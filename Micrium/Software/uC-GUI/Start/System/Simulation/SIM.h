@@ -1,4 +1,4 @@
-/*
+﻿/*
 *********************************************************************************************************
 *                                             uC/GUI V3.98
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              �C/GUI is protected by international copyright laws. Knowledge of the
+*              µC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -20,7 +20,6 @@ Purpose     : Contains macros for compatibility
 #ifndef SIM_H
 #define SIM_H
 
-#include "GUI_SIM_NoWin32.h"
 
 /********************************************************************
 *
@@ -42,13 +41,13 @@ int              SIM_HARDKEY_SetState(unsigned int KeyIndex, int State);
 *
 *********************************************************************
 */
-#define SIM_SetLCDPos(x, y)                 SIM_GUI_SetLCDPos(x, y)                
-#define SIM_SetTransColor(Color)            SIM_GUI_SetTransColor(Color)           
-#define SIM_SetLCDColorBlack(Index, Color)  SIM_GUI_SetLCDColorBlack(Index, Color)
-#define SIM_SetLCDColorWhite(Index, Color)  SIM_GUI_SetLCDColorWhite(Index, Color)
-#define SIM_SetMag(MagX, MagY)              SIM_GUI_SetMag(MagX, MagY)             
-#define SIM_GetMagX()                       SIM_GUI_GetMagX()                      
-#define SIM_GetMagY()                       SIM_GUI_GetMagY()                      
+void     SIM_SetLCDPos(int x, int y);
+int      SIM_SetTransColor(int Color);
+int      SIM_SetLCDColorBlack (unsigned int Index, int Color);
+int      SIM_SetLCDColorWhite (unsigned int Index, int Color);
+void     SIM_SetMag(int MagX, int MagY);
+int      SIM_GetMagX(void);
+int      SIM_GetMagY(void);
 
 /********************************************************************
 *
@@ -56,7 +55,7 @@ int              SIM_HARDKEY_SetState(unsigned int KeyIndex, int State);
 *
 *********************************************************************
 */
-#define SIM_X_Init() SIM_GUI_X_Init()
+void  SIM_X_Init(void);   /* Allow init before application starts ... Use it to set LCD offset etc */
 
 /********************************************************************
 *
@@ -64,12 +63,12 @@ int              SIM_HARDKEY_SetState(unsigned int KeyIndex, int State);
 *
 *********************************************************************
 */
-#define SIM_Delay(ms)     SIM_GUI_Delay(ms)   
-#define SIM_ExecIdle()    SIM_GUI_ExecIdle()   
-#define SIM_GetTime()     SIM_GUI_GetTime()    
-#define SIM_GetKey()      SIM_GUI_GetKey()     
-#define SIM_WaitKey()     SIM_GUI_WaitKey()    
-#define SIM_StoreKey(Key) SIM_GUI_StoreKey(Key)
+void SIM_Delay (int ms);
+void SIM_ExecIdle(void);
+int  SIM_GetTime(void);
+int  SIM_GetKey(void);
+int  SIM_WaitKey(void);
+void SIM_StoreKey(int);
 
 /********************************************************************
 *
@@ -77,22 +76,23 @@ int              SIM_HARDKEY_SetState(unsigned int KeyIndex, int State);
 *
 *********************************************************************
 */
-#define SIM_Log(s)                          SIM_GUI_Log(s)                         
-#define SIM_Log1(s, p0)                     SIM_GUI_Log1(s, p0)                    
-#define SIM_Log2(s, p0, p1)                 SIM_GUI_Log2(s, p0, p1)                
-#define SIM_Log3(s, p0, p1, p2)             SIM_GUI_Log3(s, p0, p1, p2)            
-#define SIM_Log4(s, p0, p1, p2,p3)          SIM_GUI_Log4(s, p0, p1, p2,p3)         
-#define SIM_Warn(s)                         SIM_GUI_Warn(s)                        
-#define SIM_Warn1(s, p0)                    SIM_GUI_Warn1(s, p0)                   
-#define SIM_Warn2(s, p0, p1)                SIM_GUI_Warn2(s, p0, p1)               
-#define SIM_Warn3(s, p0, p1, p2)            SIM_GUI_Warn3(s, p0, p1, p2)           
-#define SIM_Warn4(s, p0, p1, p2, p3)        SIM_GUI_Warn4(s, p0, p1, p2, p3)       
-#define SIM_ErrorOut(s)                     SIM_GUI_ErrorOut(s)                    
-#define SIM_ErrorOut1(s, p0)                SIM_GUI_ErrorOut1(s, p0)               
-#define SIM_ErrorOut2(s, p0, p1)            SIM_GUI_ErrorOut2(s, p0, p1)           
-#define SIM_ErrorOut3(s, p0, p1, p2)        SIM_GUI_ErrorOut3(s, p0, p1, p2)       
-#define SIM_ErrorOut4(s, p0, p1, p2, p3)    SIM_GUI_ErrorOut4(s, p0, p1, p2, p3)   
-#define SIM_EnableMessageBoxOnError(Status) SIM_GUI_EnableMessageBoxOnError(Status)
+
+void SIM_Log(const char *s);
+void SIM_Log1(const char *s, int p0);
+void SIM_Log2(const char *s, int p0, int p1);
+void SIM_Log3(const char *s, int p0, int p1, int p2);
+void SIM_Log4(const char *s, int p0, int p1, int p2,int p3);
+void SIM_Warn(const char *s);
+void SIM_Warn1(const char *s, int p0);
+void SIM_Warn2(const char *s, int p0, int p1);
+void SIM_Warn3(const char *s, int p0, int p1, int p2);
+void SIM_Warn4(const char *s, int p0, int p1, int p2, int p3);
+void SIM_ErrorOut(const char *s);
+void SIM_ErrorOut1(const char *s, int p0);
+void SIM_ErrorOut2(const char *s, int p0, int p1);
+void SIM_ErrorOut3(const char *s, int p0, int p1, int p2);
+void SIM_ErrorOut4(const char *s, int p0, int p1, int p2, int p3);
+void SIM_EnableMessageBoxOnError(int Status);
 
 /********************************************************************
 *
@@ -101,7 +101,7 @@ int              SIM_HARDKEY_SetState(unsigned int KeyIndex, int State);
 *********************************************************************
 */
 
-#define SIM_GetCmdLine() SIM_GUI_GetCmdLine()
+const char *SIM_GetCmdLine(void);
 
 /********************************************************************
 *
@@ -110,12 +110,12 @@ int              SIM_HARDKEY_SetState(unsigned int KeyIndex, int State);
 *********************************************************************
 */
 
-#define SIM_CreateTask(pName, pFunc) SIM_GUI_CreateTask(pName, pFunc)
-#define SIM_Start()                  SIM_GUI_Start()                 
-#define SIM_GetTaskID()              SIM_GUI_GetTaskID()             
-#define SIM_Lock()                   SIM_GUI_Lock()                  
-#define SIM_Unlock()                 SIM_GUI_Unlock()                
-#define SIM_InitOS()                 SIM_GUI_InitOS()                
+void SIM_CreateTask(char * pName, void * pFunc);
+void SIM_Start(void);
+unsigned long SIM_GetTaskID(void);
+void SIM_Lock(void);
+void SIM_Unlock(void);
+void SIM_InitOS(void);
 
 #endif /* LCD_H */
 

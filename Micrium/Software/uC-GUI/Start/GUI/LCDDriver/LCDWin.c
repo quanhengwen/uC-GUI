@@ -1,4 +1,4 @@
-/*
+﻿/*
 *********************************************************************************************************
 *                                             uC/GUI V3.98
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              �C/GUI is protected by international copyright laws. Knowledge of the
+*              µC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -527,7 +527,8 @@ void LCD_L0_DrawBitmap(int x0, int y0,
 *    Has no function at this point with the PC-driver.
 */
 void LCD_L0_SetOrg(int x, int y) {
-  LCDSIM_SetOrg(x, y, LCD_DISPLAY_INDEX);
+  GUI_USE_PARA(x);
+  GUI_USE_PARA(y);
 }
 
 /*********************************************************************
