@@ -74,7 +74,7 @@ static fVoidVoid * _apfTest[] = {
   GUIDEMO_ShowInternationalFonts,
   GUIDEMO_ShowColorBar,
   GUIDEMO_ShowColorList,
-  // GUIDEMO_DemoLUT,
+  GUIDEMO_DemoLUT,
   GUIDEMO_DemoPolygon,
   GUIDEMO_Circle,
   GUIDEMO_ShowMemoryDevice,

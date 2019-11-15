@@ -33,6 +33,7 @@ Requirements: WindowManager - ( )
 #include <windows.h>
 #include <stdio.h>
 #include "GUI.h"
+#include "GUIDEMO.H"
 
 /*********************************************************************
 *
@@ -90,7 +91,7 @@ static void _ShowText(void) {
     //GUI_DispString("The quick brown fox jumps over the lazy dog. 1234567890\n");
     GUI_DispString("镕镕电子AaＡａ-点半角全角，\n");
   }
-  GUI_Delay(1000);
+  GUIDEMO_Delay(1000);
 }
 
 /*********************************************************************
@@ -190,6 +191,7 @@ void GUIDEMO_TTFs(void) {
   int cnt = 3;
   char acPath[200];
 
+  GUIDEMO_ShowIntro("True Type Font",   "" );
   //
   // Be sure to modify the file encoding to UTF-8
   //
