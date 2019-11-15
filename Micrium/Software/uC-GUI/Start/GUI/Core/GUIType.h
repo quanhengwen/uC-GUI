@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 *********************************************************************************************************
 *                                             uC/GUI V3.98
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              µC/GUI is protected by international copyright laws. Knowledge of the
+*              ÂµC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -109,7 +109,7 @@ typedef struct {
 
 /* Translation list. Translates a character code into up to 2
    indices of images to display on top of each other;
-   'á' -> index('a'), index('´') */
+   'Ã¡' -> index('a'), index('Â´') */
 typedef struct {
   I16P c0;
   I16P c1;
@@ -380,6 +380,28 @@ typedef struct tGUI_SIF_APIList_struct {
 #define GUI_SIF_TYPE_PROP     &GUI_SIF_APIList_Prop
 #define GUI_SIF_TYPE_PROP_AA2 &GUI_SIF_APIList_Prop_AA2
 #define GUI_SIF_TYPE_PROP_AA4 &GUI_SIF_APIList_Prop_AA4
+
+/*********************************************************************
+*
+*       TrueType support (TTF)
+*/
+typedef struct {
+    const void* pData;      /* Pointer to TTF font file in addressable memory area */
+    U32 NumBytes;            /* Size of file in bytes */
+} GUI_TTF_DATA;
+
+typedef struct {
+    GUI_TTF_DATA* pTTF;     /* Pointer to GUI_TTF_DATA structure which contains location and size of font file */
+    U32 aImageTypeBuffer[4]; /* Buffer for image type structure */
+    int PixelHeight;         /* Pixel height of new font. It means the height of the surrounding rectangle
+                              * between the glyphs 'g' anf 'f'. Please notice that it is not the distance
+                              * between two lines of text. With other words the value returned byGUI_GetFontSizeY()
+                              * is not identically with this value. */
+    int FaceIndex;           /* Some font files can contain more than one font face. In case of more than one face
+                              * this index specifies the zero based face index to be used to create the font.
+                              * Usually 0. */
+} GUI_TTF_CS;
+
 
 /*
       *********************************

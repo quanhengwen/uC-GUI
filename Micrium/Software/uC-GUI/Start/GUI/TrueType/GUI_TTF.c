@@ -59,6 +59,8 @@ typedef struct {
   U32      MaxBytes; // If not set the default will be 200000L
 } TF_CACHE_SIZE;
 
+GUI_SADDR GUI_CONTEXT *GUI_pContext = &GUI_Context;
+
 /*********************************************************************
 *
 *       Static data
@@ -211,7 +213,7 @@ static int _RequestGlyph(U16P c, unsigned DoRender) {
                      1, 1, 1,
                      pSBit->pitch,
                      pSBit->buffer,
-                     GUI_pContext->LCD_pBkColorIndex);
+                     &LCD_BKCOLORINDEX);
     }
     r = pSBit->xadvance;
   } else {
@@ -296,6 +298,7 @@ static int _RequestGlyphAA(U16P c, unsigned DoRender) {
       //
       // Rendering cache data using the bitmap routine
       //
+#if 0
       if (GUI_pLCD_APIList) {
         GUI_pLCD_APIList->pfDrawBitmap(
                             GUI_pContext->DispPosX + pSBit->left,                                 // XPos
@@ -314,6 +317,17 @@ static int _RequestGlyphAA(U16P c, unsigned DoRender) {
                             pSBit->pitch,                                                         // BytesPerLine
                             (U8 const *)pSBit->buffer);                                           // Pointer to pixel data
       }
+#endif
+
+      LCD_DrawBitmap(
+        GUI_pContext->DispPosX + pSBit->left,                                 // XPos
+        GUI_pContext->DispPosY - pSBit->top + GUI_pContext->pAFont->Baseline, // YPos
+        pSBit->width,                                                         // XSize
+        pSBit->height,                                                        // YSize
+        1, 1, 8,
+        pSBit->pitch,                                                         // BytesPerLine
+        (U8 const *)pSBit->buffer,                                            // Pointer to pixel data
+        NULL);
     }
     r = pSBit->xadvance;
   } else {
@@ -355,10 +369,17 @@ static void _ClearLine(const char * s, int Len) {
   int       xDist;
   int       yDist;
   int       xSize;
+  int       x0;
+  int       y0;
   U16       c;
 
+  LCD_COLOR OldColor;
+  OldColor = GUI_GetColor();
+  GUI_SetColor((GUI_pContext->TextMode & GUI_TM_REV) ? GUI_GetColor() : GUI_GetBkColor());
   xDist    = 0;
   yDist    = GUI_pContext->pAFont->YDist * GUI_pContext->pAFont->YMag;
+  x0       = GUI_pContext->DispPosX;
+  y0       = GUI_pContext->DispPosY;
   c        = 0;
   while (--Len >= 0) {
     c     = GUI_UC__GetCharCodeInc(&s);
@@ -367,7 +388,8 @@ static void _ClearLine(const char * s, int Len) {
       xDist += xSize;
     }
   }
-  GUI__ClearTextBackground(xDist, yDist);
+  LCD_FillRect(x0, y0, x0 + xDist - 1, y0 + yDist - 1);
+  GUI_SetColor(OldColor);
 }
 
 /*********************************************************************
@@ -383,10 +405,17 @@ static void _ClearLineAA(const char * s, int Len) {
   int       xDist;
   int       yDist;
   int       xSize;
+  int       x0;
+  int       y0;
   U16       c;
 
+  LCD_COLOR OldColor;
+  OldColor = GUI_GetColor();
+  GUI_SetColor((GUI_pContext->TextMode & GUI_TM_REV) ? GUI_GetColor() : GUI_GetBkColor());
   xDist    = 0;
   yDist    = GUI_pContext->pAFont->YDist * GUI_pContext->pAFont->YMag;
+  x0       = GUI_pContext->DispPosX;
+  y0       = GUI_pContext->DispPosY;
   c        = 0;
   while (--Len >= 0) {
     c     = GUI_UC__GetCharCodeInc(&s);
@@ -395,7 +424,8 @@ static void _ClearLineAA(const char * s, int Len) {
       xDist += xSize;
     }
   }
-  GUI__ClearTextBackground(xDist, yDist);
+  LCD_FillRect(x0, y0, x0 + xDist - 1, y0 + yDist - 1);
+  GUI_SetColor(OldColor);
 }
 
 /*********************************************************************
@@ -507,6 +537,13 @@ static int _GetCharDistX(U16P c, int * pSizeX) {
 *
 *       _GetCharDistX_AA
 */
+#if (GUI_VERSION < 50801)
+static int _GetCharDistX_AA(U16P c) {
+  int xDist;
+  xDist = _RequestGlyphAA(c, 0);
+  return (xDist >= 0) ? xDist : 0;
+}
+#else
 static int _GetCharDistX_AA(U16P c, int * pSizeX) {
   int xDist;
   xDist = _RequestGlyphAA(c, 0);
@@ -515,6 +552,7 @@ static int _GetCharDistX_AA(U16P c, int * pSizeX) {
   }
   return (xDist >= 0) ? xDist : 0;
 }
+#endif
 
 /*********************************************************************
 *
@@ -558,7 +596,7 @@ static int _GetName(GUI_FONT * pFont, char * pBuffer, int NumBytes, int Index) {
   FTC_FaceID   face_id;
   FT_Face      face;
   int          Len;
-  const char * pName;
+  const char * pName = NULL;
   
   //
   // Get object pointer
@@ -591,7 +629,7 @@ static int _GetName(GUI_FONT * pFont, char * pBuffer, int NumBytes, int Index) {
 *
 *       _CreateFont
 */
-static int _CreateFont(GUI_FONT * pFont, GUI_TTF_CS * pCS, FT_Int Flags, void (* pfDispChar)(U16), const tGUI_ENC_APIList * pAPIList, int (* pfGetCharDistX)(U16P, int *)) {
+static int _CreateFont(GUI_FONT * pFont, GUI_TTF_CS * pCS, FT_Int Flags, void (* pfDispChar)(U16), const tGUI_ENC_APIList * pAPIList, int (* pfGetCharDistX)(U16P)) {
   FTC_ImageTypeRec * pImageType;
   FTC_FaceID         face_id;
   FTC_ScalerRec      scaler;
