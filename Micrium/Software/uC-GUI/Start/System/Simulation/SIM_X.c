@@ -26,7 +26,7 @@ void SIM_X_Init() {
   if (((LCD_GetDevCap(LCD_DEVCAP_XSIZE) * LCD_GetXMag()) == 320) && 
       ((LCD_GetDevCap(LCD_DEVCAP_YSIZE) * LCD_GetYMag()) == 240) && 
       (LCD_GetNumLayers() == 1)) {
-    SIM_SetLCDPos(71,38);                   // Define the position of the LCD in the bitmap
+    SIM_SetLCDPos(50,20);                   // Define the position of the LCD in the bitmap
     SIM_SetTransColor  (0xff0000);          // Define the transparent color
 /*
     SIM_SetLCDColorBlack(0, 0x808080);      // Define black color
