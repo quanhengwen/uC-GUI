@@ -83,8 +83,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\BMP;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;_DEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\Utility\ZLib;..\..\..\..\Utility\ZLib\Port;Application;Config;Sample\GUIDemo;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\BMP;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\PNG\Port;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;_DEBUG;WIN32;_WINDOWS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -110,8 +110,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\BMP;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;NDEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\Utility\ZLib;..\..\..\..\Utility\ZLib\Port;Application;Config;Sample\GUIDemo;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\BMP;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\PNG\Port;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;NDEBUG;WIN32;_WINDOWS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -136,38 +136,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Automotive.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Bitmap.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Bitmap4bpp.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Circle.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ColorBar.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ColorList.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Cursor.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Dialog.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawBMP.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawGIF.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawJPEG.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawPNG.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DriverPerformance.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Font.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_FrameWin.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Graph.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_HardwareInfo.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Intro.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_LUT.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_MemDevB.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Messagebox.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Navi.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Polygon.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ProgBar.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ShowAllTTFs.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Speed.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Touch.c" />
-    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_WM.c" />
-    <ClCompile Include="..\Sample\GUIDemo\MainTask.c" />
-    <ClCompile Include="..\Sample\GUIDemo\MicriumLogo.c" />
-    <ClCompile Include="..\Sample\GUIDemo\MicriumLogoWRed.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\adler32.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\compress.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\crc32.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\deflate.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\gzclose.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\gzlib.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\gzread.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\gzwrite.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\infback.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\inffast.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\inflate.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\inftrees.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\trees.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\uncompr.c" />
+    <ClCompile Include="..\..\..\..\Utility\ZLib\zutil.c" />
     <ClCompile Include="GUI\AntiAlias\GUIAAArc.c" />
     <ClCompile Include="GUI\AntiAlias\GUIAAChar.c" />
     <ClCompile Include="GUI\AntiAlias\GUIAAChar2.c" />
@@ -553,16 +536,6 @@
     <ClCompile Include="GUI\MultiLayer\LCD_2.c" />
     <ClCompile Include="GUI\MultiLayer\LCD_3.c" />
     <ClCompile Include="GUI\MultiLayer\LCD_4.c" />
-    <ClCompile Include="GUI\PNG\adler32.c" />
-    <ClCompile Include="GUI\PNG\compress.c" />
-    <ClCompile Include="GUI\PNG\crc32.c" />
-    <ClCompile Include="GUI\PNG\deflate.c" />
-    <ClCompile Include="GUI\PNG\GUI_PNG.c" />
-    <ClCompile Include="GUI\PNG\IMAGE_PNG.c" />
-    <ClCompile Include="GUI\PNG\infback.c" />
-    <ClCompile Include="GUI\PNG\inffast.c" />
-    <ClCompile Include="GUI\PNG\inflate.c" />
-    <ClCompile Include="GUI\PNG\inftrees.c" />
     <ClCompile Include="GUI\PNG\png.c" />
     <ClCompile Include="GUI\PNG\pngerror.c" />
     <ClCompile Include="GUI\PNG\pngget.c" />
@@ -578,9 +551,8 @@
     <ClCompile Include="GUI\PNG\pngwrite.c" />
     <ClCompile Include="GUI\PNG\pngwtran.c" />
     <ClCompile Include="GUI\PNG\pngwutil.c" />
-    <ClCompile Include="GUI\PNG\trees.c" />
-    <ClCompile Include="GUI\PNG\uncompr.c" />
-    <ClCompile Include="GUI\PNG\zutil.c" />
+    <ClCompile Include="GUI\PNG\Port\GUI_PNG.c" />
+    <ClCompile Include="GUI\PNG\Port\IMAGE_PNG.c" />
     <ClCompile Include="GUI\TrueType\autofit.c" />
     <ClCompile Include="GUI\TrueType\bdf.c" />
     <ClCompile Include="GUI\TrueType\cff.c" />
@@ -987,6 +959,38 @@
     <ClCompile Include="GUI\WM\WM__SendMessageIfEnabled.c" />
     <ClCompile Include="GUI\WM\WM__SendMessageNoPara.c" />
     <ClCompile Include="GUI\WM\WM__UpdateChildPositions.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Automotive.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Bitmap.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Bitmap4bpp.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Circle.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ColorBar.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ColorList.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Cursor.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Dialog.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawBMP.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawGIF.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawJPEG.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawPNG.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DriverPerformance.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Font.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_FrameWin.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Graph.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_HardwareInfo.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Intro.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_LUT.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_MemDevB.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Messagebox.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Navi.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Polygon.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ProgBar.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ShowAllTTFs.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Speed.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Touch.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_WM.c" />
+    <ClCompile Include="Sample\GUIDemo\MainTask.c" />
+    <ClCompile Include="Sample\GUIDemo\MicriumLogo.c" />
+    <ClCompile Include="Sample\GUIDemo\MicriumLogoWRed.c" />
     <ClCompile Include="System\Simulation\Main.c" />
     <ClCompile Include="System\Simulation\SIM_GUI\Branding\Branding.c" />
     <ClCompile Include="System\Simulation\SIM_GUI\FS_Win32.c" />
@@ -999,8 +1003,17 @@
     <ClCompile Include="System\Simulation\SIM_X.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Sample\GUIDemo\GUIDEMO.h" />
-    <ClInclude Include="..\Sample\GUIDemo\Map.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\crc32.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\deflate.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\gzguts.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\inffast.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\inffixed.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\inflate.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\inftrees.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\Port\zconf.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\Port\zlib.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\trees.h" />
+    <ClInclude Include="..\..\..\..\Utility\ZLib\zutil.h" />
     <ClInclude Include="Config\GUIConf.h" />
     <ClInclude Include="Config\GUITouchConf.h" />
     <ClInclude Include="Config\LCDConf.h" />
@@ -1025,24 +1038,14 @@
     <ClInclude Include="GUI\JPEG\Port\jencode_decode.h" />
     <ClInclude Include="GUI\JPEG\Port\jmorecfg.h" />
     <ClInclude Include="GUI\MultiLayer\LCD_IncludeDriver.h" />
-    <ClInclude Include="GUI\PNG\crc32.h" />
-    <ClInclude Include="GUI\PNG\deflate.h" />
-    <ClInclude Include="GUI\PNG\GUI_PNG_Private.h" />
-    <ClInclude Include="GUI\PNG\inffast.h" />
-    <ClInclude Include="GUI\PNG\inffixed.h" />
-    <ClInclude Include="GUI\PNG\inflate.h" />
-    <ClInclude Include="GUI\PNG\inftrees.h" />
     <ClInclude Include="GUI\PNG\png.h" />
     <ClInclude Include="GUI\PNG\pngconf.h" />
     <ClInclude Include="GUI\PNG\pngdebug.h" />
     <ClInclude Include="GUI\PNG\pnginfo.h" />
-    <ClInclude Include="GUI\PNG\pnglibconf.h" />
     <ClInclude Include="GUI\PNG\pngpriv.h" />
     <ClInclude Include="GUI\PNG\pngstruct.h" />
-    <ClInclude Include="GUI\PNG\trees.h" />
-    <ClInclude Include="GUI\PNG\zconf.h" />
-    <ClInclude Include="GUI\PNG\zlib.h" />
-    <ClInclude Include="GUI\PNG\zutil.h" />
+    <ClInclude Include="GUI\PNG\Port\GUI_PNG_Private.h" />
+    <ClInclude Include="GUI\PNG\Port\pnglibconf.h" />
     <ClInclude Include="GUI\TrueType\afangles.h" />
     <ClInclude Include="GUI\TrueType\afblue.h" />
     <ClInclude Include="GUI\TrueType\afcjk.h" />
@@ -1336,6 +1339,8 @@
     <ClInclude Include="GUI\WM\WM_GUI.h" />
     <ClInclude Include="GUI\WM\WM_Intern.h" />
     <ClInclude Include="GUI\WM\WM_Intern_ConfDep.h" />
+    <ClInclude Include="Sample\GUIDemo\GUIDEMO.h" />
+    <ClInclude Include="Sample\GUIDemo\Map.h" />
     <ClInclude Include="System\Simulation\Res\ResourceSim.h" />
     <ClInclude Include="System\Simulation\SIM.h" />
     <ClInclude Include="System\Simulation\SIM_GUI\Branding\Branding.h" />
