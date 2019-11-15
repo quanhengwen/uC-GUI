@@ -2562,6 +2562,9 @@
     <ClCompile Include="System\Simulation\SIM_GUI\FS_Win32.c">
       <Filter>System\Simulation\SIM_GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawPNG.c">
+      <Filter>Sample\GUIDemo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\GUIConf.h">

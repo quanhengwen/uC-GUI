@@ -56,7 +56,7 @@ Purpose     : Implementation of GUI_PNG... functions
   GUI_ALLOC_Unlock()
 
 #ifndef GUI_BYTESPERPIXEL
-  #define GUI_BYTESPERPIXEL 4
+  #define GUI_BYTESPERPIXEL   (LCD_GetBitsPerPixel()>>3)
 #endif
 
 /*********************************************************************

@@ -145,6 +145,7 @@
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ColorList.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Cursor.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Dialog.c" />
+    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawPNG.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DriverPerformance.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Font.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_FrameWin.c" />

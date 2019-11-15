@@ -225,7 +225,7 @@ void GUIDEMO_TTFs(void) {
   //
   // Iterate over files and call _cbFontDemo for each file
   //
-  _IterateOverAllFiles(acPath, "*.ttf", _cbFontDemo);
+  _IterateOverAllFiles(acPath, "simhei.ttf", _cbFontDemo);
   GUIDEMO_Wait();
 }
 
