@@ -70,51 +70,84 @@ TF_CACHE_SIZE _FTCacheSize;
 
 static GUI_SADDR GUI_CONTEXT *GUI_pContext = &GUI_Context;
 
-/* used by non transparent characters */
-static LCD_COLOR aColor[256];//
-static LCD_PIXELINDEX OldColorIndex, OldBkColorIndex;//
-static GUI_CONST_STORAGE LCD_PIXELINDEX* pTrans;//
-static GUI_CONST_STORAGE GUI_LOGPALETTE Palette = {
-  256, /* number of entries */
-  0, /* No transparency */
-  &aColor[0]
-};
-static GUI_BITMAP Bitmap = {0, 0, 0, 8, 0, &Palette, 0};
-
 /*********************************************************************
 *
 *       Static code
 *
 **********************************************************************
 */
+#define RETURN_IF_Y_OUT() \
+  if (y < GUI_Context.ClipRect.y0)                     \
+    return;                                            \
+  if (y > GUI_Context.ClipRect.y1)                     \
+    return;
+
+#define RETURN_IF_X_OUT() \
+  if (x < GUI_Context.ClipRect.x0) return;             \
+  if (x > GUI_Context.ClipRect.x1) return;
+
+/*********************************************************************
+*
+*       LCD_SetPixelAA8
+*/
+static void LCD_SetPixelAA8(int x, int y, U8 Intens) {
+  if (Intens == 0)
+    return;
+  RETURN_IF_Y_OUT();
+  RETURN_IF_X_OUT();
+  if (Intens >= 255) {
+    LCDDEV_L0_SetPixelIndex(x,y, LCD_COLORINDEX);
+  } else {
+    LCD_COLOR Color = LCD_Index2Color(LCD_COLORINDEX);
+    LCD_COLOR BkColor =  LCD_GetPixelColor(x,y);
+    Color = LCD_MixColors256(Color, BkColor, Intens);
+    LCDDEV_L0_SetPixelIndex(x,y, LCD_Color2Index(Color));
+  }
+}
+
+/*********************************************************************
+*
+*       LCD_SetPixelAA8_NoTrans
+*/
+static void LCD_SetPixelAA8_NoTrans(int x, int y, U8 Intens) {
+  RETURN_IF_Y_OUT();
+  RETURN_IF_X_OUT();
+  if (Intens == 0) {
+    LCDDEV_L0_SetPixelIndex(x,y, LCD_BKCOLORINDEX);
+  } else if (Intens == 255) {
+    LCDDEV_L0_SetPixelIndex(x,y, LCD_COLORINDEX);
+  } else {
+    LCD_COLOR Color = LCD_MixColors256(LCD_Index2Color(LCD_COLORINDEX),
+                                   LCD_Index2Color(LCD_BKCOLORINDEX),
+                                   Intens);
+    LCDDEV_L0_SetPixelIndex(x,y,LCD_Color2Index(Color));
+  }
+}
+
 /*********************************************************************
 *
 *       GUI_AA__DrawCharAA8
 */
 static void GUI_AA__DrawCharAA8(int x0, int y0, int XSize, int YSize, int BytesPerLine, const U8*pData) {
-  if ((OldColorIndex   != LCD_COLORINDEX) || 
-      (OldBkColorIndex != LCD_BKCOLORINDEX)) {
-    int i;
-    LCD_PIXELINDEX BkColorIndex = LCD_BKCOLORINDEX;
-    LCD_PIXELINDEX ColorIndex   = LCD_COLORINDEX;
-    LCD_COLOR BkColor = LCD_Index2Color(BkColorIndex);
-    LCD_COLOR Color   = LCD_Index2Color(ColorIndex);
-    aColor[0] = BkColor;
-    for (i = 1; i < 255; i++) {
-      U8 Intens;
-      Intens = 1 * i;
-      aColor[i] = LCD_MixColors256(Color, BkColor, Intens);
+  int x, y;
+  GUI_DRAWMODE DrawMode = GUI_Context.TextMode;
+  GUI_DRAWMODE OldDrawMode;
+  OldDrawMode  = LCD_SetDrawMode(DrawMode);
+  tLCD_SetPixelAA* pfSetPixelAA;
+  pfSetPixelAA = (GUI_Context.TextMode && GUI_TM_TRANS) ?
+                 LCD_SetPixelAA8 : LCD_SetPixelAA8_NoTrans;
+  for (y=0; y<YSize; y++) {
+    const U8*pData0 = pData;
+    for (x=0; x<XSize-1; x++) {
+      (*pfSetPixelAA)(x+x0,y0+y,   (*pData0)>>1); /* x0+x changed -> x+x0 to avoid problems with IAR's ICCMC80 */
+      (*pfSetPixelAA)(x0+x+1,y0+y, (*pData0++)&255);
+  	}
+    if (XSize&1) {
+      (*pfSetPixelAA)(x0+x,y0+y, (*pData0)&255);
     }
-    aColor[255] = Color;
-    LCD_GetpPalConvTableUncached(&Palette);
-    OldColorIndex = ColorIndex;
-    OldBkColorIndex = BkColorIndex;
+    pData+=BytesPerLine;
   }
-  Bitmap.XSize = XSize;
-  Bitmap.YSize = YSize;
-  Bitmap.BytesPerLine = BytesPerLine;
-  Bitmap.pData = pData;
-  GL_DrawBitmap(&Bitmap, x0, y0);
+  LCD_SetDrawMode(OldDrawMode); /* Restore draw mode */
 }
 
 /*********************************************************************
