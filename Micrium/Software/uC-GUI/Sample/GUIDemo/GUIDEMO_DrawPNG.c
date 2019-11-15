@@ -530,7 +530,6 @@ void GUIDEMO_PNGs(void) {
     GUI_ErrorOut("Not enough memory available."); 
     return;
   }
-
   _DrawStripes();
   _DrawPNG_file("C:/Keil_v5/ARM/Segger/emWin/Doc/Training/BitmapConverter/Toucan_162x150.png"); /* Please change the link to a valid PNG file */
   GUIDEMO_Delay(1000);

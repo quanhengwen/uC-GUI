@@ -1,24 +1,44 @@
-/*
-*********************************************************************************************************
-*                                             uC/GUI V3.98
-*                        Universal graphic software for embedded applications
-*
-*                       (c) Copyright 2002, Micrium Inc., Weston, FL
-*                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
-*
-*              µC/GUI is protected by international copyright laws. Knowledge of the
-*              source code may not be used to write a similar product. This file may
-*              only be used in accordance with a license and should not be redistributed
-*              in any way. We appreciate your understanding and fairness.
-*
+/*********************************************************************
+*                    SEGGER Microcontroller GmbH                     *
+*        Solutions for real time microcontroller applications        *
+**********************************************************************
+*                                                                    *
+*        (c) 1996 - 2019  SEGGER Microcontroller GmbH                *
+*                                                                    *
+*        Internet: www.segger.com    Support:  support@segger.com    *
+*                                                                    *
+**********************************************************************
+
+** emWin V5.50 - Graphical user interface for embedded applications **
+emWin is protected by international copyright laws.   Knowledge of the
+source code may not be used to write a similar product.  This file may
+only  be used  in accordance  with  a license  and should  not be  re-
+distributed in any way. We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
 File        : GUIDEMO_DrawGIF.c
 Purpose     : Shows how to render GIF images
+Requirements: WindowManager - ( )
+              MemoryDevices - ( )
+              AntiAliasing  - ( )
+              VNC-Server    - ( )
+              PNG-Library   - ( )
+              TrueTypeFonts - ( )
 ----------------------------------------------------------------------
 */
 
 #include "GUI.h"
 #include "GUIDEMO.H"
+
+/*********************************************************************
+*
+*       Defines
+*
+**********************************************************************
+*/
+//
+// Recommended memory to run the sample with adequate performance
+//
+#define RECOMMENDED_MEMORY (1024L * 20)
 
 /*******************************************************************
 *
@@ -87,28 +107,37 @@ static unsigned const char _acImage0[] = {
 *
 *       _ShowMovie
 *
-* Shows the contents of a GIF file as movie
+* Function description
+*   Shows the contents of a GIF file as movie
 */
 static void _ShowMovie(const char * pFile, int FileSize) {
-  int i, j, XPos, YPos;
-  GUI_GIF_INFO       GifInfo   = {0}; /* Info structure of GIF file */
-  GUI_GIF_IMAGE_INFO ImageInfo = {0}; /* Info structure of one particular GIF image of the GIF file */
-  /* Display sample information */
+  GUI_GIF_IMAGE_INFO ImageInfo = {0}; // Info structure of one particular GIF image of the GIF file
+  GUI_GIF_INFO       GifInfo   = {0}; // Info structure of GIF file
+  int                i;
+  int                j;
+  int                XPos;
+  int                YPos;
+
+  //
+  // Display sample information
+  //
   GUI_SetFont(&GUI_Font8x16);
   GUI_ClearRect(0, 40, 319, 59);
   GUI_DispStringHCenterAt("Show complete GIF file as movie", 160, 40);
-  /* Show movie */
-  GUI_ClearRect(0, 60, 319, 239);                                 /* Clear the image area */
-  GUI_GIF_GetInfo(pFile, FileSize, &GifInfo);                     /* Get GIF info structure */
+  //
+  // Show movie
+  //
+  GUI_ClearRect(0, 60, 319, 239);                                 // Clear the image area
+  GUI_GIF_GetInfo(pFile, FileSize, &GifInfo);                     // Get GIF info structure
   XPos = (GifInfo.xSize > 320) ?  0 : 160 - (GifInfo.xSize / 2);
   YPos = (GifInfo.ySize > 180) ? 60 : 150 - (GifInfo.ySize / 2);
-  for (i = 0; i < 2; i++) {                                       /* Show the complete GIF 2 times ... */
+  for (i = 0; i < 2; i++) {                                       // Show the complete GIF 2 times ...
     for (j = 0; j < GifInfo.NumImages; j++) {
-      GUI_GIF_DrawEx(pFile, FileSize, XPos, YPos, j);             /* Draw sub image */
-      GUI_GIF_GetImageInfo(pFile, FileSize, &ImageInfo, j);       /* Get sub image information */
-      GUI_Delay(ImageInfo.Delay ? ImageInfo.Delay * 10 : 100);    /* Use the Delay member of the ImageInfo structure for waiting a while */
+      GUI_GIF_DrawEx(pFile, FileSize, XPos, YPos, j);            // Draw sub image
+      GUI_GIF_GetImageInfo(pFile, FileSize, &ImageInfo, j);       // Get sub image information
+      GUIDEMO_Delay(ImageInfo.Delay ? ImageInfo.Delay * 10 : 100);    // Use the Delay member of the ImageInfo structure for waiting a while
     }
-    GUI_Delay(2000);                                              /* Wait a while */
+    GUIDEMO_Delay(2000);                                              // Wait a while
   }
 }
 
@@ -116,51 +145,61 @@ static void _ShowMovie(const char * pFile, int FileSize) {
 *
 *       _ShowSubImages
 *
-* Shows all sub images of a GIF file side by side
+* Function description
+*   Shows all sub images of a GIF file side by side
 */
 static void _ShowSubImages(const char * pFile, int FileSize) {
-  int j, XPos, YPos;
-  GUI_GIF_INFO       GifInfo   = {0}; /* Info structure of GIF file */
-  GUI_GIF_IMAGE_INFO ImageInfo = {0}; /* Info structure of one particular GIF image of the GIF file */
-  /* Display sample information */
+  GUI_GIF_INFO       GifInfo   = {0}; // Info structure of GIF file
+  int                j;
+  int                XPos;
+  int                YPos;
+  //
+  // Display sample information
+  //
   GUI_SetFont(&GUI_Font8x16);
   GUI_ClearRect(0, 40, 319, 59);
   GUI_DispStringHCenterAt("Show all sub images of a GIF file", 160, 40);
-  /* Show sub images */
-  GUI_ClearRect(0, 60, 319, 239);                                 /* Clear the image area */
-  GUI_GIF_GetInfo(pFile, FileSize, &GifInfo);                     /* Get GIF info structure */
+  //
+  // Show sub images
+  //
+  GUI_ClearRect(0, 60, 319, 239);                                 // Clear the image area
+  GUI_GIF_GetInfo(pFile, FileSize, &GifInfo);                     // Get GIF info structure
   XPos = 160 - GifInfo.xSize * GifInfo.NumImages / 2;
   YPos = (GifInfo.ySize > 180) ? 60 : 150 - (GifInfo.ySize / 2);
   for (j = 0; j < GifInfo.NumImages; j++) {
     char acNumber[3] = "#";
     acNumber[1] = '0' + j;
     GUI_DispStringHCenterAt(acNumber, XPos + GifInfo.xSize / 2, 90);
-    GUI_GIF_DrawEx(pFile, FileSize, XPos, YPos, j);               /* Draw sub image */
+    GUI_GIF_DrawEx(pFile, FileSize, XPos, YPos, j);              // Draw sub image
     XPos += GifInfo.xSize;
   }
-  GUI_Delay(4000);                                                /* Wait a while */
+  GUIDEMO_Delay(4000);                                                // Wait a while
 }
 
 /*******************************************************************
 *
 *       _ShowComments
 *
-* Shows all comments of a GIF file
+* Function description
+*   Shows all comments of a GIF file
 */
 static void _ShowComments(const char * pFile, int FileSize) {
-  int Size, CommentCnt;
-  U8 acBuffer[256] = {0};
-  GUI_RECT Rect = {80, 100, 239, 199};
-  GUI_GIF_INFO       GifInfo   = {0}; /* Info structure of GIF file */
-  GUI_GIF_IMAGE_INFO ImageInfo = {0}; /* Info structure of one particular GIF image of the GIF file */
-  /* Display sample information */
+  GUI_RECT Rect          = {80, 100, 239, 199};
+  char     acBuffer[256] = {0};
+  int      CommentCnt;
+
+  //
+  // Display sample information
+  //
   GUI_SetFont(&GUI_Font8x16);
   GUI_ClearRect(0, 40, 319, 59);
   GUI_DispStringHCenterAt("Show all comments of a GIF file", 160, 40);
-  /* Show all comments */
-  GUI_ClearRect(0, 60, 319, 239);                                 /* Clear the image area */
-  Size = CommentCnt = 0;
-  while (!GUI_GIF_GetComment(pFile, FileSize, acBuffer, sizeof(acBuffer), CommentCnt)) {
+  //
+  // Show all comments
+  //
+  GUI_ClearRect(0, 60, 319, 239);                                 // Clear the image area
+  CommentCnt = 0;
+  while (!GUI_GIF_GetComment(pFile, FileSize, (unsigned char *)acBuffer, sizeof(acBuffer), CommentCnt)) {
     char acNumber[12] = "Comment #0:";
     acNumber[9] = '0' + CommentCnt;
     GUI_DispStringHCenterAt(acNumber, 160, 80);
@@ -170,7 +209,7 @@ static void _ShowComments(const char * pFile, int FileSize) {
     GUI_DispStringInRectWrap(acBuffer, &Rect, GUI_TA_HCENTER | GUI_TA_VCENTER, GUI_WRAPMODE_WORD);
     GUI_SetBkColor(GUI_WHITE);
     GUI_SetColor(GUI_BLACK);
-    GUI_Delay(4000);                                              /* Wait a while */
+    GUIDEMO_Delay(4000);                                              // Wait a while
     CommentCnt++;
   }
 }
@@ -187,16 +226,23 @@ static void _ShowComments(const char * pFile, int FileSize) {
 */
 void GUIDEMO_GIFs(void) {
   GUIDEMO_ShowIntro("GIFs",   "" );
+  //
+  // Check if recommended memory for the sample is available
+  //
+  if (GUI_ALLOC_GetNumFreeBytes() < RECOMMENDED_MEMORY) {
+    GUI_ErrorOut("Not enough memory available."); 
+    return;
+  }
   GUI_SetBkColor(GUI_WHITE);
   GUI_Clear();
   GUI_SetColor(GUI_BLACK);
   GUI_SetFont(&GUI_Font24_ASCII);
   GUI_DispStringHCenterAt("DrawGIF - Sample", 160, 5);
-  _ShowMovie    (_acImage0, sizeof(_acImage0));
-  _ShowSubImages(_acImage0, sizeof(_acImage0));
-  _ShowComments (_acImage0, sizeof(_acImage0));
+  _ShowMovie    ((char *)_acImage0, sizeof(_acImage0));
+  _ShowSubImages((char *)_acImage0, sizeof(_acImage0));
+  _ShowComments ((char *)_acImage0, sizeof(_acImage0));
   GUIDEMO_Wait();
 }
 
 /*************************** End of file ****************************/
-	 	 			 		    	 				 	  			   	 	 	 	 	 	  	  	      	   		 	 	 		  		  	 		 	  	  			     			       	   	 			  		    	 	     	 				  	 					 	 			   	  	  			 				 		 	 	 			     			 
+
