@@ -103,15 +103,6 @@
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source">
       <UniqueIdentifier>{8d05de6d-a382-4051-989c-98405f1b549e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config">
-      <UniqueIdentifier>{52fb4051-7565-416b-a97f-5736a6165ab0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal">
-      <UniqueIdentifier>{04ccbcdb-6fe9-44f4-a543-b97cea188474}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services">
-      <UniqueIdentifier>{be7aca9e-06fe-4d8e-ab2c-208f0dc41645}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit">
       <UniqueIdentifier>{e094c7a6-df3c-468c-b897-34a7a1aaf141}</UniqueIdentifier>
     </Filter>
@@ -183,6 +174,39 @@
     </Filter>
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Port">
       <UniqueIdentifier>{4ea56b8f-eb4e-440e-9c4e-2b19104a60ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-FS">
+      <UniqueIdentifier>{2890c137-dd82-45d6-b965-6f8cf0f20ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-FS\Config">
+      <UniqueIdentifier>{0721f9ac-b534-443b-8ebf-ccc41b256a63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-FS\FS">
+      <UniqueIdentifier>{f8396a37-5b5b-43c8-b52b-cc6e7b6700a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-FS\Inc">
+      <UniqueIdentifier>{40620845-3323-4712-81fb-d3ea0fe5128f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-FS\Sample">
+      <UniqueIdentifier>{d31e9ad0-18ec-4758-92ec-cb6f646de452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-FS\Sample\API">
+      <UniqueIdentifier>{a0f10e7e-cadf-483c-85ad-9c935a2cbbbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-FS\Sample\OS">
+      <UniqueIdentifier>{918a7a71-acc8-4df5-a1f1-bcea6cc4e3e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype">
+      <UniqueIdentifier>{22865327-99ec-4456-85cc-2ee637b763fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config">
+      <UniqueIdentifier>{081138ce-a592-44be-b07e-3993d29f3c06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal">
+      <UniqueIdentifier>{d6a7903e-7bed-40f3-94b9-785c47d31524}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services">
+      <UniqueIdentifier>{fa333334-389e-43d5-956c-5363c1ab6538}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2775,6 +2799,228 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Port\GUI_TTF.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Port</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Config\ConfigRamDisk.c">
+      <Filter>Micrium\Software\uC-FS\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Config\ConfigWinDisk.c">
+      <Filter>Micrium\Software\uC-FS\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Config\FS_X_Panic.c">
+      <Filter>Micrium\Software\uC-FS\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_APIValidation.c">
+      <Filter>Micrium\Software\uC-FS\Sample\API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_CheckDisk.c">
+      <Filter>Micrium\Software\uC-FS\Sample\API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_DirOperations.c">
+      <Filter>Micrium\Software\uC-FS\Sample\API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_NORSectorInfo.c">
+      <Filter>Micrium\Software\uC-FS\Sample\API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_Performance.c">
+      <Filter>Micrium\Software\uC-FS\Sample\API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_Start.c">
+      <Filter>Micrium\Software\uC-FS\Sample\API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\OS\FS_X_embOS.c">
+      <Filter>Micrium\Software\uC-FS\Sample\OS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\OS\FS_X_Epsilon.c">
+      <Filter>Micrium\Software\uC-FS\Sample\OS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\OS\FS_X_ucOS_II.c">
+      <Filter>Micrium\Software\uC-FS\Sample\OS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\OS\FS_X_Win32.c">
+      <Filter>Micrium\Software\uC-FS\Sample\OS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_API.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_CheckDisk.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Dir.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_DirEntry.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_DiskInfo.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Format.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_FormatSD.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Ioct.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Misc.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Move.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Open.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Read.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Rename.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_SetEndOfFile.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_VolumeLabel.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Write.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS__ECC256.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_AddSpaceHex.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_AssignCache.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Attrib.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CacheAll.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CacheMan.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CacheRW.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CacheRWQuota.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CLib.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CopyFile.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Core.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CreateDir.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Dir.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_DirOld.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_ErrorNo2Text.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_ErrorOut.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Format.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_FRead.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_FWrite.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_GetFilePos.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_GetFileSize.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_GetNumFiles.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_GetNumOpenFiles.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Log.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_LogBlock.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_LogVolume.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_memcpy.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Misc.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Move.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_OS_Interface.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Partition.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Read.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Rename.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_SetEndOfFile.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_SetFilePos.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Storage.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Time.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Truncate.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Unmount.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Verify.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Volume.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Warn.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Write.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\RAMDISK.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\WinDrive.c">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\Config\GUIConf.h">
@@ -3059,270 +3305,6 @@
     <ClInclude Include="..\..\Utility\ZLib\zutil.h">
       <Filter>Utility\ZLib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svbdf.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svcid.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svgldict.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svgxval.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svkern.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svmm.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svotval.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svpfr.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svpostnm.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svprop.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svpscmap.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svpsinfo.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svsfnt.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svttcmap.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svtteng.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svttglyf.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svwinfnt.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services\svxf86nm.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\services</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\autohint.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftcalc.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftdebug.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftdriver.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftgloadr.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftmemory.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftobjs.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftpic.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftrfork.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftserv.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftstream.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\fttrace.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\ftvalid.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\internal.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\psaux.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\pshints.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\sfnt.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\t1types.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal\tttypes.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config\ftconfig.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config\ftheader.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config\ftmodule.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config\ftoption.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config\ftstdlib.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\config</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ft2build.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftadvanc.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftautoh.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftbbox.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftbdf.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftbitmap.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftbzip2.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftcache.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftcffdrv.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftchapters.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftcid.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\fterrdef.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\fterrors.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftgasp.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftglyph.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftgxval.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftgzip.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftimage.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftincrem.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftlcdfil.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftlist.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftlzw.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftmac.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftmm.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftmodapi.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftmoderr.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftotval.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftoutln.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftpfr.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftrender.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftsizes.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftsnames.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftstroke.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftsynth.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftsystem.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\fttrigon.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftttdrv.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\fttypes.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftwinfnt.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ftxf86.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\t1tables.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ttnameid.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\tttables.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\tttags.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ttunpat.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit\aferrors.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit</Filter>
     </ClInclude>
@@ -3454,6 +3436,333 @@
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux\pstypes.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\Config\FS_Conf.h">
+      <Filter>Micrium\Software\uC-FS\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\Inc\Global.h">
+      <Filter>Micrium\Software\uC-FS\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FAT.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FAT_Intern.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_API.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_CLib.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_ConfDefaults.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Debug.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Dev.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_DF_X_HW.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Int.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Lbl.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_OS.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Storage.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Types.h">
+      <Filter>Micrium\Software\uC-FS\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\ft2build.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\freetype.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftadvanc.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftbbox.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftbdf.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftbitmap.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftbzip2.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftcache.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftchapters.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftcid.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftcolor.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftdriver.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\fterrdef.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\fterrors.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftfntfmt.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftgasp.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftglyph.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftgxval.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftgzip.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftimage.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftincrem.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftlcdfil.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftlist.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftlzw.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftmac.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftmm.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftmodapi.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftmoderr.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftotval.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftoutln.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftparams.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftpfr.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftrender.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftsizes.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftsnames.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftstroke.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftsynth.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftsystem.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\fttrigon.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\fttypes.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ftwinfnt.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\t1tables.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\ttnameid.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\tttables.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\tttags.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config\ftconfig.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config\ftheader.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config\ftmodule.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config\ftoption.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config\ftstdlib.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\autohint.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\cffotypes.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\cfftypes.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftcalc.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftdebug.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftdrv.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftgloadr.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\fthash.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftmemory.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftobjs.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftpsprop.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftrfork.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftserv.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftstream.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\fttrace.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\ftvalid.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\internal.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\psaux.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\pshints.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\sfnt.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\t1types.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\tttypes.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\wofftypes.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svbdf.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svcfftl.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svcid.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svfntfmt.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svgldict.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svgxval.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svkern.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svmetric.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svmm.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svotval.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svpfr.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svpostnm.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svprop.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svpscmap.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svpsinfo.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svsfnt.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svttcmap.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svtteng.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svttglyf.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svwinfnt.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
