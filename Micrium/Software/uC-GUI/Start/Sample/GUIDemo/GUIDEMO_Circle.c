@@ -1,4 +1,4 @@
-/*
+﻿/*
 *********************************************************************************************************
 *                                                uC/GUI
 *                        Universal graphic software for embedded applications
@@ -6,50 +6,56 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              �C/GUI is protected by international copyright laws. Knowledge of the
+*              µC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
 *
 ----------------------------------------------------------------------
-File        : GUIDEMO_Messagebox.c
-Purpose     : Messagebox samples
+File        : GUIDEMO_Circle.c
+Purpose     : Drawing circles
 ----------------------------------------------------------------------
 */
 
-#include <stddef.h>           /* needed for definition of NULL */
-#include "GUI.H"
-#include "GUIDEMO.H"
-#include "LCD_ConfDefaults.h"
-#include "WM.h"
-#include "Dialog.h"
-
-#if GUI_WINSUPPORT
+#include "GUI.h"
+#include "GUIDEMO.h"
 
 /*********************************************************************
 *
-*       GUIDEMO_Dialog
+*       GUIDEMO_Circle
 *
 **********************************************************************
 */
 
-void GUIDEMO_Messagebox(void) {
-  GUI_COLOR Color;
-  GUIDEMO_ShowIntro("Message boxes",
-                    "Message boxes" "\ncan easily be created");
-  Color = WM_SetDesktopColor(GUI_RED);
-  GUI_MessageBox("Message", "Text", 0);
-  GUI_Delay(1000);
-  GUI_MessageBox("2. Message", "Text", 0);
-  GUI_Delay(1000);
-  WM_SetDesktopColor(Color);
-  GUIDEMO_NotifyStartNext();
-
+void GUIDEMO_Circle(void) {
+  int XSize = LCD_GetXSize();
+  int YSize = LCD_GetYSize();
+  GUIDEMO_ShowIntro("Circles",
+                    "\nArbitrary circles"
+                    "\nand arcs.");
+  GUI_Clear();
+  GUI_SetFont(&GUI_Font8x16);
+  GUI_SetColor(GUI_WHITE);
+  #if GUIDEMO_LARGE
+    GUI_DispStringAt("Circle", 0, 0);
+  #endif
+  GUI_FillCircle (XSize / 2, YSize / 2, 50);
+  GUIDEMO_Wait();
+  GUI_SetDrawMode(GUI_DM_XOR);
+  GUI_FillCircle (XSize / 2, YSize / 2, 60);
+  GUI_SetDrawMode(0);
+  GUIDEMO_Wait();
+  #if GUI_SUPPORT_AA
+    #if GUIDEMO_LARGE
+      GUIDEMO_ShowInfo("Circles with\nAntialiasing");
+    #endif
+    GUI_Clear();
+    GUI_SetColor(GUI_WHITE);
+    #if GUIDEMO_LARGE
+      GUI_DispStringAt("Antialiased\ncircle", 0, 0);
+    #endif
+    GUI_AA_FillCircle(XSize / 2, YSize / 2, 47);
+    GUIDEMO_Wait();
+  #endif
 }
-
-#else
-
-void GUIDEMO_Messagebox(void) {}
-
-#endif /* GUI_SUPPORT_MEMDEV */
 	 	 			 		    	 				 	  			   	 	 	 	 	 	  	  	      	   		 	 	 		  		  	 		 	  	  			     			       	   	 			  		    	 	     	 				  	 					 	 			   	  	  			 				 		 	 	 			     			 

@@ -1,4 +1,4 @@
-/*
+﻿/*
 *********************************************************************************************************
 *                                                uC/GUI
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              �C/GUI is protected by international copyright laws. Knowledge of the
+*              µC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -205,7 +205,9 @@ static void _DemoRandomGraph(void) {
   GUI_RECT Rect = {19, (LCD_YSIZE - 20) - YSIZE, (LCD_XSIZE - 2), (LCD_YSIZE - 21)};
   GUI_HMEM hMem = GUI_ALLOC_AllocZero((LCD_XSIZE - 20) * sizeof(I16));
   _ShowText("Random graph");
+  GUI_LOCK();
   Param.aY = (I16*)GUI_ALLOC_h2p(hMem);
+  GUI_UNLOCK();    /* Note: unlocking is permitted only if no further allocation is done so hMem stays valid */
   /*
   GUI_SetFont(&GUI_Font6x8);
   GUI_DispStringAt("msec/graph:", 10, 50);
@@ -256,7 +258,9 @@ static void _DemoSineWave(void) {
   GUI_RECT Rect = {19, (LCD_YSIZE - 20) - YSIZE, (LCD_XSIZE - 2), (LCD_YSIZE - 21)};
   GUI_HMEM hMem = GUI_ALLOC_AllocZero((LCD_XSIZE + 90) * sizeof(I16));
   _ShowText("Sine wave");
+  GUI_LOCK();
   pStart = (I16*)GUI_ALLOC_h2p(hMem);
+  GUI_UNLOCK();    /* Note: unlocking is permitted only if no further allocation is done so hMem stays valid */
   _GetSineData(pStart, LCD_XSIZE + 90);
   /*
   GUI_SetFont(&GUI_Font6x8);
@@ -308,7 +312,9 @@ static void _DemoOrData(void) {
   GUI_RECT Rect = {19, (LCD_YSIZE - 20) - YSIZE, (LCD_XSIZE - 2), (LCD_YSIZE - 21)};
   GUI_HMEM hMem = GUI_ALLOC_AllocZero((LCD_XSIZE + 90) * sizeof(I16));
   _ShowText("Several waves...");
+  GUI_LOCK();
   Param.aY = (I16*)GUI_ALLOC_h2p(hMem);
+  GUI_UNLOCK();    /* Note: unlocking is permitted only if no further allocation is done so hMem stays valid */
   _GetSineData(Param.aY, LCD_XSIZE + 90);
   GUI_MEMDEV_Draw(&Rect, _Draw, &Param, 0, GUI_MEMDEV_NOTRANS);
   for (i = 0; (i < 90) && !GUIDEMO_CheckCancel(); i++) {

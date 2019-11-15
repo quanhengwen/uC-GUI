@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 *********************************************************************************************************
 *                                                uC/GUI
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              µC/GUI is protected by international copyright laws. Knowledge of the
+*              ÂµC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -52,8 +52,8 @@ Purpose     : Demonstrates the FRAMEWIN widget
 static const GUI_ConstString _asLang[] = {
   "English", 
   "Deutsch", 
-  "Français", 
-  "Espa\xf1ol", /* "Español" -> "Espa\xf1ol" to avoid problems with NC308 */
+  "Fran""\xb5""ais", 
+  "Espa\xf1ol", /* "EspaÃ±ol" -> "Espa\xf1ol" to avoid problems with NC308 */
   "Italiano", 
   NULL 
 };

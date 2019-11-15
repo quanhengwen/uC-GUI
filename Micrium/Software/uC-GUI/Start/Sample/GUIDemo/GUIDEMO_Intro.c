@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 *********************************************************************************************************
 *                                                uC/GUI
 *                        Universal graphic software for embedded applications
@@ -6,14 +6,14 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              µC/GUI is protected by international copyright laws. Knowledge of the
+*              ÂµC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
 *
 ----------------------------------------------------------------------
 File        : GUIDEMO_Intro.c
-Purpose     : Introduction for µC/GUI generic demo
+Purpose     : Introduction for ÂµC/GUI generic demo
               (This is also a good file to demo and explain basic
               uC/GUI features by setting breakpoints)
 ----------------------------------------------------------------------
@@ -35,13 +35,13 @@ Purpose     : Introduction for µC/GUI generic demo
 void GUIDEMO_Intro(void) {
   int xCenter = LCD_GET_XSIZE() / 2;
   int y;
-  char acText[50] = "Version of µC/GUI: ";
+  char acText[50] = "Version of ""\xb5""C/GUI: ";
   strcat(acText, GUI_GetVersionString());
   GUI_SetBkColor(GUI_BLUE);
   GUI_SetColor(GUI_LIGHTRED);
   GUI_Clear();
   GUI_SetFont(&GUI_Font24B_1);
-  GUI_DispStringHCenterAt("µC/GUI", xCenter, y= 15);
+  GUI_DispStringHCenterAt("\xb5""C/GUI", xCenter, y= 15);
   GUI_SetColor(GUI_WHITE);
   GUI_SetFont(&GUI_Font13H_ASCII);
   GUI_DispStringHCenterAt("Universal graphic software"
@@ -61,8 +61,8 @@ void GUIDEMO_Intro(void) {
   GUI_DispStringHCenterAt("www.micrium.com", LCD_GET_XSIZE() / 2, LCD_GET_YSIZE() - 40);
   GUI_DrawBitmap(&bmMicriumLogo, (LCD_GET_XSIZE() - bmMicriumLogo.XSize) / 2, 150);
   GUI_SetFont(&GUI_Font10S_ASCII);
-  GUI_DispStringAt("GUI_OS: ", 0,210); GUI_DispDecMin(GUI_OS);
-  GUI_DispStringAt("GUI_ALLOC_SIZE: ",0, 220); GUI_DispDecMin(GUI_ALLOC_SIZE);
+  GUI_DispStringAt("GUI_OS: ", 0,450); GUI_DispDecMin(GUI_OS);
+  GUI_DispStringAt("GUI_ALLOC_SIZE: ",0, 460); GUI_DispDecMin(GUI_ALLOC_SIZE);
   GUI_DispStringAt("Compiler: "
   #ifdef _MSC_VER
     "Microsoft"
@@ -81,7 +81,7 @@ void GUIDEMO_Intro(void) {
   #else
     "Unknown"
   #endif
-    ,0, 230);
+    ,0, 470);
   GUIDEMO_Delay(5000);
 }
 
@@ -90,13 +90,13 @@ void GUIDEMO_Intro(void) {
 void GUIDEMO_Intro(void) {
   int xCenter = LCD_GET_XSIZE() / 2;
   int y;
-  char acText[50] = "Version of µC/GUI: ";
+  char acText[50] = "Version of ÂµC/GUI: ";
   strcat(acText, GUI_GetVersionString());
   GUI_SetBkColor(GUI_BLUE);
   GUI_SetColor(GUI_YELLOW);
   GUI_Clear();
   GUI_SetFont(&GUI_Font13B_1);
-  GUI_DispStringHCenterAt("µC/GUI", xCenter, y= 10);
+  GUI_DispStringHCenterAt("ÂµC/GUI", xCenter, y= 10);
   GUI_SetFont(&GUI_Font10_ASCII);
   GUI_SetColor(GUI_WHITE);
   GUI_DispStringHCenterAt("Universal graphic software"

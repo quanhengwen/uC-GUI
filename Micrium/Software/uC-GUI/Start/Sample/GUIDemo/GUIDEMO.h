@@ -1,4 +1,4 @@
-/*
+﻿/*
 *********************************************************************************************************
 *                                                uC/GUI
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              �C/GUI is protected by international copyright laws. Knowledge of the
+*              µC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -106,6 +106,12 @@ void GUIDEMO_ShowColorList(void);
 void GUIDEMO_Touch(void);
 void GUIDEMO_WM(void);
 void GUIDEMO_MultiEdit(void);
+void GUIDEMO_TTFs(void);
+void GUIDEMO_PNGs(void);
+void GUIDEMO_JPEGs(void);
+void GUIDEMO_GIFs(void);
+void GUIDEMO_BMPs(void);
+void GUIDEMO_DriverPerformance(void);
 
 //extern const GUI_BITMAP bmemWinGSCLogo320x46;
 extern const GUI_BITMAP bmMicriumLogo;
