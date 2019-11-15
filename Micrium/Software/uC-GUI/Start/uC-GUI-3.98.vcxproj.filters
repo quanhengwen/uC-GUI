@@ -70,6 +70,9 @@
     <Filter Include="GUI\JPEG\Port">
       <UniqueIdentifier>{5161c01b-1178-41fa-bd7e-50b53abc2138}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI\BMP">
+      <UniqueIdentifier>{6fd37344-4c31-4e9d-a07d-ac860c3ec618}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="System\Simulation\SIM_GUI\Branding\Branding.c">
@@ -2652,6 +2655,9 @@
     <ClCompile Include="GUI\JPEG\Port\jencode_decode.c">
       <Filter>GUI\JPEG\Port</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\BMP\qdbmp.c">
+      <Filter>GUI\BMP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\GUIConf.h">
@@ -3676,6 +3682,9 @@
     </ClInclude>
     <ClInclude Include="GUI\JPEG\Port\jencode_decode.h">
       <Filter>GUI\JPEG\Port</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\BMP\qdbmp.h">
+      <Filter>GUI\BMP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

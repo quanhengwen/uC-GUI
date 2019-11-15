@@ -6,20 +6,20 @@
 /* Bitmap header */
 typedef struct _BMP_Header
 {
-	USHORT		Magic;				/* Magic identifier: "BM" */
+	USHORT	Magic;				/* Magic identifier: "BM" */
 	UINT		FileSize;			/* Size of the BMP file in bytes */
-	USHORT		Reserved1;			/* Reserved */
-	USHORT		Reserved2;			/* Reserved */
+	USHORT	Reserved1;			/* Reserved */
+	USHORT	Reserved2;			/* Reserved */
 	UINT		DataOffset;			/* Offset of image data relative to the file's start */
 	UINT		HeaderSize;			/* Size of the header in bytes */
 	UINT		Width;				/* Bitmap's width */
 	UINT		Height;				/* Bitmap's height */
-	USHORT		Planes;				/* Number of color planes in the bitmap */
-	USHORT		BitsPerPixel;		/* Number of bits per pixel */
-	UINT		CompressionType;	/* Compression type */
+	USHORT	Planes;				/* Number of color planes in the bitmap */
+	USHORT	BitsPerPixel;		/* Number of bits per pixel */
+	UINT		CompressionType;	    /* Compression type */
 	UINT		ImageDataSize;		/* Size of uncompressed image's data */
-	UINT		HPixelsPerMeter;	/* Horizontal resolution (pixels per meter) */
-	UINT		VPixelsPerMeter;	/* Vertical resolution (pixels per meter) */
+	UINT		HPixelsPerMeter;	    /* Horizontal resolution (pixels per meter) */
+	UINT		VPixelsPerMeter;	    /* Vertical resolution (pixels per meter) */
 	UINT		ColorsUsed;			/* Number of color indexes in the color table that are actually used by the bitmap */
 	UINT		ColorsRequired;		/* Number of color indexes that are required for displaying the bitmap */
 } BMP_Header;
@@ -57,7 +57,6 @@ static const char* BMP_ERROR_STRING[] =
 #define BMP_PALETTE_SIZE	( 256 * 4 )
 
 
-
 /*********************************** Forward declarations **********************************/
 int		ReadHeader	( BMP* bmp, FILE* f );
 int		WriteHeader	( BMP* bmp, FILE* f );
@@ -67,9 +66,6 @@ int		ReadUSHORT	( USHORT *x, FILE* f );
 
 int		WriteUINT	( UINT x, FILE* f );
 int		WriteUSHORT	( USHORT x, FILE* f );
-
-
-
 
 
 
@@ -644,8 +640,6 @@ const char* BMP_GetErrorDescription()
 
 
 
-
-
 /*********************************** Private methods **********************************/
 
 
@@ -663,14 +657,14 @@ int	ReadHeader( BMP* bmp, FILE* f )
 	/* The header's fields are read one by one, and converted from the format's
 	little endian to the system's native representation. */
 	if ( !ReadUSHORT( &( bmp->Header.Magic ), f ) )			return BMP_IO_ERROR;
-	if ( !ReadUINT( &( bmp->Header.FileSize ), f ) )		return BMP_IO_ERROR;
+	if ( !ReadUINT( &( bmp->Header.FileSize ), f ) )		    return BMP_IO_ERROR;
 	if ( !ReadUSHORT( &( bmp->Header.Reserved1 ), f ) )		return BMP_IO_ERROR;
 	if ( !ReadUSHORT( &( bmp->Header.Reserved2 ), f ) )		return BMP_IO_ERROR;
 	if ( !ReadUINT( &( bmp->Header.DataOffset ), f ) )		return BMP_IO_ERROR;
 	if ( !ReadUINT( &( bmp->Header.HeaderSize ), f ) )		return BMP_IO_ERROR;
 	if ( !ReadUINT( &( bmp->Header.Width ), f ) )			return BMP_IO_ERROR;
 	if ( !ReadUINT( &( bmp->Header.Height ), f ) )			return BMP_IO_ERROR;
-	if ( !ReadUSHORT( &( bmp->Header.Planes ), f ) )		return BMP_IO_ERROR;
+	if ( !ReadUSHORT( &( bmp->Header.Planes ), f ) )		    return BMP_IO_ERROR;
 	if ( !ReadUSHORT( &( bmp->Header.BitsPerPixel ), f ) )	return BMP_IO_ERROR;
 	if ( !ReadUINT( &( bmp->Header.CompressionType ), f ) )	return BMP_IO_ERROR;
 	if ( !ReadUINT( &( bmp->Header.ImageDataSize ), f ) )	return BMP_IO_ERROR;
@@ -697,14 +691,14 @@ int	WriteHeader( BMP* bmp, FILE* f )
 	/* The header's fields are written one by one, and converted to the format's
 	little endian representation. */
 	if ( !WriteUSHORT( bmp->Header.Magic, f ) )			return BMP_IO_ERROR;
-	if ( !WriteUINT( bmp->Header.FileSize, f ) )		return BMP_IO_ERROR;
+	if ( !WriteUINT( bmp->Header.FileSize, f ) )		    return BMP_IO_ERROR;
 	if ( !WriteUSHORT( bmp->Header.Reserved1, f ) )		return BMP_IO_ERROR;
 	if ( !WriteUSHORT( bmp->Header.Reserved2, f ) )		return BMP_IO_ERROR;
 	if ( !WriteUINT( bmp->Header.DataOffset, f ) )		return BMP_IO_ERROR;
 	if ( !WriteUINT( bmp->Header.HeaderSize, f ) )		return BMP_IO_ERROR;
 	if ( !WriteUINT( bmp->Header.Width, f ) )			return BMP_IO_ERROR;
 	if ( !WriteUINT( bmp->Header.Height, f ) )			return BMP_IO_ERROR;
-	if ( !WriteUSHORT( bmp->Header.Planes, f ) )		return BMP_IO_ERROR;
+	if ( !WriteUSHORT( bmp->Header.Planes, f ) )		    return BMP_IO_ERROR;
 	if ( !WriteUSHORT( bmp->Header.BitsPerPixel, f ) )	return BMP_IO_ERROR;
 	if ( !WriteUINT( bmp->Header.CompressionType, f ) )	return BMP_IO_ERROR;
 	if ( !WriteUINT( bmp->Header.ImageDataSize, f ) )	return BMP_IO_ERROR;

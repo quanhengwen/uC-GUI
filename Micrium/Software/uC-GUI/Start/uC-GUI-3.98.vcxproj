@@ -83,7 +83,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\BMP;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;_DEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -110,7 +110,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\BMP;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;NDEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -177,6 +177,7 @@
     <ClCompile Include="GUI\AntiAlias\GUIAALine.c" />
     <ClCompile Include="GUI\AntiAlias\GUIAAPoly.c" />
     <ClCompile Include="GUI\AntiAlias\GUIAAPolyOut.c" />
+    <ClCompile Include="GUI\BMP\qdbmp.c" />
     <ClCompile Include="GUI\ConvertColor\LCDP111.c" />
     <ClCompile Include="GUI\ConvertColor\LCDP222.c" />
     <ClCompile Include="GUI\ConvertColor\LCDP233.c" />
@@ -1003,6 +1004,7 @@
     <ClInclude Include="Config\GUIConf.h" />
     <ClInclude Include="Config\GUITouchConf.h" />
     <ClInclude Include="Config\LCDConf.h" />
+    <ClInclude Include="GUI\BMP\qdbmp.h" />
     <ClInclude Include="GUI\Core\GUI.h" />
     <ClInclude Include="GUI\Core\GUIDebug.h" />
     <ClInclude Include="GUI\Core\GUIType.h" />
