@@ -2274,96 +2274,6 @@
     <ClCompile Include="GUI\Widget\BUTTON.c">
       <Filter>GUI\Widget</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\PNG\adler32.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\compress.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\crc32.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\deflate.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\GUI_PNG.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\gzio.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\infback.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\inffast.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\inflate.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\inftrees.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\png.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngerror.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pnggccrd.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngget.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngmem.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngpread.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngread.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngrio.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngrtran.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngrutil.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngset.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngtrans.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngvcrd.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngwio.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngwrite.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngwtran.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\pngwutil.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\trees.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\uncompr.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\PNG\zutil.c">
-      <Filter>GUI\PNG</Filter>
-    </ClCompile>
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO.c">
       <Filter>Sample\GUIDemo</Filter>
     </ClCompile>
@@ -2598,6 +2508,90 @@
     <ClCompile Include="GUI\TrueType\winfnt.c">
       <Filter>GUI\TrueType</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\PNG\adler32.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\compress.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\crc32.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\deflate.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\GUI_PNG.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\IMAGE_PNG.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\infback.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\inffast.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\inflate.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\inftrees.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\png.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngerror.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngget.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngmem.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngpread.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngread.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngrio.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngrtran.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngrutil.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngset.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngtrans.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngwio.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngwrite.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngwtran.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\pngwutil.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\trees.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\uncompr.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\PNG\zutil.c">
+      <Filter>GUI\PNG</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\GUIConf.h">
@@ -2830,48 +2824,6 @@
     </ClInclude>
     <ClInclude Include="GUI\Widget\BUTTON.h">
       <Filter>GUI\Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\crc32.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\deflate.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\GUI_PNG_Private.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\inffast.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\inffixed.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\inflate.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\inftrees.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\png.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\pngconf.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\trees.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\zconf.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\zconf.in.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\zlib.h">
-      <Filter>GUI\PNG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\PNG\zutil.h">
-      <Filter>GUI\PNG</Filter>
     </ClInclude>
     <ClInclude Include="..\Sample\GUIDemo\GUIDEMO.h">
       <Filter>Sample\GUIDemo</Filter>
@@ -3628,6 +3580,60 @@
     </ClInclude>
     <ClInclude Include="GUI\TrueType\winfnt.h">
       <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\crc32.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\deflate.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\GUI_PNG_Private.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\inffast.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\inffixed.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\inflate.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\inftrees.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\png.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\pngconf.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\pngdebug.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\pnginfo.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\pnglibconf.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\pngpriv.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\pngstruct.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\trees.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\zconf.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\zlib.h">
+      <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\PNG\zutil.h">
+      <Filter>GUI\PNG</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
