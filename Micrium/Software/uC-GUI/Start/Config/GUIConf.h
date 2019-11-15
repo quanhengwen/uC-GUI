@@ -1,4 +1,4 @@
-/*
+﻿/*
 *********************************************************************************************************
 *                                             uC/GUI V3.98
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              �C/GUI is protected by international copyright laws. Knowledge of the
+*              µC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -35,7 +35,7 @@ Purpose     : Configures abilities, fonts etc.
 */
 
 #define GUI_WINSUPPORT            1  /* Window manager package available */
-#define GUI_SUPPORT_MEMDEV        0  /* Memory devices available */
+#define GUI_SUPPORT_MEMDEV        1  /* Memory devices available */
 #define GUI_SUPPORT_AA            1  /* Anti aliasing available */
 
 #endif  /* Avoid multiple inclusion */
