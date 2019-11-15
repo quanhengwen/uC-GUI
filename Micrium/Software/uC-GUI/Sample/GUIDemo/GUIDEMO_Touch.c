@@ -274,7 +274,7 @@ int _ExecKeyboard(void) {
   GUI_Clear();
   GUI_SetFont(&GUI_FontComic18B_ASCII);
   GUI_SetColor(GUI_WHITE);
-  GUI_DispStringInRect("µC/GUI", &rText, GUI_TA_RIGHT | GUI_TA_VCENTER);
+  GUI_DispStringInRect("\xb5""C/GUI", &rText, GUI_TA_RIGHT | GUI_TA_VCENTER);
   rText.y0 +=20;
   rText.y1 +=20;
   GUI_DispStringInRect("Touch screen demo", &rText, GUI_TA_RIGHT | GUI_TA_VCENTER);

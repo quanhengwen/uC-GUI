@@ -86,11 +86,12 @@ static void _ShowText(void) {
   GUI_DispString("ABCDEFGHIJKLMNOPQRSTUVWXYZ\n");
   GUI_DispString("123456789.:,;(:*!?')\n");
   GUI_DrawHLine(GUI_GetDispPosY(), 0, 0xfff);
+  GUI_UC_SetEncodeUTF8();
   for (i = 0; i < GUI_COUNTOF(_aHeight); i++) {
     GUI_SetFont(&_aFont[i]);
-    //GUI_DispString("The quick brown fox jumps over the lazy dog. 1234567890\n");
-    GUI_DispString("镕镕电子AaＡａ-点半角全角，\n");
+    GUI_DispString("狐狸AaＡａ-镕，1234567890.\n");
   }
+  GUI_UC_SetEncodeNone();
   GUIDEMO_Delay(1000);
 }
 
@@ -188,14 +189,11 @@ static void _IterateOverAllFiles(const char * sFolder, const char * sMask, void 
 *       GUIDEMO_TTFs
 */
 void GUIDEMO_TTFs(void) {
-  int cnt = 3;
   char acPath[200];
 
   GUIDEMO_ShowIntro("True Type Font",   "" );
-  //
-  // Be sure to modify the file encoding to UTF-8
-  //
-  GUI_UC_SetEncodeUTF8();
+  GUI_Clear();
+
   //
   // Check if recommended memory for the sample is available
   //
@@ -217,9 +215,8 @@ void GUIDEMO_TTFs(void) {
   //
   // Iterate over files and call _cbFontDemo for each file
   //
-  while (cnt--) {
-    _IterateOverAllFiles(acPath, "simhei.ttf", _cbFontDemo);
-  }
+  _IterateOverAllFiles(acPath, "simhei.ttf", _cbFontDemo);
+  GUIDEMO_Wait();
 }
 
 #endif
