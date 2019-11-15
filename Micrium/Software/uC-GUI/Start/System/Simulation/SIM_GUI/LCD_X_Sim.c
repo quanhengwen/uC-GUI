@@ -1,6 +1,6 @@
 /*
 *********************************************************************************************************
-*                                             uC/GUI V3.98
+*                                                uC/GUI
 *                        Universal graphic software for embedded applications
 *
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
@@ -12,27 +12,21 @@
 *              in any way. We appreciate your understanding and fairness.
 *
 ----------------------------------------------------------------------
-File        : WinMain.c
+File        : LCD_X_Sim.c
+Purpose     : Config / System dependent externals for LCD
 ---------------------------END-OF-HEADER------------------------------
 */
 
-#include <windows.h>
+#include "SIM.h"
 
-#include "GUI_SIM_Win32.h"
+
 
 /*********************************************************************
 *
-*       Public code
+*                 LCD_X_Init(void)
 *
 **********************************************************************
 */
-/*********************************************************************
-*
-*       WinMain
-*/
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,  LPSTR lpCmdLine, int nCmdShow) {
-  return SIM_GUI_App(hInstance, hPrevInstance,  lpCmdLine, nCmdShow);
-}
 
-/*************************** End of file ****************************/
-	 	 			 		    	 				 	  			   	 	 	 	 	 	  	  	      	   		 	 	 		  		  	 		 	  	  			     			       	   	 			  		    	 	     	 				  	 					 	 			   	  	  			 				 		 	 	 			     			 
+void LCD_X_Init(void) {}
+
