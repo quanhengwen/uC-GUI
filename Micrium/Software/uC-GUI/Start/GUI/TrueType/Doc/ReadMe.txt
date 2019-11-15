@@ -1,30 +1,84 @@
-Notes on the TrueType Library
-=============================
+  FreeType 2.10.1
+  ===============
 
-The FreeType 2 font engine located in the folder GUI\TrueType is derived
-work based on the FreeType  Project,  copyright (C) 1996-2000  by  David
-Turner,Robert Wilhelm and Werner Lemberg and is used by SEGGER under the
-terms of the enclosed Free Type License (FTL.TXT).
+  Homepage: https://www.freetype.org
 
-The  FreeType 2 font  engine can be used and  distributed free of charge 
-under one of the  two licenses described below:
+  FreeType is a freely available software library to render fonts.
 
-  - The FreeType License, found in  the file `FTL.TXT', which is similar
-    to the original BSD license *with* an advertising clause that forces
-    you  to  explicitly cite  the  FreeType  project  in your  product's
-    documentation.  All  details are in the license  file.  This license
-    is  suited  to products  which  don't  use  the GNU  General  Public
-    License.
+  It  is  written  in  C,  designed to  be  small,  efficient,  highly
+  customizable, and  portable while capable of  producing high-quality
+  output  (glyph  images) of  most  vector  and bitmap  font  formats.
 
-  - The GNU  General Public License  version 2, found in  `GPL.TXT' (any
-    later version can be used  also), for programs which already use the
-    GPL.  Note  that the  FTL is  incompatible with the  GPL due  to its
-    advertisement clause.
+  Please   read   the  docs/CHANGES   file,   it  contains   IMPORTANT
+  INFORMATION.
 
-The  contributed  PCF and  BDF drivers are FreeType font drivers and are 
-used by  SEGGER  under the  terms of the  enclosed licenses (PCF.TXT and 
-BDF.TXT), similar to the X Window System,and can be used and distributed
-free of charge according to above mentioned FTL and GPL licenses. 
+  Read the  files `docs/INSTALL*'  for installation  instructions; see
+  the file `docs/LICENSE.TXT' for the available licenses.
 
-Segger Microcontroller Systeme GmbH, August 2006
-================================================
+  The FreeType  2 API  reference is located  in `docs/reference/site';
+  use  the  file `index.html'  as  the  top entry  point.   Additional
+  documentation is available as a separate package from our sites.  Go
+  to
+
+    https://download.savannah.gnu.org/releases/freetype/
+
+  and download one of the following files.
+
+    freetype-doc-2.10.1.tar.xz
+    freetype-doc-2.10.1.tar.gz
+    ftdoc2101.zip
+
+  To view the documentation online, go to
+
+    https://www.freetype.org/freetype2/docs/
+
+
+  Mailing Lists
+  =============
+
+  The preferred way  of communication with the FreeType  team is using
+  e-mail lists.
+
+    general use and discussion:      freetype@nongnu.org
+    engine internals, porting, etc.: freetype-devel@nongnu.org
+    announcements:                   freetype-announce@nongnu.org
+    git repository tracker:          freetype-commit@nongnu.org
+
+  The lists are moderated; see
+
+    https://www.freetype.org/contact.html
+
+  how to subscribe.
+
+
+  Bugs
+  ====
+
+  Please submit bug reports at
+
+    https://savannah.nongnu.org/bugs/?group=freetype
+
+  Alternatively,    you   might    report    bugs    by   e-mail    to
+  `freetype-devel@nongnu.org'.   Don't  forget   to  send  a  detailed
+  explanation of the problem --  there is nothing worse than receiving
+  a terse message that only says `it doesn't work'.
+
+
+  Enjoy!
+
+
+    The FreeType Team
+
+----------------------------------------------------------------------
+
+Copyright (C) 2006-2019 by
+David Turner, Robert Wilhelm, and Werner Lemberg.
+
+This  file is  part of  the FreeType  project, and  may only  be used,
+modified,  and distributed  under the  terms of  the  FreeType project
+license,  LICENSE.TXT.  By  continuing to  use, modify,  or distribute
+this file you  indicate that you have read  the license and understand
+and accept it fully.
+
+
+--- end of README ---
