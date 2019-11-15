@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 *********************************************************************************************************
 *                                                uC/GUI
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              µC/GUI is protected by international copyright laws. Knowledge of the
+*              ÂµC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -359,7 +359,7 @@ void GUIDEMO_main(void) {
     xPos  = LCD_GetXSize() - xSize;
     yPos  = 0;
     /* Create info window and run the individual demos */
-    _ahFrameWin[0] = FRAMEWIN_Create("µC/GUI Demo", NULL, WM_CF_STAYONTOP, 
+    _ahFrameWin[0] = FRAMEWIN_Create("\xb5""C/GUI Demo", NULL, WM_CF_STAYONTOP, 
                                      xPos, yPos, xSize, ySize);
 //    _ahInfoWin[0] = WM_GetFirstChild(_ahFrameWin[0]);
     _ahInfoWin[0] = WM_CreateWindowAsChild(0, 0, 0, 0, WM_GetFirstChild(_ahFrameWin[0]), WM_CF_SHOW | WM_CF_STAYONTOP, 0, 0);

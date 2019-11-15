@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 *********************************************************************************************************
 *                                                uC/GUI
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              µC/GUI is protected by international copyright laws. Knowledge of the
+*              ÂµC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -184,7 +184,7 @@ The routine returns after ENTER or ESC has been pressed.
 static char _acText[] = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '='
                         ,0, 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'
                         ,0, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Q'
-                        ,0, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Ö', 'Ä', 'Ü'
+                        ,0, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '\xD6', '\xC4', '\xDC'
                         ,' ', ' ', ' ', ' ', ' ', 0, 0
 };
 
@@ -200,7 +200,7 @@ int _ExecKeyboard(void) {
   GUI_DrawBitmap(&bmMicriumLogo, 0, 0);
   GUI_SetFont(&GUI_Font16B_1);
   GUI_SetColor(GUI_WHITE);
-  GUI_DispStringInRect("µC/GUI", &rText, GUI_TA_RIGHT | GUI_TA_VCENTER);
+  GUI_DispStringInRect("\xb5""C/GUI", &rText, GUI_TA_RIGHT | GUI_TA_VCENTER);
   rText.y0 +=20;
   rText.y1 +=20;
   GUI_DispStringInRect("Touch screen demo", &rText, GUI_TA_RIGHT | GUI_TA_VCENTER);
@@ -274,7 +274,7 @@ int _ExecKeyboard(void) {
   GUI_Clear();
   GUI_SetFont(&GUI_FontComic18B_ASCII);
   GUI_SetColor(GUI_WHITE);
-  GUI_DispStringInRect("µC/GUI", &rText, GUI_TA_RIGHT | GUI_TA_VCENTER);
+  GUI_DispStringInRect("ÂµC/GUI", &rText, GUI_TA_RIGHT | GUI_TA_VCENTER);
   rText.y0 +=20;
   rText.y1 +=20;
   GUI_DispStringInRect("Touch screen demo", &rText, GUI_TA_RIGHT | GUI_TA_VCENTER);
@@ -349,7 +349,7 @@ void GUIDEMO_Touch(void) {
     GUI_Clear();
     GUI_DrawBitmap(&bmMicriumLogo, (XSize - 1 - bmMicriumLogo.XSize) / 2, 15);
     GUI_SetFont(&GUI_Font16B_1);
-    GUI_DispStringInRect("µC/GUI Touch screen demo", &rText, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    GUI_DispStringInRect("\xb5""C/GUI Touch screen demo", &rText, GUI_TA_HCENTER | GUI_TA_VCENTER);
     ahButton[0] =  BUTTON_Create( XMid - 50, YMid - 30, 100, 50, ID_CALIBRATE,BUTTON_CF_SHOW );
     ahButton[1] =  BUTTON_Create( XMid - 90, YMid + 30, 80, 30, ID_KEYBOARD, BUTTON_CF_SHOW );
     ahButton[2] =  BUTTON_Create( XMid + 10, YMid + 30, 80, 30, ID_TESTCAL,BUTTON_CF_SHOW );
