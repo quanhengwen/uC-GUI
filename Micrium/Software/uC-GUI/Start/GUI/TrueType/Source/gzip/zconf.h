@@ -5,7 +5,6 @@
 
 /* @(#) $Id$ */
 
-//JE: Renamed to ttzconf.h
 
 #ifndef _ZCONF_H
 #define _ZCONF_H

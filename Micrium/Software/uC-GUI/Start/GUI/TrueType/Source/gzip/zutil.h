@@ -10,7 +10,6 @@
 
 /* @(#) $Id$ */
 
-//JE: Renamed to ttzutil.h
 
 #ifndef _Z_UTIL_H
 #define _Z_UTIL_H

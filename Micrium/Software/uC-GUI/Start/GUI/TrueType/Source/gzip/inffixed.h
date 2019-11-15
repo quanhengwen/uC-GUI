@@ -7,7 +7,6 @@
    subject to change. Applications should only use zlib.h.
  */
 
-//JE: Renamed to ttinffixed.h
 
 local const uInt fixed_bl = 9;
 local const uInt fixed_bd = 5;

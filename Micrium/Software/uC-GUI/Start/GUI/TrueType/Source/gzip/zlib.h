@@ -28,7 +28,6 @@
   (zlib format), rfc1951.txt (deflate format) and rfc1952.txt (gzip format).
 */
 
-//JE: Renamed to ttzlib.h
 
 #ifndef _ZLIB_H
 #define _ZLIB_H
