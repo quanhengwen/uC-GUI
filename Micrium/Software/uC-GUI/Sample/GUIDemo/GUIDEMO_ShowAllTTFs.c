@@ -95,7 +95,7 @@ static void _ShowText(void) {
   GUI_UC_SetEncodeUTF8();
   for (i = 0; i < GUI_COUNTOF(_aHeight); i++) {
     GUI_SetFont(&_aFont[i]);
-    GUI_DispString("狐狸AaＡａ-镕，1234567890.\n");
+    GUI_DispString("The quick brown fox jumps over the lazy dog. 1234567890\n");
   }
   GUI_UC_SetEncodeNone();
   GUIDEMO_Delay(1000);
@@ -120,7 +120,7 @@ static int _CreateFonts(const U8 * pData, U32 NumBytes) {
     //
     // Create GUI font
     //
-    if (GUI_TTF_CreateFont(&_aFont[i], &_aCS[i])) {
+    if (GUI_TTF_CreateFontAA(&_aFont[i], &_aCS[i])) {
       return 1;
     }
   }
@@ -214,8 +214,8 @@ void GUIDEMO_TTFs(void) {
   //
   // Set colors and text mode
   //
-  GUI_SetBkColor(GUI_WHITE);
-  GUI_SetColor(GUI_BLACK);
+  GUI_SetBkColor(GUI_YELLOW);
+  GUI_SetColor(GUI_LIGHTBLUE);
   GUI_SetTextMode(GUI_TM_TRANS);
   //
   // Get windows system directory and extend it with '\Font'
@@ -225,7 +225,7 @@ void GUIDEMO_TTFs(void) {
   //
   // Iterate over files and call _cbFontDemo for each file
   //
-  _IterateOverAllFiles(acPath, "simhei.ttf", _cbFontDemo);
+  _IterateOverAllFiles(acPath, "*.ttf", _cbFontDemo);
   GUIDEMO_Wait();
 }
 

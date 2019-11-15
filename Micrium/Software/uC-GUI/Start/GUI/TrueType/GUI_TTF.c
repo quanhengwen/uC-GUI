@@ -59,8 +59,6 @@ typedef struct {
   U32      MaxBytes; // If not set the default will be 200000L
 } TF_CACHE_SIZE;
 
-GUI_SADDR GUI_CONTEXT *GUI_pContext = &GUI_Context;
-
 /*********************************************************************
 *
 *       Static data
@@ -70,12 +68,55 @@ GUI_SADDR GUI_CONTEXT *GUI_pContext = &GUI_Context;
 FT_CONTEXT    _FTContext;
 TF_CACHE_SIZE _FTCacheSize;
 
+static GUI_SADDR GUI_CONTEXT *GUI_pContext = &GUI_Context;
+
+/* used by non transparent characters */
+static LCD_COLOR aColor[256];//
+static LCD_PIXELINDEX OldColorIndex, OldBkColorIndex;//
+static GUI_CONST_STORAGE LCD_PIXELINDEX* pTrans;//
+static GUI_CONST_STORAGE GUI_LOGPALETTE Palette = {
+  256, /* number of entries */
+  0, /* No transparency */
+  &aColor[0]
+};
+static GUI_BITMAP Bitmap = {0, 0, 0, 8, 0, &Palette, 0};
+
 /*********************************************************************
 *
 *       Static code
 *
 **********************************************************************
 */
+/*********************************************************************
+*
+*       GUI_AA__DrawCharAA8
+*/
+static void GUI_AA__DrawCharAA8(int x0, int y0, int XSize, int YSize, int BytesPerLine, const U8*pData) {
+  if ((OldColorIndex   != LCD_COLORINDEX) || 
+      (OldBkColorIndex != LCD_BKCOLORINDEX)) {
+    int i;
+    LCD_PIXELINDEX BkColorIndex = LCD_BKCOLORINDEX;
+    LCD_PIXELINDEX ColorIndex   = LCD_COLORINDEX;
+    LCD_COLOR BkColor = LCD_Index2Color(BkColorIndex);
+    LCD_COLOR Color   = LCD_Index2Color(ColorIndex);
+    aColor[0] = BkColor;
+    for (i = 1; i < 255; i++) {
+      U8 Intens;
+      Intens = 1 * i;
+      aColor[i] = LCD_MixColors256(Color, BkColor, Intens);
+    }
+    aColor[255] = Color;
+    LCD_GetpPalConvTableUncached(&Palette);
+    OldColorIndex = ColorIndex;
+    OldBkColorIndex = BkColorIndex;
+  }
+  Bitmap.XSize = XSize;
+  Bitmap.YSize = YSize;
+  Bitmap.BytesPerLine = BytesPerLine;
+  Bitmap.pData = pData;
+  GL_DrawBitmap(&Bitmap, x0, y0);
+}
+
 /*********************************************************************
 *
 *       _cbFaceRequester
@@ -298,7 +339,6 @@ static int _RequestGlyphAA(U16P c, unsigned DoRender) {
       //
       // Rendering cache data using the bitmap routine
       //
-#if 0
       if (GUI_pLCD_APIList) {
         GUI_pLCD_APIList->pfDrawBitmap(
                             GUI_pContext->DispPosX + pSBit->left,                                 // XPos
@@ -317,17 +357,6 @@ static int _RequestGlyphAA(U16P c, unsigned DoRender) {
                             pSBit->pitch,                                                         // BytesPerLine
                             (U8 const *)pSBit->buffer);                                           // Pointer to pixel data
       }
-#endif
-
-      LCD_DrawBitmap(
-        GUI_pContext->DispPosX + pSBit->left,                                 // XPos
-        GUI_pContext->DispPosY - pSBit->top + GUI_pContext->pAFont->Baseline, // YPos
-        pSBit->width,                                                         // XSize
-        pSBit->height,                                                        // YSize
-        1, 1, 8,
-        pSBit->pitch,                                                         // BytesPerLine
-        (U8 const *)pSBit->buffer,                                            // Pointer to pixel data
-        NULL);
     }
     r = pSBit->xadvance;
   } else {
