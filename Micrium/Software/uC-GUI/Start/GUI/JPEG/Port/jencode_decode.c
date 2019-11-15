@@ -21,13 +21,6 @@
 #include "jencode_decode.h"
 
 /* Private typedef -----------------------------------------------------------*/
-   /* This struct contains the JPEG compression parameters */
-   static struct jpeg_compress_struct encode_cinfo;
-   struct jpeg_decompress_struct decode_cinfo;
-   /* This struct represents a JPEG error handler */
-   static struct jpeg_error_mgr encode_jerr;
-   struct jpeg_error_mgr decode_jerr;
-
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -35,15 +28,17 @@
 /*
  * BMP 文件头
  * 使用结构体读取文件头时候不读取前两个字节是因为编译器默认是 4 字节对齐的（一次读取 4 个字节）,
- * 结构体中添加 vbfType 会导致后面的数据错误. 读的时候偏移两个字节就可以了。
+ * 结构体中添加 vbfType 会导致后面的数据错误. 读的时候偏移两个字节或者使用宏定义。
  */
+#pragma pack(2)
 typedef struct BITMAP_FILE_HEADER {
-    //UINT16 bfType;        // 2 Byte 位图文件类型(BMP 格式图片,固定为 "BM" ).
+    UINT16 bfType;        // 2 Byte 位图文件类型(BMP 格式图片,固定为 "BM" ).
     DWORD  bfSize;        // 4 Byte 位图文件大小,单位 字节.
     UINT16 bfReserved1;   // 2 Byte 保留字 1.
     UINT16 bfReserved2;   // 2 Byte 保留字 2.
     DWORD  bfOffBits;     // 4 Byte 位图数据偏移量,从文件头开始到实际图像数据之间的字节偏移量,单位 字节.
 } BITMAP_FILE_HEADER;
+#pragma pack()
 
 /*
  * 位图信息头
@@ -74,6 +69,10 @@ typedef struct BITMAP_INFO_HEADER {
   */
 void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality)
 {
+  /* This struct contains the JPEG compression parameters */
+  struct jpeg_compress_struct encode_cinfo;
+  /* This struct represents a JPEG error handler */
+  struct jpeg_error_mgr encode_jerr;
   /* Encode BMP Image to JPEG */
   JSAMPROW row_pointer;    /* Pointer to a single row */
   uint32_t bytesread;
@@ -83,7 +82,6 @@ void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality)
   DWORD data_size;
 
   /* Get bitmap File Header */
-  (void) SetFilePointer((HANDLE) file, 2, NULL, FILE_BEGIN);
   (void) ReadFile((HANDLE) file, &bmpFileHeader, sizeof(bmpFileHeader), (UINT*)&bytesread, NULL);
 
   /* Get bitmap Info Header */
@@ -142,19 +140,16 @@ void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality)
   * @brief  Jpeg Decode
   * @param  callback: line decoding callback
   * @param  file1:    pointer to the jpg file
-  * @param  width:    image width
-  * @param  buff:     pointer to the image line
   * @retval None
   */
-void jpeg_decode(JFILE *file, uint32_t width, uint8_t * buff, uint8_t (*callback)(uint8_t*, uint32_t))
+void jpeg_decode(JFILE *file)
 {
+  /* This struct contains the JPEG compression parameters */
+  struct jpeg_decompress_struct decode_cinfo;
+  /* This struct represents a JPEG error handler */
+  struct jpeg_error_mgr decode_jerr;
 
   /* Decode JPEG Image */
-  JSAMPROW buffer[2] = {0}; /* Output row buffer */
-  uint32_t row_stride = 0; /* physical row width in image buffer */
-
-  buffer[0] = buff;
-
   /* Step 1: allocate and initialize JPEG decompression object */
   decode_cinfo.err = jpeg_std_error(&decode_jerr);
 
@@ -172,15 +167,22 @@ void jpeg_decode(JFILE *file, uint32_t width, uint8_t * buff, uint8_t (*callback
   /* Step 5: start decompressor */
   jpeg_start_decompress(&decode_cinfo);
 
-  row_stride = width * 3;
+  unsigned long width     = decode_cinfo.output_width;
+  unsigned long height    = decode_cinfo.output_height;
+  unsigned short depth    = decode_cinfo.output_components;
+
+  unsigned char *src_buff = (unsigned char *)JMALLOC(width * height * depth);
+  unsigned char *point    = src_buff;
+  memset(src_buff, 0, sizeof(unsigned char) * width * height * depth);
+
+  JSAMPARRAY buffer       = (*decode_cinfo.mem->alloc_sarray)((j_common_ptr)&decode_cinfo, JPOOL_IMAGE, width * depth, 1);
+
   while (decode_cinfo.output_scanline < decode_cinfo.output_height)
   {
     (void) jpeg_read_scanlines(&decode_cinfo, buffer, 1);
 
-    if (callback(buffer[0], row_stride) != 0)
-    {
-      break;
-    }
+    memcpy(point, *buffer, width * depth);
+    point += width * depth;
   }
 
   /* Step 6: Finish decompression */
@@ -189,6 +191,7 @@ void jpeg_decode(JFILE *file, uint32_t width, uint8_t * buff, uint8_t (*callback
   /* Step 7: Release JPEG decompression object */
   jpeg_destroy_decompress(&decode_cinfo);
 
+  JFREE(src_buff);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

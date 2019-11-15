@@ -233,6 +233,19 @@ static void _JPEGsDecodeEncode(void) {
     //
     _pFS_API->pfCloseFile(MyFile1);
     _pFS_API->pfCloseFile(MyFile);
+    //
+    // Open the JPG image with read access
+    //
+    MyFile1 = _pFS_API->pfOpenFile(JPEG_IMAGE_FILE);
+    //
+    // decode JPG
+    //
+    /* Jpeg Decoding for display to LCD */
+    jpeg_decode(MyFile1);
+    //
+    // close file
+    //
+    _pFS_API->pfCloseFile(MyFile1);
 }
 
 /*******************************************************************

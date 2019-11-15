@@ -36,7 +36,7 @@
 /* Private functions ---------------------------------------------------------*/
 
 void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality);
-void jpeg_decode(JFILE *file, uint32_t width, uint8_t * buff, uint8_t (*callback)(uint8_t*, uint32_t));
+void jpeg_decode(JFILE *file);
 
 #endif /* __ENCODE_H */
 

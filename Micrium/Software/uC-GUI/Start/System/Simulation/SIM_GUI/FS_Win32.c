@@ -104,7 +104,7 @@ static int _FS_WIN32_Close(void* hFile) {
 *
 *       _FS_WIN32_Seek
 */
-long long _FS_WIN32_Seek (void* hFile, long long distance, U32 MoveMethod)
+static long long _FS_WIN32_Seek (void* hFile, long long distance, U32 MoveMethod)
 {
    LARGE_INTEGER li;
 
@@ -129,9 +129,13 @@ long long _FS_WIN32_Seek (void* hFile, long long distance, U32 MoveMethod)
 */
 static int _FS_WIN32_ReadAt(void* hFile, void* pDest, U32 Pos, U32 NumBytes) {
   DWORD NumBytesRead;
-
-  SetFilePointer((HANDLE)hFile, Pos, 0, FILE_BEGIN);
-  ReadFile((HANDLE)hFile, pDest, NumBytes, &NumBytesRead, NULL);
+  BOOL State;
+  _FS_WIN32_Seek((HANDLE)hFile, Pos, FILE_BEGIN);
+  State = ReadFile((HANDLE)hFile, pDest, NumBytes, &NumBytesRead, NULL);
+  if (State == FALSE && GetLastError() != NO_ERROR)
+  {
+      return -1;
+  }
   return 0;
 }
 
@@ -252,7 +256,7 @@ static int _FS_WIN32_WriteAt(void* hFile, void* pBuffer, U32 Pos, U32 NumBytes) 
   U32 NumBytesWritten;
   U32 r;
 
-  SetFilePointer((HANDLE)hFile, Pos, 0, FILE_BEGIN);
+  _FS_WIN32_Seek((HANDLE)hFile, Pos, FILE_BEGIN);
   r = WriteFile((HANDLE)hFile, pBuffer, NumBytes, &NumBytesWritten, NULL);
   if (r) {
     return NumBytesWritten;
