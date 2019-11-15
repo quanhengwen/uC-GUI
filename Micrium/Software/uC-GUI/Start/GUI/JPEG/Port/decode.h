@@ -22,7 +22,11 @@
 #define __DECODE_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+#include <stdint.h>
+
+/* Jpeg includes component */
+#include "jpeglib.h"
+#include "jdata_conf.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/

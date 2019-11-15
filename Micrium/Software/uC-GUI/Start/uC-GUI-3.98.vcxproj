@@ -83,7 +83,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;_DEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -110,7 +110,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;NDEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -476,10 +476,28 @@
     <ClCompile Include="GUI\Font\FD60x80.c" />
     <ClCompile Include="GUI\Font\FD64.c" />
     <ClCompile Include="GUI\Font\FD80.c" />
-    <ClCompile Include="GUI\JPEG\GUI_JPEG.c" />
+    <ClCompile Include="GUI\JPEG\jaricom.c" />
+    <ClCompile Include="GUI\JPEG\jcapimin.c" />
+    <ClCompile Include="GUI\JPEG\jcapistd.c" />
+    <ClCompile Include="GUI\JPEG\jcarith.c" />
+    <ClCompile Include="GUI\JPEG\jccoefct.c" />
+    <ClCompile Include="GUI\JPEG\jccolor.c" />
+    <ClCompile Include="GUI\JPEG\jcdctmgr.c" />
+    <ClCompile Include="GUI\JPEG\jchuff.c" />
+    <ClCompile Include="GUI\JPEG\jcinit.c" />
+    <ClCompile Include="GUI\JPEG\jcmainct.c" />
+    <ClCompile Include="GUI\JPEG\jcmarker.c" />
+    <ClCompile Include="GUI\JPEG\jcmaster.c" />
     <ClCompile Include="GUI\JPEG\jcomapi.c" />
+    <ClCompile Include="GUI\JPEG\jcparam.c" />
+    <ClCompile Include="GUI\JPEG\jcprepct.c" />
+    <ClCompile Include="GUI\JPEG\jcsample.c" />
+    <ClCompile Include="GUI\JPEG\jctrans.c" />
     <ClCompile Include="GUI\JPEG\jdapimin.c" />
     <ClCompile Include="GUI\JPEG\jdapistd.c" />
+    <ClCompile Include="GUI\JPEG\jdarith.c" />
+    <ClCompile Include="GUI\JPEG\jdatadst.c" />
+    <ClCompile Include="GUI\JPEG\jdatasrc.c" />
     <ClCompile Include="GUI\JPEG\jdcoefct.c" />
     <ClCompile Include="GUI\JPEG\jdcolor.c" />
     <ClCompile Include="GUI\JPEG\jddctmgr.c" />
@@ -489,7 +507,6 @@
     <ClCompile Include="GUI\JPEG\jdmarker.c" />
     <ClCompile Include="GUI\JPEG\jdmaster.c" />
     <ClCompile Include="GUI\JPEG\jdmerge.c" />
-    <ClCompile Include="GUI\JPEG\jdphuff.c" />
     <ClCompile Include="GUI\JPEG\jdpostct.c" />
     <ClCompile Include="GUI\JPEG\jdsample.c" />
     <ClCompile Include="GUI\JPEG\jdtrans.c" />
@@ -500,11 +517,14 @@
     <ClCompile Include="GUI\JPEG\jidctflt.c" />
     <ClCompile Include="GUI\JPEG\jidctfst.c" />
     <ClCompile Include="GUI\JPEG\jidctint.c" />
-    <ClCompile Include="GUI\JPEG\jidctred.c" />
     <ClCompile Include="GUI\JPEG\jmemmgr.c" />
     <ClCompile Include="GUI\JPEG\jquant1.c" />
     <ClCompile Include="GUI\JPEG\jquant2.c" />
     <ClCompile Include="GUI\JPEG\jutils.c" />
+    <ClCompile Include="GUI\JPEG\Port\decode.c" />
+    <ClCompile Include="GUI\JPEG\Port\encode.c" />
+    <ClCompile Include="GUI\JPEG\Port\GUI_JPEG.c" />
+    <ClCompile Include="GUI\JPEG\Port\jdata_conf.c" />
     <ClCompile Include="GUI\LCDDriver\LCDWin.c" />
     <ClCompile Include="GUI\MemDev\GUIDEV.c" />
     <ClCompile Include="GUI\MemDev\GUIDEV_1.c" />
@@ -999,16 +1019,11 @@
     <ClInclude Include="GUI\Core\LCD_ConfDefaults.h" />
     <ClInclude Include="GUI\Core\LCD_Private.h" />
     <ClInclude Include="GUI\Core\LCD_Protected.h" />
-    <ClInclude Include="GUI\JPEG\jconfig.h" />
-    <ClInclude Include="GUI\JPEG\jdct.h" />
-    <ClInclude Include="GUI\JPEG\jdhuff.h" />
-    <ClInclude Include="GUI\JPEG\jerror.h" />
-    <ClInclude Include="GUI\JPEG\jinclude.h" />
-    <ClInclude Include="GUI\JPEG\jmemsys.h" />
-    <ClInclude Include="GUI\JPEG\jmorecfg.h" />
-    <ClInclude Include="GUI\JPEG\jpegint.h" />
-    <ClInclude Include="GUI\JPEG\jpeglib.h" />
-    <ClInclude Include="GUI\JPEG\jversion.h" />
+    <ClInclude Include="GUI\JPEG\Port\decode.h" />
+    <ClInclude Include="GUI\JPEG\Port\encode.h" />
+    <ClInclude Include="GUI\JPEG\Port\jconfig.h" />
+    <ClInclude Include="GUI\JPEG\Port\jdata_conf.h" />
+    <ClInclude Include="GUI\JPEG\Port\jmorecfg.h" />
     <ClInclude Include="GUI\MultiLayer\LCD_IncludeDriver.h" />
     <ClInclude Include="GUI\PNG\crc32.h" />
     <ClInclude Include="GUI\PNG\deflate.h" />

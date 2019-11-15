@@ -85,7 +85,7 @@ static void* _FS_WIN32_Open(const char* sFilename) {
 
   _ConvertFileName(acFilename, sFilename, sizeof(acFilename));
   hFile = CreateFile(acFilename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-  if (hFile == INVALID_HANDLE_VALUE) {
+  if (hFile == INVALID_HANDLE_VALUE && GetLastError() != NO_ERROR) {
     hFile = 0;
   }
   return hFile;
@@ -98,6 +98,29 @@ static void* _FS_WIN32_Open(const char* sFilename) {
 static int _FS_WIN32_Close(void* hFile) {
   CloseHandle((HANDLE)hFile);
   return 0;
+}
+
+/*********************************************************************
+*
+*       _FS_WIN32_Seek
+*/
+long long _FS_WIN32_Seek (void* hFile, long long distance, U32 MoveMethod)
+{
+   LARGE_INTEGER li;
+
+   li.QuadPart = distance;
+
+   li.LowPart = SetFilePointer (hFile, 
+                                li.LowPart, 
+                                &li.HighPart, 
+                                MoveMethod);
+
+   if (li.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
+   {
+      li.QuadPart = 0;
+   }
+
+   return li.QuadPart;
 }
 
 /*********************************************************************
@@ -215,7 +238,7 @@ static void* _FS_WIN32_Create(const char* sFileName) {
 
   _ConvertFileName(acFilename, sFileName, sizeof(acFilename));
   hFile = CreateFile(acFilename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-  if (hFile == INVALID_HANDLE_VALUE) {
+  if (hFile == INVALID_HANDLE_VALUE && GetLastError() != NO_ERROR) {
     hFile = 0;
   }
   return hFile;
@@ -384,6 +407,7 @@ const _FS_API _FS_Win32 = {
   //
   _FS_WIN32_Open,
   _FS_WIN32_Close,
+  _FS_WIN32_Seek,
   _FS_WIN32_ReadAt,
   _FS_WIN32_GetLen,
   //

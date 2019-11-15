@@ -1,4 +1,4 @@
-/*
+﻿/*
 *********************************************************************************************************
 *                                                uC/GUI
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              �C/GUI is protected by international copyright laws. Knowledge of the
+*              µC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -20,6 +20,7 @@ Purpose     : Implementation of GUI_JPEG... functions
 #include <stdlib.h>
 
 #include "GUI_Private.h"
+#include "jinclude.h"
 #include "jpeglib.h"
 #include "jerror.h"
 #include "jmemsys.h"
@@ -188,7 +189,7 @@ static void _InitSrc(j_decompress_ptr cinfo, const U8* pFileData, I32 FileSize) 
    * manager serially with the same JPEG object.  Caveat programmer.
    */
   if (cinfo->src == NULL) {	/* first time for this JPEG object? */
-    cinfo->src = (jpeg_source_mgr *) (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT, sizeof(SOURCE_MANAGER));
+    cinfo->src = (struct jpeg_source_mgr *) (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT, sizeof(SOURCE_MANAGER));
   }
   pSrc = (SOURCE_MANAGER*) cinfo->src;
   pSrc->pub.init_source       = _InitSource;
@@ -265,10 +266,37 @@ GLOBAL(void) jpeg_mem_term (j_common_ptr cinfo) {
   GUI_USE_PARA(cinfo);
 }
 
+/*
+ * Backing store (temporary file) management.
+ * Since jpeg_mem_available always promised the moon,
+ * this should never be called and we can just error out.
+ */
 
+GLOBAL(void)
+jpeg_open_backing_store (j_common_ptr cinfo, backing_store_ptr info,
+			 long total_bytes_needed)
+{
+  ERREXIT(cinfo, JERR_NO_BACKING_STORE);
+}
 
+/*
+ * "Large" objects are treated the same as "small" ones.
+ * NB: although we include FAR keywords in the routine declarations,
+ * this file won't actually work in 80x86 small/medium model; at least,
+ * you probably won't be able to process useful-size images in only 64KB.
+ */
 
+GLOBAL(void FAR *)
+jpeg_get_large (j_common_ptr cinfo, size_t sizeofobject)
+{
+  return (void FAR *) JMALLOC(sizeofobject);
+}
 
+GLOBAL(void)
+jpeg_free_large (j_common_ptr cinfo, void FAR * object, size_t sizeofobject)
+{
+  JFREE(object);
+}
 
 
 
@@ -303,7 +331,7 @@ static void _WritePixelsRGB(const U8*p, int x0, int y0, int xSize) {
     r = *p++;
     g = *p++;
     b = *p++;
-    LCD_SetColor(r | (g << 8) | (U32)((U32)b << 16));
+    LCD_SetColor(b | (g << 8) | (U32)(((U32)r << 16) | 0xFF000000));
     LCD_DrawPixel(x0++, y0);
     xSize--;
   }

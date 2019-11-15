@@ -61,8 +61,8 @@ void GUIDEMO_Intro(void) {
   GUI_DispStringHCenterAt("www.micrium.com", LCD_GET_XSIZE() / 2, LCD_GET_YSIZE() - 40);
   GUI_DrawBitmap(&bmMicriumLogo, (LCD_GET_XSIZE() - bmMicriumLogo.XSize) / 2, 150);
   GUI_SetFont(&GUI_Font10S_ASCII);
-  GUI_DispStringAt("GUI_OS: ", 0,210); GUI_DispDecMin(GUI_OS);
-  GUI_DispStringAt("GUI_ALLOC_SIZE: ",0, 220); GUI_DispDecMin(GUI_ALLOC_SIZE);
+  GUI_DispStringAt("GUI_OS: ", 0,450); GUI_DispDecMin(GUI_OS);
+  GUI_DispStringAt("GUI_ALLOC_SIZE: ",0, 460); GUI_DispDecMin(GUI_ALLOC_SIZE);
   GUI_DispStringAt("Compiler: "
   #ifdef _MSC_VER
     "Microsoft"
@@ -81,7 +81,7 @@ void GUIDEMO_Intro(void) {
   #else
     "Unknown"
   #endif
-    ,0, 230);
+    ,0, 470);
   GUIDEMO_Delay(5000);
 }
 

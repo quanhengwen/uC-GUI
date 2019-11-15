@@ -67,6 +67,9 @@
     <Filter Include="GUI\WM">
       <UniqueIdentifier>{e967b4d4-0e6b-444a-8709-166c823d68a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI\JPEG\Port">
+      <UniqueIdentifier>{5161c01b-1178-41fa-bd7e-50b53abc2138}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="System\Simulation\SIM_GUI\Branding\Branding.c">
@@ -1019,93 +1022,6 @@
     </ClCompile>
     <ClCompile Include="GUI\Font\FD80.c">
       <Filter>GUI\Font</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\GUI_JPEG.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jcomapi.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdapimin.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdapistd.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdcoefct.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdcolor.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jddctmgr.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdhuff.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdinput.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdmainct.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdmarker.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdmaster.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdmerge.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdphuff.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdpostct.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdsample.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jdtrans.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jerror.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jfdctflt.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jfdctfst.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jfdctint.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jidctflt.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jidctfst.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jidctint.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jidctred.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jmemmgr.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jquant1.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jquant2.c">
-      <Filter>GUI\JPEG</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\jutils.c">
-      <Filter>GUI\JPEG</Filter>
     </ClCompile>
     <ClCompile Include="GUI\LCDDriver\LCDWin.c">
       <Filter>GUI\LCDDriver</Filter>
@@ -2592,6 +2508,153 @@
     <ClCompile Include="GUI\PNG\zutil.c">
       <Filter>GUI\PNG</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\JPEG\Port\decode.c">
+      <Filter>GUI\JPEG\Port</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\Port\encode.c">
+      <Filter>GUI\JPEG\Port</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\Port\GUI_JPEG.c">
+      <Filter>GUI\JPEG\Port</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\Port\jdata_conf.c">
+      <Filter>GUI\JPEG\Port</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jaricom.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcapimin.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcapistd.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcarith.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jccoefct.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jccolor.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcdctmgr.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jchuff.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcinit.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcmainct.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcmarker.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcmaster.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcomapi.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcparam.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcprepct.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jcsample.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jctrans.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdapimin.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdapistd.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdarith.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdatadst.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdatasrc.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdcoefct.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdcolor.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jddctmgr.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdhuff.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdinput.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdmainct.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdmarker.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdmaster.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdmerge.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdpostct.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdsample.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jdtrans.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jerror.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jfdctflt.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jfdctfst.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jfdctint.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jidctflt.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jidctfst.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jidctint.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jmemmgr.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jquant1.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jquant2.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\jutils.c">
+      <Filter>GUI\JPEG</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\GUIConf.h">
@@ -2659,36 +2722,6 @@
     </ClInclude>
     <ClInclude Include="GUI\Core\LCDSIM.h">
       <Filter>GUI\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\jconfig.h">
-      <Filter>GUI\JPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\jdct.h">
-      <Filter>GUI\JPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\jdhuff.h">
-      <Filter>GUI\JPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\jerror.h">
-      <Filter>GUI\JPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\jinclude.h">
-      <Filter>GUI\JPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\jmemsys.h">
-      <Filter>GUI\JPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\jmorecfg.h">
-      <Filter>GUI\JPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\jpegint.h">
-      <Filter>GUI\JPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\jpeglib.h">
-      <Filter>GUI\JPEG</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\jversion.h">
-      <Filter>GUI\JPEG</Filter>
     </ClInclude>
     <ClInclude Include="GUI\MultiLayer\LCD_IncludeDriver.h">
       <Filter>GUI\MultiLayer</Filter>
@@ -3634,6 +3667,21 @@
     </ClInclude>
     <ClInclude Include="GUI\PNG\zutil.h">
       <Filter>GUI\PNG</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\JPEG\Port\decode.h">
+      <Filter>GUI\JPEG\Port</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\JPEG\Port\encode.h">
+      <Filter>GUI\JPEG\Port</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\JPEG\Port\jconfig.h">
+      <Filter>GUI\JPEG\Port</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\JPEG\Port\jdata_conf.h">
+      <Filter>GUI\JPEG\Port</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\JPEG\Port\jmorecfg.h">
+      <Filter>GUI\JPEG\Port</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

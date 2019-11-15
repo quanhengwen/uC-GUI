@@ -19,7 +19,8 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ff.h"
+#include <stdint.h>
+#include <windows.h>
 
 /* Private typedef -----------------------------------------------------------*/  
 /* Private define ------------------------------------------------------------*/
@@ -28,7 +29,7 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-#define JFILE            FIL
+#define JFILE     HANDLE
 
 #define JMALLOC   malloc    
 #define JFREE     free  

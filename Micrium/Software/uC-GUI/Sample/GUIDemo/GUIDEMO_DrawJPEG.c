@@ -32,9 +32,12 @@ Requirements: WindowManager - ( )
 
 #include <windows.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "GUI.h"
 #include "GUIDEMO.H"
+#include "FS_Win32.h"
+#include "encode.h"
 
 /*********************************************************************
 *
@@ -46,6 +49,10 @@ Requirements: WindowManager - ( )
 #define TITLE_HEIGHT          40
 #define BORDER_SIZE           5
 #define YPOS_IMAGE            73
+
+#define JPEG_IMAGE_FILE       "ColorCircle_120x120_24bpp.jpg"
+#define BMP_IMAGE_FILE        "ColorCircle_120x120_24bpp.bmp"
+#define IMAGE_QUALITY         100
 
 //
 // Recommended memory to run the sample with adequate performance
@@ -105,7 +112,7 @@ static void _DrawJPEGs(const char * sFileName) {
   hFile    = CreateFile(sFileName, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   FileSize = GetFileSize(hFile, NULL);
   pFile    = malloc(FileSize);
-  ReadFile(hFile, pFile, FileSize, &NumBytesRead, NULL);
+  (void) ReadFile(hFile, pFile, FileSize, &NumBytesRead, NULL);
   CloseHandle(hFile);
   //
   // Check if the current JPEG image fits on the screen.
@@ -184,6 +191,54 @@ static int _GetFirstBitmapDirectory(char * pDir, char * pBuffer) {
 
 /*******************************************************************
 *
+*       _JPEGsDecodeEncode
+*
+* Function description
+*   Iterates over all JPEG files in a Windows sub folder.
+*/
+static void _JPEGsDecodeEncode(void) {
+    //
+    // File handle
+    //
+    HANDLE MyFile, MyFile1;
+    //
+    // File path
+    //
+    char acBuffer[_MAX_PATH];
+    //
+    // File system info
+    //
+    static const _FS_API* _pFS_API;
+    //
+    // Assign file system
+    //
+    _pFS_API = &_FS_Win32;     // Use Windows filesystem.
+    //
+    // Config Base Dir
+    //
+    sprintf(acBuffer, "%s", "C:\\Keil_v5\\ARM\\Segger\\emWin\\Doc\\Training\\BitmapConverter\\");
+    _FS_WIN32_ConfigBaseDir(acBuffer);
+    //
+    // Open the JPG image with read access
+    //
+    MyFile1 = _pFS_API->pfCreate(JPEG_IMAGE_FILE);
+    //
+    // Open the BMP image with read access
+    //
+    MyFile  = _pFS_API->pfOpenFile(BMP_IMAGE_FILE);
+    //
+    // encode JPG
+    //
+    jpeg_encode(MyFile, MyFile1, IMAGE_QUALITY);
+    //
+    // close file
+    //
+    _pFS_API->pfCloseFile(MyFile1);
+    _pFS_API->pfCloseFile(MyFile);
+}
+
+/*******************************************************************
+*
 *       _DrawJPEGsFromWindowsDir
 *
 * Function description
@@ -238,6 +293,7 @@ void GUIDEMO_JPEGs(void) {
     GUI_ErrorOut("Not enough memory available."); 
     return;
   }
+  _JPEGsDecodeEncode();
   _DrawJPEGsFromWindowsDir();
   GUIDEMO_Wait();
 }

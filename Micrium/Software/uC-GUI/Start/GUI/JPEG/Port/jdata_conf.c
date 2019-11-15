@@ -31,14 +31,14 @@
 size_t read_file (JFILE  *file, uint8_t *buf, uint32_t sizeofbuf)
 {
   static size_t BytesReadfile ;  
-  f_read (file, buf , sizeofbuf, &BytesReadfile); 
+  (void) ReadFile ((HANDLE) file, buf , sizeofbuf, &BytesReadfile, NULL); 
   return BytesReadfile; 
 }
 
 size_t write_file (JFILE  *file, uint8_t *buf, uint32_t sizeofbuf)
 {
   static size_t BytesWritefile ;  
-  f_write (file, buf , sizeofbuf, &BytesWritefile); 
+  (void) WriteFile((HANDLE) file, buf , sizeofbuf, &BytesWritefile, NULL);
   return BytesWritefile; 
 }
 

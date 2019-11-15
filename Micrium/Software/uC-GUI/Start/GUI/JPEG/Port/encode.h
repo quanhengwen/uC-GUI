@@ -22,7 +22,11 @@
 #define __ENCODE_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+#include <stdint.h>
+
+/* Jpeg includes component */
+#include "jpeglib.h"
+#include "jdata_conf.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -31,7 +35,7 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-void jpeg_encode(JFILE *file, JFILE *file1, uint32_t width, uint32_t height, uint32_t image_quality, uint8_t * buff);
+void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality);
 
 #endif /* __ENCODE_H */
 
