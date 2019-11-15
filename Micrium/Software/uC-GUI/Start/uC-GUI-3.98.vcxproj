@@ -83,7 +83,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;_DEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -110,7 +110,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Sample\GUIDemo;Application;Config;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\TrueType;GUI\Widget;GUI\WM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;NDEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -136,7 +136,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Sample\GUIDemo\FS_Win32.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Automotive.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Bitmap.c" />
@@ -165,18 +164,6 @@
     <ClCompile Include="..\Sample\GUIDemo\MainTask.c" />
     <ClCompile Include="..\Sample\GUIDemo\MicriumLogo.c" />
     <ClCompile Include="..\Sample\GUIDemo\MicriumLogoWRed.c" />
-    <ClCompile Include="Application\MainTask.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Application\MicriumLogo.C">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Application\MicriumLogo_1bpp.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="GUI\AntiAlias\GUIAAArc.c" />
     <ClCompile Include="GUI\AntiAlias\GUIAAChar.c" />
     <ClCompile Include="GUI\AntiAlias\GUIAAChar2.c" />
@@ -972,6 +959,7 @@
     <ClCompile Include="GUI\WM\WM__UpdateChildPositions.c" />
     <ClCompile Include="System\Simulation\Main.c" />
     <ClCompile Include="System\Simulation\SIM_GUI\Branding\Branding.c" />
+    <ClCompile Include="System\Simulation\SIM_GUI\FS_Win32.c" />
     <ClCompile Include="System\Simulation\SIM_GUI\GUI_X_Sim.c" />
     <ClCompile Include="System\Simulation\SIM_GUI\LCDSIM.c" />
     <ClCompile Include="System\Simulation\SIM_GUI\LCDSIM_SaveBMP.c" />
@@ -981,7 +969,6 @@
     <ClCompile Include="System\Simulation\SIM_X.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Sample\GUIDemo\FS_Win32.h" />
     <ClInclude Include="..\Sample\GUIDemo\GUIDEMO.h" />
     <ClInclude Include="..\Sample\GUIDemo\Map.h" />
     <ClInclude Include="Config\GUIConf.h" />
@@ -1266,6 +1253,7 @@
     <ClInclude Include="System\Simulation\Res\ResourceSim.h" />
     <ClInclude Include="System\Simulation\SIM.h" />
     <ClInclude Include="System\Simulation\SIM_GUI\Branding\Branding.h" />
+    <ClInclude Include="System\Simulation\SIM_GUI\FS_Win32.h" />
     <ClInclude Include="System\Simulation\SIM_GUI\LCDSIM_Private.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Application">
-      <UniqueIdentifier>{b8fa7ef7-d37d-4805-9d3f-512de2ff8c37}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Config">
       <UniqueIdentifier>{c8589bdd-00a9-42a7-95bf-5cc87b95d3fc}</UniqueIdentifier>
     </Filter>
@@ -72,15 +69,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application\MainTask.c">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\MicriumLogo.C">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="Application\MicriumLogo_1bpp.c">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="System\Simulation\SIM_GUI\Branding\Branding.c">
       <Filter>System\Simulation\SIM_GUI\Branding</Filter>
     </ClCompile>
@@ -2568,11 +2556,11 @@
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ShowAllTTFs.c">
       <Filter>Sample\GUIDemo</Filter>
     </ClCompile>
-    <ClCompile Include="..\Sample\GUIDemo\FS_Win32.c">
-      <Filter>Sample\GUIDemo</Filter>
-    </ClCompile>
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DriverPerformance.c">
       <Filter>Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="System\Simulation\SIM_GUI\FS_Win32.c">
+      <Filter>System\Simulation\SIM_GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3431,8 +3419,8 @@
     <ClInclude Include="..\Sample\GUIDemo\Map.h">
       <Filter>Sample\GUIDemo</Filter>
     </ClInclude>
-    <ClInclude Include="..\Sample\GUIDemo\FS_Win32.h">
-      <Filter>Sample\GUIDemo</Filter>
+    <ClInclude Include="System\Simulation\SIM_GUI\FS_Win32.h">
+      <Filter>System\Simulation\SIM_GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
