@@ -68,7 +68,7 @@ static void _ShowBMP(const char * sFilename) {
   char * pFile = malloc(FileSize);
   ReadFile(hFile, pFile, FileSize, &NumBytesRead, NULL);
   CloseHandle(hFile);
-  GUI_ClearRect(0, 60, 319, 239);
+  GUI_ClearRect(0, 60, 640, 480);
   XSize = GUI_BMP_GetXSize(pFile);
   YSize = GUI_BMP_GetYSize(pFile);
   XPos = (XSize > 320) ?  0 : 160 - (XSize / 2);

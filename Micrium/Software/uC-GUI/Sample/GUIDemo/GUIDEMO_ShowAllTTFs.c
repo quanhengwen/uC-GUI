@@ -53,7 +53,7 @@ Requirements: WindowManager - ( )
 *
 **********************************************************************
 */
-static unsigned     _aHeight  [] = {16, 20, 32, 48};   // Array of heights used to show text
+static unsigned     _aHeight  [] = {16, 20, 32, 48, 72, 96, 102};   // Array of heights used to show text
 static GUI_TTF_CS   _aCS      [GUI_COUNTOF(_aHeight)]; // Each GUI font needs its own GUI_TTF_CS structure
 static GUI_FONT     _aFont    [GUI_COUNTOF(_aHeight)]; // Array of GUI fonts
 static char         _acFamily [200];

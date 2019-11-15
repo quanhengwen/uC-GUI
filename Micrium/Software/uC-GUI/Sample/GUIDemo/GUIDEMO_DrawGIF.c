@@ -122,12 +122,12 @@ static void _ShowMovie(const char * pFile, int FileSize) {
   // Display sample information
   //
   GUI_SetFont(&GUI_Font8x16);
-  GUI_ClearRect(0, 40, 319, 59);
+  GUI_ClearRect(0, 40, 640, 59);
   GUI_DispStringHCenterAt("Show complete GIF file as movie", 160, 40);
   //
   // Show movie
   //
-  GUI_ClearRect(0, 60, 319, 239);                                 // Clear the image area
+  GUI_ClearRect(0, 60, 640, 480);                                 // Clear the image area
   GUI_GIF_GetInfo(pFile, FileSize, &GifInfo);                     // Get GIF info structure
   XPos = (GifInfo.xSize > 320) ?  0 : 160 - (GifInfo.xSize / 2);
   YPos = (GifInfo.ySize > 180) ? 60 : 150 - (GifInfo.ySize / 2);
@@ -157,12 +157,12 @@ static void _ShowSubImages(const char * pFile, int FileSize) {
   // Display sample information
   //
   GUI_SetFont(&GUI_Font8x16);
-  GUI_ClearRect(0, 40, 319, 59);
+  GUI_ClearRect(0, 40, 640, 59);
   GUI_DispStringHCenterAt("Show all sub images of a GIF file", 160, 40);
   //
   // Show sub images
   //
-  GUI_ClearRect(0, 60, 319, 239);                                 // Clear the image area
+  GUI_ClearRect(0, 60, 640, 480);                                 // Clear the image area
   GUI_GIF_GetInfo(pFile, FileSize, &GifInfo);                     // Get GIF info structure
   XPos = 160 - GifInfo.xSize * GifInfo.NumImages / 2;
   YPos = (GifInfo.ySize > 180) ? 60 : 150 - (GifInfo.ySize / 2);
@@ -184,7 +184,7 @@ static void _ShowSubImages(const char * pFile, int FileSize) {
 *   Shows all comments of a GIF file
 */
 static void _ShowComments(const char * pFile, int FileSize) {
-  GUI_RECT Rect          = {80, 100, 239, 199};
+  GUI_RECT Rect          = {80, 100, 480, 199};
   char     acBuffer[256] = {0};
   int      CommentCnt;
 
@@ -192,12 +192,12 @@ static void _ShowComments(const char * pFile, int FileSize) {
   // Display sample information
   //
   GUI_SetFont(&GUI_Font8x16);
-  GUI_ClearRect(0, 40, 319, 59);
+  GUI_ClearRect(0, 40, 640, 59);
   GUI_DispStringHCenterAt("Show all comments of a GIF file", 160, 40);
   //
   // Show all comments
   //
-  GUI_ClearRect(0, 60, 319, 239);                                 // Clear the image area
+  GUI_ClearRect(0, 60, 640, 480);                                 // Clear the image area
   CommentCnt = 0;
   while (!GUI_GIF_GetComment(pFile, FileSize, (unsigned char *)acBuffer, sizeof(acBuffer), CommentCnt)) {
     char acNumber[12] = "Comment #0:";

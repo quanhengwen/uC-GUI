@@ -429,9 +429,9 @@ static void _DrawStripes(void) {
     GUI_MAGENTA,
     GUI_YELLOW ,
   };
-  for (i = 0; i < 240; i += 10) {
+  for (i = 0; i < 480; i += 10) {
     GUI_SetColor(_aColor[(i / 10) % GUI_COUNTOF(_aColor)]);
-    GUI_FillRect(0, i, 319, i + 9);
+    GUI_FillRect(0, i, 640, i + 9);
   }
 }
 
