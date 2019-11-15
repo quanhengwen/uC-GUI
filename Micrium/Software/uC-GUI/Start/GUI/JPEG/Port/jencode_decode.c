@@ -1,19 +1,8 @@
 ﻿/**
   ******************************************************************************
-  * @file    LibJPEG/LibJPEG_Encoding/Src/encode.c
-  * @author  MCD Application Team
+  * @file    jencode_decode.c
+  * @author  SongWenShuai
   * @brief   This file contain the compress method.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
-  *
   ******************************************************************************
   */
 
@@ -90,43 +79,44 @@ void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality)
   /* Get bitmap image data */
   data_size = bmpInfoHeader.biWidth * bmpInfoHeader.biHeight * (bmpInfoHeader.biBitCount / 8);
   bmp_ptr = JMALLOC(data_size);
-  (void) ReadFile((HANDLE) file, bmp_ptr, data_size, (UINT*)&bytesread, NULL);
-
-  /* Step 1: allocate and initialize JPEG compression object */
-  /* Set up the error handler */
-  encode_cinfo.err = jpeg_std_error(&encode_jerr);
-
-  /* Initialize the JPEG compression object */
-  jpeg_create_compress(&encode_cinfo);
-
-  /* Step 2: specify data destination */
-  jpeg_stdio_dest(&encode_cinfo, file1);
-
-  /* Step 3: set parameters for compression */
-  encode_cinfo.image_width = bmpInfoHeader.biWidth;
-  encode_cinfo.image_height = bmpInfoHeader.biHeight;
-  encode_cinfo.input_components = 3;
-  encode_cinfo.in_color_space = JCS_RGB;
-
-  /* Set default compression parameters */
-  jpeg_set_defaults(&encode_cinfo);
-
-  encode_cinfo.dct_method  = JDCT_FLOAT;
-
-  jpeg_set_quality(&encode_cinfo, image_quality, TRUE);
-
-  /* Step 4: start compressor */
-  jpeg_start_compress(&encode_cinfo, TRUE);
-
-  while (encode_cinfo.next_scanline < encode_cinfo.image_height)
-  {
-    /* In this application, the input file is a BMP, which first encodes the bottom of the picture */
-    /* JPEG encodes the highest part of the picture first. We need to read the lines upside down   */
-    /* Move the read pointer to 'last line of the picture - next_scanline'    */
-    row_pointer = (JSAMPROW)&bmp_ptr[((encode_cinfo.image_height - 1 - encode_cinfo.next_scanline) * encode_cinfo.image_width * 3)];
-    jpeg_write_scanlines(&encode_cinfo, &row_pointer, 1);
+  if (bmp_ptr != NULL) {
+    (void) ReadFile((HANDLE) file, bmp_ptr, data_size, (UINT*)&bytesread, NULL);
+    
+    /* Step 1: allocate and initialize JPEG compression object */
+    /* Set up the error handler */
+    encode_cinfo.err = jpeg_std_error(&encode_jerr);
+    
+    /* Initialize the JPEG compression object */
+    jpeg_create_compress(&encode_cinfo);
+    
+    /* Step 2: specify data destination */
+    jpeg_stdio_dest(&encode_cinfo, file1);
+    
+    /* Step 3: set parameters for compression */
+    encode_cinfo.image_width = bmpInfoHeader.biWidth;
+    encode_cinfo.image_height = bmpInfoHeader.biHeight;
+    encode_cinfo.input_components = 3;
+    encode_cinfo.in_color_space = JCS_RGB;
+    
+    /* Set default compression parameters */
+    jpeg_set_defaults(&encode_cinfo);
+    
+    encode_cinfo.dct_method  = JDCT_FLOAT;
+    
+    jpeg_set_quality(&encode_cinfo, image_quality, TRUE);
+    
+    /* Step 4: start compressor */
+    jpeg_start_compress(&encode_cinfo, TRUE);
+    
+    while (encode_cinfo.next_scanline < encode_cinfo.image_height)
+    {
+      /* In this application, the input file is a BMP, which first encodes the bottom of the picture */
+      /* JPEG encodes the highest part of the picture first. We need to read the lines upside down   */
+      /* Move the read pointer to 'last line of the picture - next_scanline'    */
+      row_pointer = (JSAMPROW)&bmp_ptr[((encode_cinfo.image_height - 1 - encode_cinfo.next_scanline) * encode_cinfo.image_width * 3)];
+      jpeg_write_scanlines(&encode_cinfo, &row_pointer, 1);
+    }
   }
-
   /* Step 5: finish compression */
   jpeg_finish_compress(&encode_cinfo);
 
@@ -148,6 +138,12 @@ void jpeg_decode(JFILE *file)
   struct jpeg_decompress_struct decode_cinfo;
   /* This struct represents a JPEG error handler */
   struct jpeg_error_mgr decode_jerr;
+  unsigned long width;
+  unsigned long height;
+  unsigned short depth;
+  unsigned char* src_buff;
+  unsigned char* point;
+  JSAMPARRAY buffer;
 
   /* Decode JPEG Image */
   /* Step 1: allocate and initialize JPEG decompression object */
@@ -167,24 +163,22 @@ void jpeg_decode(JFILE *file)
   /* Step 5: start decompressor */
   jpeg_start_decompress(&decode_cinfo);
 
-  unsigned long width     = decode_cinfo.output_width;
-  unsigned long height    = decode_cinfo.output_height;
-  unsigned short depth    = decode_cinfo.output_components;
+  width   = decode_cinfo.output_width;
+  height  = decode_cinfo.output_height;
+  depth   = decode_cinfo.output_components;
 
-  unsigned char *src_buff = (unsigned char *)JMALLOC(width * height * depth);
-  unsigned char *point    = src_buff;
-  memset(src_buff, 0, sizeof(unsigned char) * width * height * depth);
-
-  JSAMPARRAY buffer       = (*decode_cinfo.mem->alloc_sarray)((j_common_ptr)&decode_cinfo, JPOOL_IMAGE, width * depth, 1);
-
-  while (decode_cinfo.output_scanline < decode_cinfo.output_height)
-  {
-    (void) jpeg_read_scanlines(&decode_cinfo, buffer, 1);
-
-    memcpy(point, *buffer, width * depth);
-    point += width * depth;
+  src_buff = (unsigned char *)JMALLOC(width * height * depth);
+  if(src_buff != NULL) {
+    point = src_buff;
+    memset(src_buff, 0, sizeof(unsigned char) * width * height * depth);
+    buffer       = (*decode_cinfo.mem->alloc_sarray)((j_common_ptr)&decode_cinfo, JPOOL_IMAGE, width * depth, 1);
+    while (decode_cinfo.output_scanline < decode_cinfo.output_height)
+    {
+      (void) jpeg_read_scanlines(&decode_cinfo, buffer, 1);
+      memcpy(point, *buffer, width * depth);
+      point += width * depth;
+    }
   }
-
   /* Step 6: Finish decompression */
   jpeg_finish_decompress(&decode_cinfo);
 
