@@ -45,6 +45,16 @@ Purpose     : Implementation of external binary fonts
 #define FAMILY_NAME 0
 #define STYLE_NAME  1
 
+#define RETURN_IF_Y_OUT() \
+  if (y < GUI_Context.ClipRect.y0)                     \
+    return;                                            \
+  if (y > GUI_Context.ClipRect.y1)                     \
+    return;
+
+#define RETURN_IF_X_OUT() \
+  if (x < GUI_Context.ClipRect.x0) return;             \
+  if (x > GUI_Context.ClipRect.x1) return;
+
 /*********************************************************************
 *
 *       Types
@@ -75,22 +85,6 @@ FT_CONTEXT    _FTContext;
 TF_CACHE_SIZE _FTCacheSize;
 
 static GUI_SADDR GUI_CONTEXT *GUI_pContext = &GUI_Context;
-
-/*********************************************************************
-*
-*       Static code
-*
-**********************************************************************
-*/
-#define RETURN_IF_Y_OUT() \
-  if (y < GUI_Context.ClipRect.y0)                     \
-    return;                                            \
-  if (y > GUI_Context.ClipRect.y1)                     \
-    return;
-
-#define RETURN_IF_X_OUT() \
-  if (x < GUI_Context.ClipRect.x0) return;             \
-  if (x > GUI_Context.ClipRect.x1) return;
 
 /*********************************************************************
 *
@@ -145,7 +139,7 @@ static void GUI_AA__DrawCharAA8(int x0, int y0, int XSize, int YSize, int BytesP
   for (y=0; y<YSize; y++) {
     const U8*pData0 = pData;
     for (x=0; x<XSize-1; x++) {
-      (*pfSetPixelAA)(x0+x+1,y0+y, (*pData0++)&255);
+      (*pfSetPixelAA)(x0+x,y0+y, (*pData0++)&255);
   	}
     if (XSize&1) {
       (*pfSetPixelAA)(x0+x,y0+y, (*pData0)&255);
