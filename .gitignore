@@ -35,10 +35,8 @@
 .vs/
 Debug/
 Release/
-uC-GUI-3.98.vcxproj.user
-uC-GUI-3.98.sln
-FS_Start.sln
-FS_Start.vcxproj.user
+uC-GUI-FS.vcxproj.user
+uC-GUI-FS.sln
 
 # Visual Studio Code
 .vscode/
