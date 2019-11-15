@@ -36,6 +36,9 @@
 #ifndef FT2BUILD_H_
 #define FT2BUILD_H_
 
+#define FT2_BUILD_LIBRARY //JE: added
+#define FT2_FLAT_BUILD    //JE: added
+
 #include <freetype/config/ftheader.h>
 
 #endif /* FT2BUILD_H_ */

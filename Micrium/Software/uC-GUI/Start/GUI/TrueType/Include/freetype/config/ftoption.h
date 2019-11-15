@@ -254,7 +254,7 @@ FT_BEGIN_HEADER
    * stream support, in the cases where file stream support is not necessary
    * such as memory loading of font files.
    */
-/* #define FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT */
+#define FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT // Disabled by Segger
 
 
   /**************************************************************************
@@ -314,7 +314,7 @@ FT_BEGIN_HEADER
    *   You would normally undefine this configuration macro when building a
    *   version of FreeType that doesn't contain a Type~1 or CFF driver.
    */
-#define FT_CONFIG_OPTION_POSTSCRIPT_NAMES
+//#define FT_CONFIG_OPTION_POSTSCRIPT_NAMES // Disabled by Segger
 
 
   /**************************************************************************
@@ -331,7 +331,7 @@ FT_BEGIN_HEADER
    *   in your 'psnames' module.  The Type~1 driver will not be able to
    *   synthesize a Unicode charmap out of the glyphs found in the fonts.
    */
-#define FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
+//#define FT_CONFIG_OPTION_ADOBE_GLYPH_LIST // Disabled by Segger
 
 
   /**************************************************************************
@@ -344,7 +344,7 @@ FT_BEGIN_HEADER
    *
    *   Note that the 'FOND' resource isn't checked.
    */
-#define FT_CONFIG_OPTION_MAC_FONTS
+//#define FT_CONFIG_OPTION_MAC_FONTS // Disabled by Segger
 
 
   /**************************************************************************
@@ -530,7 +530,7 @@ FT_BEGIN_HEADER
    * outlines (from the 'COLR'/'CPAL' tables) in all formats using the 'sfnt'
    * module (namely TrueType~& OpenType).
    */
-#define TT_CONFIG_OPTION_COLOR_LAYERS
+//#define TT_CONFIG_OPTION_COLOR_LAYERS // Disabled by Segger
 
 
   /**************************************************************************
@@ -545,7 +545,7 @@ FT_BEGIN_HEADER
    *
    * (By default, the module uses 'psnames' to extract glyph names.)
    */
-#define TT_CONFIG_OPTION_POSTSCRIPT_NAMES
+//#define TT_CONFIG_OPTION_POSTSCRIPT_NAMES // Disabled by Segger
 
 
   /**************************************************************************
@@ -559,7 +559,10 @@ FT_BEGIN_HEADER
    * Accessing SFNT names is done through the functions declared in
    * `ftsnames.h`.
    */
-#define TT_CONFIG_OPTION_SFNT_NAMES
+#define TT_CONFIG_OPTION_SFNT_NAMES // Could not be disabled because of
+                                    // references to FT_Get_Sfnt_Name() in 
+                                    // function gxv_sfntName_validate() of
+                                    // module gxvalid.c (Segger)
 
 
   /**************************************************************************

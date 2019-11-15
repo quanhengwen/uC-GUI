@@ -187,7 +187,7 @@
     for ( i = 0; i < nChains; i++ )
     {
       GXV_TRACE(( "validating chain %d/%d\n", i + 1, nChains ));
-      GXV_32BIT_ALIGNMENT_VALIDATE( p - table );
+      GXV_32BIT_ALIGNMENT_VALIDATE( (FT_ULong)(p - table) );
       gxv_morx_chain_validate( p, limit, gxvalid );
       p += gxvalid->subtable_length;
     }
