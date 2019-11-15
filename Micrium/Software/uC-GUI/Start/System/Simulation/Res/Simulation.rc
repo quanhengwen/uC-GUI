@@ -1,28 +1,21 @@
-//Microsoft Developer Studio generated resource script.
-//
 #include "ResourceSim.h"
 #include "windows.h"
-#include "Branding.rh"     // Branding specific info such as Copyright etc
 
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Branding
-//
-// The followin resources are in their respective branding directories.
-// remains consistent on all systems.
+/*********************************************************************
+*
+*       Icons
+*
+**********************************************************************
+*/
 
 IDR_MAINFRAME           ICON    DISCARDABLE     "Simulation.ico"
-IDB_LOGO                BITMAP  DISCARDABLE     "Logo.bmp"
-IDB_DEVICE              BITMAP  DISCARDABLE     "Device.bmp"
-IDB_DEVICE1             BITMAP  DISCARDABLE     "Device1.bmp"
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
+/*********************************************************************
+*
+*       Menu
+*
+**********************************************************************
+*/
 
 IDC_SIMULATION MENU DISCARDABLE 
   BEGIN
@@ -62,24 +55,12 @@ IDC_SIMULATION_POPUP MENU DISCARDABLE
     END
   END
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Accelerator
-//
-
-IDC_SIMULATION ACCELERATORS MOVEABLE PURE 
-  BEGIN
-    VK_F3,          ID_FILE_STARTAPPLICATION, VIRTKEY, NOINVERT
-    VK_F4,          ID_FILE_STOPAPPLICATION, VIRTKEY, NOINVERT
-    VK_F5,          ID_FILE_CONTINUEAPPLICATION, VIRTKEY, NOINVERT
-  END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
+/*********************************************************************
+*
+*       Dialog
+*
+**********************************************************************
+*/
 
 IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 217, 98
   STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
@@ -94,8 +75,30 @@ IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 217, 98
     CTEXT           "Copyright",IDC_COPYRIGHT,14,44,190,41
   END
 
+/*********************************************************************
+*
+*       Bitmap
+*
+**********************************************************************
+*/
+
+IDB_LOGO                BITMAP  DISCARDABLE     "Logo.bmp"
+IDB_DEVICE              BITMAP  DISCARDABLE     "Device.bmp"
+IDB_DEVICE1             BITMAP  DISCARDABLE     "Device1.bmp"
 
 
+/*********************************************************************
+*
+*       Accelerators
+*
+**********************************************************************
+*/
 
+IDC_SIMULATION ACCELERATORS MOVEABLE PURE 
+  BEGIN
+    VK_F3,          ID_FILE_STARTAPPLICATION, VIRTKEY, NOINVERT
+    VK_F4,          ID_FILE_STOPAPPLICATION, VIRTKEY, NOINVERT
+    VK_F5,          ID_FILE_CONTINUEAPPLICATION, VIRTKEY, NOINVERT
+  END
 
-
+/*************************** end of file ****************************/
