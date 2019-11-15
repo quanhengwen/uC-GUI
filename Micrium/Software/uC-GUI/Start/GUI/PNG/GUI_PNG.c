@@ -28,6 +28,8 @@ Purpose     : Implementation of GUI_PNG... functions
 #include "GUI_Private.h"
 #include "GUI_PNG_Private.h"
 
+#define GUI_BYTESPERPIXEL (LCD_BITSPERPIXEL / 8)
+
 #if (GUI_VERSION <= 41800)
   int GUI_PNG_Draw      (const void * pFileData, int DataSize, int x0, int y0);
   int GUI_PNG_DrawEx    (GUI_GET_DATA_FUNC * pfGetData, void * p, int x0, int y0);
@@ -43,6 +45,21 @@ Purpose     : Implementation of GUI_PNG... functions
 *
 **********************************************************************
 */
+
+/*********************************************************************
+*
+*       LCD_ReadRect
+*/
+static void LCD_ReadRect(int x0, int y0, int x1, int y1, LCD_PIXELINDEX * pBuffer, const tLCDDEV_APIList * pAPI) {
+    while (y0 <= y1) {
+      int x;
+      for (x = x0; x <= x1; x++) {
+        *pBuffer++ = pAPI->pfGetPixelIndex(x, y0);
+      }
+      y0++;
+    }
+}
+
 /*********************************************************************
 *
 *       GUI_PNG__GetData
@@ -274,8 +291,6 @@ static int _Draw(int x0, int y0, GUI_PNG_CONTEXT * pContext) {
   LCD_PIXELINDEX * pBkGnd;
   U32 * pColor;
   U32 * pWrite;
-  tLCDDEV_Index2Color * pfIndex2Color;
-  tLCDDEV_Color2Index * pfColor2Index;
   GUI_HMEM hBkGnd;
   GUI_HMEM hColor;
   
@@ -375,8 +390,8 @@ static int _Draw(int x0, int y0, GUI_PNG_CONTEXT * pContext) {
         GUI_RECT Rect;
       #endif
 
-      pColor = (U32 *)GUI_LOCK_H(hColor);
-      pBkGnd = (LCD_PIXELINDEX *)GUI_LOCK_H(hBkGnd);
+      pColor = (U32 *)(hColor);
+      pBkGnd = (LCD_PIXELINDEX *)(hBkGnd);
       BitsPerPixel = LCD_GetBitsPerPixel();
       if (BitsPerPixel <= 8) {
         BytesPerPixel = 1;
@@ -385,11 +400,6 @@ static int _Draw(int x0, int y0, GUI_PNG_CONTEXT * pContext) {
       } else {
         BytesPerPixel = 4;
       }
-      //
-      // Get function pointer(s)
-      //
-      pfIndex2Color = GUI_GetpfIndex2ColorEx(GUI_Context.SelLayer);
-      pfColor2Index = GUI_GetpfColor2IndexEx(GUI_Context.SelLayer);
       //
       // Iterate over window manager rectangles
       //
@@ -444,13 +454,13 @@ static int _Draw(int x0, int y0, GUI_PNG_CONTEXT * pContext) {
             Alpha = *(pColor + x) >> 24;
             if (Alpha) {
               BkPixelIndex = *(pBkGnd + x);
-              BkColor = pfIndex2Color(BkPixelIndex);
+              BkColor = GUI_Index2Color(BkPixelIndex);
               DataColor = *(pColor + x) & 0xFFFFFF;
               Color = LCD_MixColors256(DataColor, BkColor, 255 - Alpha);
-              *(pBkGnd + x) = pfColor2Index(Color);
+              *(pBkGnd + x) = GUI_Color2Index(Color);
             } else {
               Color = *(pColor + x) & 0xFFFFFF;
-              *(pBkGnd + x) = pfColor2Index(Color);
+              *(pBkGnd + x) = GUI_Color2Index(Color);
             }
           }
         } else {
@@ -463,7 +473,7 @@ static int _Draw(int x0, int y0, GUI_PNG_CONTEXT * pContext) {
             Alpha = *(pColor + x) >> 24;
             if (Alpha == 0) {
               Color = *(pColor + x);
-              *(pBkGnd + x) = pfColor2Index(Color);
+              *(pBkGnd + x) = GUI_Color2Index(Color);
             }
           }
         }
@@ -477,11 +487,6 @@ static int _Draw(int x0, int y0, GUI_PNG_CONTEXT * pContext) {
       #if (GUI_WINSUPPORT)
         } WM_ITERATE_END();
       #endif
-      //
-      // Unlock pointers
-      //
-      GUI_UNLOCK_H(pColor);
-      GUI_UNLOCK_H(pBkGnd);
     }
     GUI_ALLOC_Free(hColor);
     GUI_ALLOC_Free(hBkGnd);

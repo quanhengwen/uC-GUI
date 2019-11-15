@@ -702,6 +702,24 @@ void GUI_MoveTo           (int x, int y);
 
 /*********************************************************************
 *
+*       IMAGE file support
+*/
+typedef int GUI_GET_DATA_FUNC(void * p, const U8 ** ppData, unsigned NumBytes, U32 Off);
+
+/*********************************************************************
+*
+*       PNG file support
+*/
+int GUI_PNG_Draw      (const void * pFileData, int DataSize, int x0, int y0);
+int GUI_PNG_DrawEx    (GUI_GET_DATA_FUNC * pfGetData, void * p, int x0, int y0);
+int GUI_PNG_GetXSize  (const void * pFileData, int FileSize);
+int GUI_PNG_GetXSizeEx(GUI_GET_DATA_FUNC * pfGetData, void * p);
+int GUI_PNG_GetYSize  (const void * pFileData, int FileSize);
+int GUI_PNG_GetYSizeEx(GUI_GET_DATA_FUNC * pfGetData, void * p);
+
+
+/*********************************************************************
+*
 *       JPEG support
 *
 **********************************************************************
