@@ -28,6 +28,8 @@
   (zlib format), rfc1951.txt (deflate format) and rfc1952.txt (gzip format).
 */
 
+//JE: Renamed to ttzlib.h
+
 #ifndef _ZLIB_H
 #define _ZLIB_H
 
@@ -106,12 +108,12 @@ typedef z_stream FAR *z_streamp;
 
    On 16-bit systems, the functions zalloc and zfree must be able to allocate
    exactly 65536 bytes, but will not be required to allocate more than this
-   if the symbol MAXSEG_64K is defined (see ttzconf.h). WARNING: On MSDOS,
+   if the symbol MAXSEG_64K is defined (see zconf.h). WARNING: On MSDOS,
    pointers returned by zalloc for objects of exactly 65536 bytes *must*
    have their offset normalized to zero. The default allocation function
    provided by this library ensures this (see zutil.c). To reduce memory
    requirements and avoid any allocation of 64K objects, at the expense of
-   compression ratio, compile the library with -DMAX_WBITS=14 (see ttzconf.h).
+   compression ratio, compile the library with -DMAX_WBITS=14 (see zconf.h).
 
    The fields total_in and total_out can be used for statistics or
    progress reports. After compression, total_in holds the total size of
@@ -416,7 +418,7 @@ ZEXTERN(int)  deflateInit2 OF((z_streamp strm,
      The memLevel parameter specifies how much memory should be allocated
    for the internal compression state. memLevel=1 uses minimum memory but
    is slow and reduces compression ratio; memLevel=9 uses maximum memory
-   for optimal speed. The default value is 8. See ttzconf.h for total memory
+   for optimal speed. The default value is 8. See zconf.h for total memory
    usage as a function of windowBits and memLevel.
 
      The strategy parameter is used to tune the compression algorithm. Use the

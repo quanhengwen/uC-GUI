@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Single object library component.                                     */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2006, 2013 by                                           */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -21,12 +21,155 @@
 #include "ft2build.h"
 /***************************************************************************/
 /*                                                                         */
+/*  sfntpic.c                                                              */
+/*                                                                         */
+/*    The FreeType position independent code services for sfnt module.     */
+/*                                                                         */
+/*  Copyright 2009, 2010, 2012, 2013 by                                    */
+/*  Oran Agra and Mickey Gabel.                                            */
+/*                                                                         */
+/*  This file is part of the FreeType project, and may only be used,       */
+/*  modified, and distributed under the terms of the FreeType project      */
+/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
+/*  this file you indicate that you have read the license and              */
+/*  understand and accept it fully.                                        */
+/*                                                                         */
+/***************************************************************************/
+
+
+#include "ft2build.h"
+#include FT_FREETYPE_H
+#include FT_INTERNAL_OBJECTS_H
+#include "sfntpic.h"
+#include "sferrors.h"
+
+
+#ifdef FT_CONFIG_OPTION_PIC
+
+  /* forward declaration of PIC init functions from sfdriver.c */
+  FT_Error
+  FT_Create_Class_sfnt_services( FT_Library           library,
+                                 FT_ServiceDescRec**  output_class );
+  void
+  FT_Destroy_Class_sfnt_services( FT_Library          library,
+                                  FT_ServiceDescRec*  clazz );
+  void
+  FT_Init_Class_sfnt_service_bdf( FT_Service_BDFRec*  clazz );
+  void
+  FT_Init_Class_sfnt_interface( FT_Library       library,
+                                SFNT_Interface*  clazz );
+  void
+  FT_Init_Class_sfnt_service_glyph_dict(
+    FT_Library                library,
+    FT_Service_GlyphDictRec*  clazz );
+  void
+  FT_Init_Class_sfnt_service_ps_name(
+    FT_Library                 library,
+    FT_Service_PsFontNameRec*  clazz );
+  void
+  FT_Init_Class_tt_service_get_cmap_info(
+    FT_Library              library,
+    FT_Service_TTCMapsRec*  clazz );
+  void
+  FT_Init_Class_sfnt_service_sfnt_table(
+    FT_Service_SFNT_TableRec*  clazz );
+
+
+  /* forward declaration of PIC init functions from ttcmap.c */
+  FT_Error
+  FT_Create_Class_tt_cmap_classes( FT_Library       library,
+                                   TT_CMap_Class**  output_class );
+  void
+  FT_Destroy_Class_tt_cmap_classes( FT_Library      library,
+                                    TT_CMap_Class*  clazz );
+
+
+  void
+  sfnt_module_class_pic_free( FT_Library  library )
+  {
+    FT_PIC_Container*  pic_container = &library->pic_container;
+    FT_Memory          memory        = library->memory;
+
+
+    if ( pic_container->sfnt )
+    {
+      sfntModulePIC*  container = (sfntModulePIC*)pic_container->sfnt;
+
+
+      if ( container->sfnt_services )
+        FT_Destroy_Class_sfnt_services( library,
+                                        container->sfnt_services );
+      container->sfnt_services = NULL;
+
+      if ( container->tt_cmap_classes )
+        FT_Destroy_Class_tt_cmap_classes( library,
+                                          container->tt_cmap_classes );
+      container->tt_cmap_classes = NULL;
+
+      FT_FREE( container );
+      pic_container->sfnt = NULL;
+    }
+  }
+
+
+  FT_Error
+  sfnt_module_class_pic_init( FT_Library  library )
+  {
+    FT_PIC_Container*  pic_container = &library->pic_container;
+    FT_Error           error         = FT_Err_Ok;
+    sfntModulePIC*     container     = NULL;
+    FT_Memory          memory        = library->memory;
+
+
+    /* allocate pointer, clear and set global container pointer */
+    if ( FT_ALLOC( container, sizeof ( *container ) ) )
+      return error;
+    FT_MEM_SET( container, 0, sizeof ( *container ) );
+    pic_container->sfnt = container;
+
+    /* initialize pointer table -                       */
+    /* this is how the module usually expects this data */
+    error = FT_Create_Class_sfnt_services( library,
+                                           &container->sfnt_services );
+    if ( error )
+      goto Exit;
+
+    error = FT_Create_Class_tt_cmap_classes( library,
+                                             &container->tt_cmap_classes );
+    if ( error )
+      goto Exit;
+
+    FT_Init_Class_sfnt_service_glyph_dict(
+      library, &container->sfnt_service_glyph_dict );
+    FT_Init_Class_sfnt_service_ps_name(
+      library, &container->sfnt_service_ps_name );
+    FT_Init_Class_tt_service_get_cmap_info(
+      library, &container->tt_service_get_cmap_info );
+    FT_Init_Class_sfnt_service_sfnt_table(
+      &container->sfnt_service_sfnt_table );
+#ifdef TT_CONFIG_OPTION_BDF
+    FT_Init_Class_sfnt_service_bdf( &container->sfnt_service_bdf );
+#endif
+    FT_Init_Class_sfnt_interface( library, &container->sfnt_interface );
+
+  Exit:
+    if ( error )
+      sfnt_module_class_pic_free( library );
+    return error;
+  }
+
+#endif /* FT_CONFIG_OPTION_PIC */
+
+
+/* END */
+/***************************************************************************/
+/*                                                                         */
 /*  ttload.c                                                               */
 /*                                                                         */
 /*    Load the basic TrueType tables, i.e., tables that can be either in   */
 /*    TTF or OTF fonts (body).                                             */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2010, 2012, 2013 by                                     */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -79,6 +222,9 @@
   {
     TT_Table  entry;
     TT_Table  limit;
+#ifdef FT_DEBUG_LEVEL_TRACE
+    FT_Bool   zero_length = FALSE;
+#endif
 
 
     FT_TRACE4(( "tt_face_lookup_table: %08p, `%c%c%c%c' -- ",
@@ -93,17 +239,29 @@
 
     for ( ; entry < limit; entry++ )
     {
-      /* For compatibility with Windows, we consider 0-length */
-      /* tables the same as missing tables.                   */
-      if ( entry->Tag == tag && entry->Length != 0 )
+      /* For compatibility with Windows, we consider    */
+      /* zero-length tables the same as missing tables. */
+      if ( entry->Tag == tag )
       {
-        FT_TRACE4(( "found table.\n" ));
-        return entry;
+        if ( entry->Length != 0 )
+        {
+          FT_TRACE4(( "found table.\n" ));
+          return entry;
+        }
+#ifdef FT_DEBUG_LEVEL_TRACE
+        zero_length = TRUE;
+#endif
       }
     }
 
-    FT_TRACE4(( "could not find table!\n" ));
-    return 0;
+#ifdef FT_DEBUG_LEVEL_TRACE
+    if ( zero_length )
+      FT_TRACE4(( "ignoring empty table\n" ));
+    else
+      FT_TRACE4(( "could not find table\n" ));
+#endif
+
+    return NULL;
   }
 
 
@@ -145,37 +303,40 @@
         *length = table->Length;
 
       if ( FT_STREAM_SEEK( table->Offset ) )
-       goto Exit;
+        goto Exit;
     }
     else
-      error = SFNT_Err_Table_Missing;
+      error = FT_THROW( Table_Missing );
 
   Exit:
     return error;
   }
 
 
-  /* Here, we                                                              */
-  /*                                                                       */
-  /* - check that `num_tables' is valid                                    */
-  /* - look for a `head' table, check its size, and parse it to check      */
-  /*   whether its `magic' field is correctly set                          */
-  /*                                                                       */
-  /* When checking directory entries, ignore the tables `glyx' and `locx'  */
-  /* which are hacked-out versions of `glyf' and `loca' in some PostScript */
-  /* Type 42 fonts, and which are generally invalid.                       */
-  /*                                                                       */
+  /* Here, we                                                         */
+  /*                                                                  */
+  /* - check that `num_tables' is valid (and adjust it if necessary)  */
+  /*                                                                  */
+  /* - look for a `head' table, check its size, and parse it to check */
+  /*   whether its `magic' field is correctly set                     */
+  /*                                                                  */
+  /* - errors (except errors returned by stream handling)             */
+  /*                                                                  */
+  /*     SFNT_Err_Unknown_File_Format:                                */
+  /*       no table is defined in directory, it is not sfnt-wrapped   */
+  /*       data                                                       */
+  /*     SFNT_Err_Table_Missing:                                      */
+  /*       table directory is valid, but essential tables             */
+  /*       (head/bhed/SING) are missing                               */
+  /*                                                                  */
   static FT_Error
   check_table_dir( SFNT_Header  sfnt,
                    FT_Stream    stream )
   {
-    FT_Error        error;
-    FT_UInt         nn;
-    FT_UInt         has_head = 0, has_sing = 0, has_meta = 0;
-    FT_ULong        offset = sfnt->offset + 12;
-
-    const FT_ULong  glyx_tag = FT_MAKE_TAG( 'g', 'l', 'y', 'x' );
-    const FT_ULong  locx_tag = FT_MAKE_TAG( 'l', 'o', 'c', 'x' );
+    FT_Error   error;
+    FT_UShort  nn, valid_entries = 0;
+    FT_UInt    has_head = 0, has_sing = 0, has_meta = 0;
+    FT_ULong   offset = sfnt->offset + 12;
 
     static const FT_Frame_Field  table_dir_entry_fields[] =
     {
@@ -191,12 +352,8 @@
     };
 
 
-    if ( sfnt->num_tables == 0                         ||
-         offset + sfnt->num_tables * 16 > stream->size )
-      return SFNT_Err_Unknown_File_Format;
-
     if ( FT_STREAM_SEEK( offset ) )
-      return error;
+      goto Exit;
 
     for ( nn = 0; nn < sfnt->num_tables; nn++ )
     {
@@ -204,12 +361,23 @@
 
 
       if ( FT_STREAM_READ_FIELDS( table_dir_entry_fields, &table ) )
-        return error;
+      {
+        nn--;
+        FT_TRACE2(( "check_table_dir:"
+                    " can read only %d table%s in font (instead of %d)\n",
+                    nn, nn == 1 ? "" : "s", sfnt->num_tables ));
+        sfnt->num_tables = nn;
+        break;
+      }
 
-      if ( table.Offset + table.Length > stream->size &&
-           table.Tag != glyx_tag                      &&
-           table.Tag != locx_tag                      )
-        return SFNT_Err_Unknown_File_Format;
+      /* we ignore invalid tables */
+      if ( table.Offset + table.Length > stream->size )
+      {
+        FT_TRACE2(( "check_table_dir: table entry %d invalid\n", nn ));
+        continue;
+      }
+      else
+        valid_entries++;
 
       if ( table.Tag == TTAG_head || table.Tag == TTAG_bhed )
       {
@@ -231,17 +399,23 @@
          *
          */
         if ( table.Length < 0x36 )
-          return SFNT_Err_Unknown_File_Format;
+        {
+          FT_TRACE2(( "check_table_dir:"
+                      " `head' or `bhed' table too small\n" ));
+          error = FT_THROW( Table_Missing );
+          goto Exit;
+        }
 
         if ( FT_STREAM_SEEK( table.Offset + 12 ) ||
              FT_READ_ULONG( magic )              )
-          return error;
+          goto Exit;
 
         if ( magic != 0x5F0F3CF5UL )
-          return SFNT_Err_Unknown_File_Format;
+          FT_TRACE2(( "check_table_dir:"
+                      " invalid magic number in `head' or `bhed' table\n"));
 
         if ( FT_STREAM_SEEK( offset + ( nn + 1 ) * 16 ) )
-          return error;
+          goto Exit;
       }
       else if ( table.Tag == TTAG_SING )
         has_sing = 1;
@@ -249,11 +423,34 @@
         has_meta = 1;
     }
 
+    sfnt->num_tables = valid_entries;
+
+    if ( sfnt->num_tables == 0 )
+    {
+      FT_TRACE2(( "check_table_dir: no tables found\n" ));
+      error = FT_THROW( Unknown_File_Format );
+      goto Exit;
+    }
+
     /* if `sing' and `meta' tables are present, there is no `head' table */
     if ( has_head || ( has_sing && has_meta ) )
-      return SFNT_Err_Ok;
+    {
+      error = FT_Err_Ok;
+      goto Exit;
+    }
     else
-      return SFNT_Err_Unknown_File_Format;
+    {
+      FT_TRACE2(( "check_table_dir:" ));
+#ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
+      FT_TRACE2(( " neither `head', `bhed', nor `sing' table found\n" ));
+#else
+      FT_TRACE2(( " neither `head' nor `sing' table found\n" ));
+#endif
+      error = FT_THROW( Table_Missing );
+    }
+
+  Exit:
+    return error;
   }
 
 
@@ -287,7 +484,7 @@
     FT_Error        error;
     FT_Memory       memory = stream->memory;
     TT_TableRec*    entry;
-    TT_TableRec*    limit;
+    FT_Int          nn;
 
     static const FT_Frame_Field  offset_table_fields[] =
     {
@@ -311,62 +508,78 @@
 
     if ( FT_READ_ULONG( sfnt.format_tag )                    ||
          FT_STREAM_READ_FIELDS( offset_table_fields, &sfnt ) )
-      return error;
+      goto Exit;
 
     /* many fonts don't have these fields set correctly */
 #if 0
     if ( sfnt.search_range != 1 << ( sfnt.entry_selector + 4 )        ||
          sfnt.search_range + sfnt.range_shift != sfnt.num_tables << 4 )
-      return SFNT_Err_Unknown_File_Format;
+      return FT_THROW( Unknown_File_Format );
 #endif
 
     /* load the table directory */
 
-    FT_TRACE2(( "-- Tables count:   %12u\n",  sfnt.num_tables ));
-    FT_TRACE2(( "-- Format version: %08lx\n", sfnt.format_tag ));
+    FT_TRACE2(( "-- Number of tables: %10u\n",    sfnt.num_tables ));
+    FT_TRACE2(( "-- Format version:   0x%08lx\n", sfnt.format_tag ));
 
-    /* check first */
-    error = check_table_dir( &sfnt, stream );
-    if ( error )
+    if ( sfnt.format_tag != TTAG_OTTO )
     {
-      FT_TRACE2(( "tt_face_load_font_dir: invalid table directory!\n" ));
+      /* check first */
+      error = check_table_dir( &sfnt, stream );
+      if ( error )
+      {
+        FT_TRACE2(( "tt_face_load_font_dir:"
+                    " invalid table directory for TrueType\n" ));
 
-      return error;
+        goto Exit;
+      }
     }
 
     face->num_tables = sfnt.num_tables;
     face->format_tag = sfnt.format_tag;
 
     if ( FT_QNEW_ARRAY( face->dir_tables, face->num_tables ) )
-      return error;
+      goto Exit;
 
     if ( FT_STREAM_SEEK( sfnt.offset + 12 )       ||
          FT_FRAME_ENTER( face->num_tables * 16L ) )
-      return error;
+      goto Exit;
 
     entry = face->dir_tables;
-    limit = entry + face->num_tables;
 
-    for ( ; entry < limit; entry++ )
+    FT_TRACE2(( "\n"
+                "  tag    offset    length   checksum\n"
+                "  ----------------------------------\n" ));
+
+    for ( nn = 0; nn < sfnt.num_tables; nn++ )
     {
       entry->Tag      = FT_GET_TAG4();
       entry->CheckSum = FT_GET_ULONG();
-      entry->Offset   = FT_GET_LONG();
-      entry->Length   = FT_GET_LONG();
+      entry->Offset   = FT_GET_ULONG();
+      entry->Length   = FT_GET_ULONG();
 
-      FT_TRACE2(( "  %c%c%c%c  -  %08lx  -  %08lx\n",
-                  (FT_Char)( entry->Tag >> 24 ),
-                  (FT_Char)( entry->Tag >> 16 ),
-                  (FT_Char)( entry->Tag >> 8  ),
-                  (FT_Char)( entry->Tag       ),
-                  entry->Offset,
-                  entry->Length ));
+      /* ignore invalid tables */
+      if ( entry->Offset + entry->Length > stream->size )
+        continue;
+      else
+      {
+        FT_TRACE2(( "  %c%c%c%c  %08lx  %08lx  %08lx\n",
+                    (FT_Char)( entry->Tag >> 24 ),
+                    (FT_Char)( entry->Tag >> 16 ),
+                    (FT_Char)( entry->Tag >> 8  ),
+                    (FT_Char)( entry->Tag       ),
+                    entry->Offset,
+                    entry->Length,
+                    entry->CheckSum ));
+        entry++;
+      }
     }
 
     FT_FRAME_EXIT();
 
     FT_TRACE2(( "table directory loaded\n\n" ));
 
+  Exit:
     return error;
   }
 
@@ -430,7 +643,7 @@
       table = tt_face_lookup_table( face, tag );
       if ( !table )
       {
-        error = SFNT_Err_Table_Missing;
+        error = FT_THROW( Table_Missing );
         goto Exit;
       }
 
@@ -445,7 +658,7 @@
     {
       *length = size;
 
-      return SFNT_Err_Ok;
+      return FT_Err_Ok;
     }
 
     if ( length )
@@ -574,7 +787,7 @@
     FT_Error        error;
     TT_MaxProfile*  maxProfile = &face->max_profile;
 
-    const FT_Frame_Field  maxp_fields[] =
+    static const FT_Frame_Field  maxp_fields[] =
     {
 #undef  FT_STRUCTURE
 #define FT_STRUCTURE  TT_MaxProfile
@@ -585,7 +798,7 @@
       FT_FRAME_END
     };
 
-    const FT_Frame_Field  maxp_fields_extra[] =
+    static const FT_Frame_Field  maxp_fields_extra[] =
     {
       FT_FRAME_START( 26 ),
         FT_FRAME_USHORT( maxPoints ),
@@ -635,10 +848,30 @@
       /*      broken fonts like `Keystrokes MT' :-(           */
       /*                                                      */
       /*   We allocate 64 function entries by default when    */
-      /*   the maxFunctionDefs field is null.                 */
+      /*   the maxFunctionDefs value is smaller.              */
 
-      if ( maxProfile->maxFunctionDefs == 0 )
+      if ( maxProfile->maxFunctionDefs < 64 )
         maxProfile->maxFunctionDefs = 64;
+
+      /* we add 4 phantom points later */
+      if ( maxProfile->maxTwilightPoints > ( 0xFFFFU - 4 ) )
+      {
+        FT_TRACE0(( "tt_face_load_maxp:"
+                    " too much twilight points in `maxp' table;\n"
+                    "                  "
+                    " some glyphs might be rendered incorrectly\n" ));
+
+        maxProfile->maxTwilightPoints = 0xFFFFU - 4;
+      }
+
+      /* we arbitrarily limit recursion to avoid stack exhaustion */
+      if ( maxProfile->maxComponentDepth > 100 )
+      {
+        FT_TRACE0(( "tt_face_load_maxp:"
+                    " abnormally large component depth (%d) set to 100\n",
+                    maxProfile->maxComponentDepth ));
+        maxProfile->maxComponentDepth = 100;
+      }
     }
 
     FT_TRACE3(( "numGlyphs: %u\n", maxProfile->numGlyphs ));
@@ -651,7 +884,7 @@
   /*************************************************************************/
   /*                                                                       */
   /* <Function>                                                            */
-  /*    tt_face_load_names                                                 */
+  /*    tt_face_load_name                                                  */
   /*                                                                       */
   /* <Description>                                                         */
   /*    Loads the name records.                                            */
@@ -728,8 +961,8 @@
 
     if ( storage_start > storage_limit )
     {
-      FT_ERROR(( "invalid `name' table\n" ));
-      error = SFNT_Err_Name_Table_Missing;
+      FT_ERROR(( "tt_face_load_name: invalid `name' table\n" ));
+      error = FT_THROW( Name_Table_Missing );
       goto Exit;
     }
 
@@ -827,8 +1060,8 @@
   /*    tt_face_load_cmap                                                  */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Loads the cmap directory in a face object.  The cmaps itselves are */
-  /*    loaded on demand in the `ttcmap.c' module.                         */
+  /*    Loads the cmap directory in a face object.  The cmaps themselves   */
+  /*    are loaded on demand in the `ttcmap.c' module.                     */
   /*                                                                       */
   /* <Input>                                                               */
   /*    face   :: A handle to the target face object.                      */
@@ -882,7 +1115,7 @@
     FT_Error  error;
     TT_OS2*   os2;
 
-    const FT_Frame_Field  os2_fields[] =
+    static const FT_Frame_Field  os2_fields[] =
     {
 #undef  FT_STRUCTURE
 #define FT_STRUCTURE  TT_OS2
@@ -934,7 +1167,8 @@
       FT_FRAME_END
     };
 
-    const FT_Frame_Field  os2_fields_extra[] =
+    /* `OS/2' version 1 and newer */
+    static const FT_Frame_Field  os2_fields_extra1[] =
     {
       FT_FRAME_START( 8 ),
         FT_FRAME_ULONG( ulCodePageRange1 ),
@@ -942,7 +1176,8 @@
       FT_FRAME_END
     };
 
-    const FT_Frame_Field  os2_fields_extra2[] =
+    /* `OS/2' version 2 and newer */
+    static const FT_Frame_Field  os2_fields_extra2[] =
     {
       FT_FRAME_START( 10 ),
         FT_FRAME_SHORT ( sxHeight ),
@@ -950,6 +1185,15 @@
         FT_FRAME_USHORT( usDefaultChar ),
         FT_FRAME_USHORT( usBreakChar ),
         FT_FRAME_USHORT( usMaxContext ),
+      FT_FRAME_END
+    };
+
+    /* `OS/2' version 5 and newer */
+    static const FT_Frame_Field  os2_fields_extra5[] =
+    {
+      FT_FRAME_START( 4 ),
+        FT_FRAME_USHORT( usLowerOpticalPointSize ),
+        FT_FRAME_USHORT( usUpperOpticalPointSize ),
       FT_FRAME_END
     };
 
@@ -966,18 +1210,20 @@
     if ( FT_STREAM_READ_FIELDS( os2_fields, os2 ) )
       goto Exit;
 
-    os2->ulCodePageRange1 = 0;
-    os2->ulCodePageRange2 = 0;
-    os2->sxHeight         = 0;
-    os2->sCapHeight       = 0;
-    os2->usDefaultChar    = 0;
-    os2->usBreakChar      = 0;
-    os2->usMaxContext     = 0;
+    os2->ulCodePageRange1        = 0;
+    os2->ulCodePageRange2        = 0;
+    os2->sxHeight                = 0;
+    os2->sCapHeight              = 0;
+    os2->usDefaultChar           = 0;
+    os2->usBreakChar             = 0;
+    os2->usMaxContext            = 0;
+    os2->usLowerOpticalPointSize = 0;
+    os2->usUpperOpticalPointSize = 0xFFFF;
 
     if ( os2->version >= 0x0001 )
     {
       /* only version 1 tables */
-      if ( FT_STREAM_READ_FIELDS( os2_fields_extra, os2 ) )
+      if ( FT_STREAM_READ_FIELDS( os2_fields_extra1, os2 ) )
         goto Exit;
 
       if ( os2->version >= 0x0002 )
@@ -985,6 +1231,13 @@
         /* only version 2 tables */
         if ( FT_STREAM_READ_FIELDS( os2_fields_extra2, os2 ) )
           goto Exit;
+
+        if ( os2->version >= 0x0005 )
+        {
+          /* only version 5 tables */
+          if ( FT_STREAM_READ_FIELDS( os2_fields_extra5, os2 ) )
+            goto Exit;
+        }
       }
     }
 
@@ -1055,7 +1308,7 @@
     FT_TRACE3(( "isFixedPitch:   %s\n", post->isFixedPitch
                                         ? "  yes" : "   no" ));
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -1092,6 +1345,7 @@
         FT_FRAME_USHORT( Style ),
         FT_FRAME_USHORT( TypeFamily ),
         FT_FRAME_USHORT( CapHeight ),
+        FT_FRAME_USHORT( SymbolSet ),
         FT_FRAME_BYTES ( TypeFace, 16 ),
         FT_FRAME_BYTES ( CharacterComplement, 8 ),
         FT_FRAME_BYTES ( FileName, 6 ),
@@ -1143,7 +1397,7 @@
     FT_Memory  memory = stream->memory;
 
     FT_UInt        j,num_ranges;
-    TT_GaspRange   gaspranges;
+    TT_GaspRange   gaspranges = NULL;
 
 
     /* the gasp table is optional */
@@ -1159,14 +1413,22 @@
 
     FT_FRAME_EXIT();
 
+    /* only support versions 0 and 1 of the table */
+    if ( face->gasp.version >= 2 )
+    {
+      face->gasp.numRanges = 0;
+      error = FT_THROW( Invalid_Table );
+      goto Exit;
+    }
+
     num_ranges = face->gasp.numRanges;
     FT_TRACE3(( "numRanges: %u\n", num_ranges ));
 
-    if ( FT_QNEW_ARRAY( gaspranges, num_ranges ) ||
-         FT_FRAME_ENTER( num_ranges * 4L )      )
+    if ( FT_QNEW_ARRAY( face->gasp.gaspRanges, num_ranges ) ||
+         FT_FRAME_ENTER( num_ranges * 4L )                  )
       goto Exit;
 
-    face->gasp.gaspRanges = gaspranges;
+    gaspranges = face->gasp.gaspRanges;
 
     for ( j = 0; j < num_ranges; j++ )
     {
@@ -1187,14 +1449,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  ttmtx.c                                                                */
 /*                                                                         */
 /*    Load the metrics tables common to TTF and OTF fonts (body).          */
 /*                                                                         */
-/*  Copyright 2006 by                                                      */
+/*  Copyright 2006-2009, 2011-2013 by                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1225,13 +1486,6 @@
 #define FT_COMPONENT  trace_ttmtx
 
 
-  /*
-   *  Unfortunately, we can't enable our memory optimizations if
-   *  FT_CONFIG_OPTION_OLD_INTERNALS is defined.  This is because at least
-   *  one rogue client (libXfont in the X.Org XServer) is directly accessing
-   *  the metrics.
-   */
-
   /*************************************************************************/
   /*                                                                       */
   /* <Function>                                                            */
@@ -1250,169 +1504,40 @@
   /* <Return>                                                              */
   /*    FreeType error code.  0 means success.                             */
   /*                                                                       */
-#if defined FT_OPTIMIZE_MEMORY && !defined FT_CONFIG_OPTION_OLD_INTERNALS
-
   FT_LOCAL_DEF( FT_Error )
   tt_face_load_hmtx( TT_Face    face,
                      FT_Stream  stream,
                      FT_Bool    vertical )
   {
     FT_Error   error;
-    FT_ULong   table_size;
-    FT_Byte**  ptable;
+    FT_ULong   tag, table_size;
+    FT_ULong*  ptable_offset;
     FT_ULong*  ptable_size;
-    
-    
+
+
     if ( vertical )
     {
-      error = face->goto_table( face, TTAG_vmtx, stream, &table_size );
-      if ( error )
-        goto Fail;
-
-      ptable      = &face->vert_metrics;
-      ptable_size = &face->vert_metrics_size;
+      tag           = TTAG_vmtx;
+      ptable_offset = &face->vert_metrics_offset;
+      ptable_size   = &face->vert_metrics_size;
     }
     else
     {
-      error = face->goto_table( face, TTAG_hmtx, stream, &table_size );
-      if ( error )
-        goto Fail;
-
-      ptable      = &face->horz_metrics;
-      ptable_size = &face->horz_metrics_size;
+      tag           = TTAG_hmtx;
+      ptable_offset = &face->horz_metrics_offset;
+      ptable_size   = &face->horz_metrics_size;
     }
-    
-    if ( FT_FRAME_EXTRACT( table_size, *ptable ) )
+
+    error = face->goto_table( face, tag, stream, &table_size );
+    if ( error )
       goto Fail;
-      
-    *ptable_size = table_size;
+
+    *ptable_size   = table_size;
+    *ptable_offset = FT_STREAM_POS();
 
   Fail:
     return error;
   }
-
-#else /* !OPTIMIZE_MEMORY || OLD_INTERNALS */
-
-  FT_LOCAL_DEF( FT_Error )
-  tt_face_load_hmtx( TT_Face    face,
-                     FT_Stream  stream,
-                     FT_Bool    vertical )
-  {
-    FT_Error   error;
-    FT_Memory  memory = stream->memory;
-
-    FT_ULong   table_len;
-    FT_Long    num_shorts, num_longs, num_shorts_checked;
-
-    TT_LongMetrics *   longs;
-    TT_ShortMetrics**  shorts;
-
-
-    if ( vertical )
-    {
-      error = face->goto_table( face, TTAG_vmtx, stream, &table_len );
-      if ( error )
-        goto Fail;
-
-      num_longs = face->vertical.number_Of_VMetrics;
-      if ( (FT_ULong)num_longs > table_len / 4 )
-        num_longs = (FT_Long)(table_len / 4);
-
-      face->vertical.number_Of_VMetrics = 0;
-
-      longs  = (TT_LongMetrics *)&face->vertical.long_metrics;
-      shorts = (TT_ShortMetrics**)&face->vertical.short_metrics;
-    }
-    else
-    {
-      error = face->goto_table( face, TTAG_hmtx, stream, &table_len );
-      if ( error )
-        goto Fail;
-
-      num_longs = face->horizontal.number_Of_HMetrics;
-      if ( (FT_ULong)num_longs > table_len / 4 )
-        num_longs = (FT_Long)(table_len / 4);
-
-      face->horizontal.number_Of_HMetrics = 0;
-
-      longs  = (TT_LongMetrics *)&face->horizontal.long_metrics;
-      shorts = (TT_ShortMetrics**)&face->horizontal.short_metrics;
-    }
-
-    /* never trust derived values */
-
-    num_shorts         = face->max_profile.numGlyphs - num_longs;
-    num_shorts_checked = ( table_len - num_longs * 4L ) / 2;
-
-    if ( num_shorts < 0 )
-    {
-      FT_ERROR(( "%cmtx has more metrics than glyphs.\n" ));
-
-      /* Adobe simply ignores this problem.  So we shall do the same. */
-#if 0
-      error = vertical ? SFNT_Err_Invalid_Vert_Metrics
-                       : SFNT_Err_Invalid_Horiz_Metrics;
-      goto Exit;
-#else
-      num_shorts = 0;
-#endif
-    }
-
-    if ( FT_QNEW_ARRAY( *longs,  num_longs  ) ||
-         FT_QNEW_ARRAY( *shorts, num_shorts ) )
-      goto Fail;
-
-    if ( FT_FRAME_ENTER( table_len ) )
-      goto Fail;
-
-    {
-      TT_LongMetrics  cur   = *longs;
-      TT_LongMetrics  limit = cur + num_longs;
-
-
-      for ( ; cur < limit; cur++ )
-      {
-        cur->advance = FT_GET_USHORT();
-        cur->bearing = FT_GET_SHORT();
-      }
-    }
-
-    /* do we have an inconsistent number of metric values? */
-    {
-      TT_ShortMetrics*  cur   = *shorts;
-      TT_ShortMetrics*  limit = cur +
-                                FT_MIN( num_shorts, num_shorts_checked );
-
-
-      for ( ; cur < limit; cur++ )
-        *cur = FT_GET_SHORT();
-
-      /* We fill up the missing left side bearings with the     */
-      /* last valid value.  Since this will occur for buggy CJK */
-      /* fonts usually only, nothing serious will happen.       */
-      if ( num_shorts > num_shorts_checked && num_shorts_checked > 0 )
-      {
-        FT_Short  val = (*shorts)[num_shorts_checked - 1];
-
-
-        limit = *shorts + num_shorts;
-        for ( ; cur < limit; cur++ )
-          *cur = val;
-      }
-    }
-
-    FT_FRAME_EXIT();
-
-    if ( vertical )
-      face->vertical.number_Of_VMetrics = (FT_UShort)num_longs;
-    else
-      face->horizontal.number_Of_HMetrics = (FT_UShort)num_longs;
-
-  Fail:
-    return error;
-  }
-
-#endif /* !OPTIMIZE_MEMORY || OLD_INTERNALS */
 
 
   /*************************************************************************/
@@ -1441,7 +1566,7 @@
     FT_Error        error;
     TT_HoriHeader*  header;
 
-    const FT_Frame_Field  metrics_header_fields[] =
+    static const FT_Frame_Field  metrics_header_fields[] =
     {
 #undef  FT_STRUCTURE
 #define FT_STRUCTURE  TT_HoriHeader
@@ -1470,11 +1595,14 @@
 
     if ( vertical )
     {
+      void  *v = &face->vertical;
+
+
       error = face->goto_table( face, TTAG_vhea, stream, 0 );
       if ( error )
         goto Fail;
 
-      header = (TT_HoriHeader*)&face->vertical;
+      header = (TT_HoriHeader*)v;
     }
     else
     {
@@ -1503,26 +1631,27 @@
   /*************************************************************************/
   /*                                                                       */
   /* <Function>                                                            */
-  /*    tt_face_get_metrics                                                */ 
+  /*    tt_face_get_metrics                                                */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Returns the horizontal or vertical metrics in font units for a     */
-  /*    given glyph.  The metrics are the left side bearing (resp. top     */
-  /*    side bearing) and advance width (resp. advance height).            */
+  /*    Return the horizontal or vertical metrics in font units for a      */
+  /*    given glyph.  The values are the left side bearing (top side       */
+  /*    bearing for vertical metrics) and advance width (advance height    */
+  /*    for vertical metrics).                                             */
   /*                                                                       */
   /* <Input>                                                               */
-  /*    header  :: A pointer to either the horizontal or vertical metrics  */
-  /*               structure.                                              */
+  /*    face     :: A pointer to the TrueType face structure.              */
   /*                                                                       */
-  /*    idx     :: The glyph index.                                        */
+  /*    vertical :: If set to TRUE, get vertical metrics.                  */
+  /*                                                                       */
+  /*    gindex   :: The glyph index.                                       */
   /*                                                                       */
   /* <Output>                                                              */
-  /*    bearing :: The bearing, either left side or top side.              */
+  /*    abearing :: The bearing, either left side or top side.             */
   /*                                                                       */
-  /*    advance :: The advance width resp. advance height.                 */
+  /*    aadvance :: The advance width or advance height, depending on      */
+  /*                the `vertical' flag.                                   */
   /*                                                                       */
-#if defined FT_OPTIMIZE_MEMORY && !defined FT_CONFIG_OPTION_OLD_INTERNALS
-
   FT_LOCAL_DEF( FT_Error )
   tt_face_get_metrics( TT_Face     face,
                        FT_Bool     vertical,
@@ -1530,24 +1659,30 @@
                        FT_Short   *abearing,
                        FT_UShort  *aadvance )
   {
+    FT_Error        error;
+    FT_Stream       stream = face->root.stream;
     TT_HoriHeader*  header;
-    FT_Byte*        p;
-    FT_Byte*        limit;
+    FT_ULong        table_pos, table_size, table_end;
     FT_UShort       k;
 
 
     if ( vertical )
     {
-      header = (TT_HoriHeader*)&face->vertical;
-      p      = face->vert_metrics;
-      limit  = p + face->vert_metrics_size;
+      void*  v = &face->vertical;
+
+
+      header     = (TT_HoriHeader*)v;
+      table_pos  = face->vert_metrics_offset;
+      table_size = face->vert_metrics_size;
     }
     else
     {
-      header = &face->horizontal;
-      p      = face->horz_metrics;
-      limit  = p + face->horz_metrics_size;
+      header     = &face->horizontal;
+      table_pos  = face->horz_metrics_offset;
+      table_size = face->horz_metrics_size;
     }
+
+    table_end = table_pos + table_size;
 
     k = header->number_Of_HMetrics;
 
@@ -1555,25 +1690,33 @@
     {
       if ( gindex < (FT_UInt)k )
       {
-        p += 4 * gindex;
-        if ( p + 4 > limit )
+        table_pos += 4 * gindex;
+        if ( table_pos + 4 > table_end )
           goto NoData;
 
-        *aadvance = FT_NEXT_USHORT( p );
-        *abearing = FT_NEXT_SHORT( p );
+        if ( FT_STREAM_SEEK( table_pos ) ||
+             FT_READ_USHORT( *aadvance ) ||
+             FT_READ_SHORT( *abearing )  )
+          goto NoData;
       }
       else
       {
-        p += 4 * ( k - 1 );
-        if ( p + 4 > limit )
+        table_pos += 4 * ( k - 1 );
+        if ( table_pos + 4 > table_end )
           goto NoData;
 
-        *aadvance = FT_NEXT_USHORT( p );
-        p += 2 + 2 * ( gindex - k );
-        if ( p + 2 > limit )
+        if ( FT_STREAM_SEEK( table_pos ) ||
+             FT_READ_USHORT( *aadvance ) )
+          goto NoData;
+
+        table_pos += 4 + 2 * ( gindex - k );
+        if ( table_pos + 2 > table_end )
           *abearing = 0;
         else
-          *abearing = FT_PEEK_SHORT( p );
+        {
+          if ( !FT_STREAM_SEEK( table_pos ) )
+            (void)FT_READ_SHORT( *abearing );
+        }
       }
     }
     else
@@ -1583,59 +1726,18 @@
       *aadvance = 0;
     }
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
-
-#else /* !OPTIMIZE_MEMORY || OLD_INTERNALS */
-
-  FT_LOCAL_DEF( FT_Error )
-  tt_face_get_metrics( TT_Face     face,
-                       FT_Bool     vertical,
-                       FT_UInt     gindex,
-                       FT_Short*   abearing,
-                       FT_UShort*  aadvance )
-  {
-    TT_HoriHeader*  header = vertical ? (TT_HoriHeader*)&face->vertical
-                                      :                 &face->horizontal;
-    TT_LongMetrics  longs_m;
-    FT_UShort       k = header->number_Of_HMetrics;
-
-
-    if ( k == 0                                         ||
-         !header->long_metrics                          ||
-         gindex >= (FT_UInt)face->max_profile.numGlyphs )
-    {
-      *abearing = *aadvance = 0;
-      return SFNT_Err_Ok;
-    }
-
-    if ( gindex < (FT_UInt)k )
-    {
-      longs_m   = (TT_LongMetrics)header->long_metrics + gindex;
-      *abearing = longs_m->bearing;
-      *aadvance = longs_m->advance;
-    }
-    else
-    {
-      *abearing = ((TT_ShortMetrics*)header->short_metrics)[gindex - k];
-      *aadvance = ((TT_LongMetrics)header->long_metrics)[k - 1].advance;
-    }
-
-    return SFNT_Err_Ok;
-  }
-
-#endif /* !OPTIMIZE_MEMORY || OLD_INTERNALS */
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  ttcmap.c                                                               */
 /*                                                                         */
 /*    TrueType character mapping table (cmap) support (body).              */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2004, 2005, 2006 by                              */
+/*  Copyright 2002-2010, 2012-2014 by                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1656,6 +1758,7 @@
 #include FT_INTERNAL_STREAM_H
 #include "ttload.h"
 #include "ttcmap.h"
+#include "sfntpic.h"
 
 
   /*************************************************************************/
@@ -1670,11 +1773,13 @@
 
 #define TT_PEEK_SHORT   FT_PEEK_SHORT
 #define TT_PEEK_USHORT  FT_PEEK_USHORT
+#define TT_PEEK_UINT24  FT_PEEK_UOFF3
 #define TT_PEEK_LONG    FT_PEEK_LONG
 #define TT_PEEK_ULONG   FT_PEEK_ULONG
 
 #define TT_NEXT_SHORT   FT_NEXT_SHORT
 #define TT_NEXT_USHORT  FT_NEXT_USHORT
+#define TT_NEXT_UINT24  FT_NEXT_UOFF3
 #define TT_NEXT_LONG    FT_NEXT_LONG
 #define TT_NEXT_ULONG   FT_NEXT_ULONG
 
@@ -1684,7 +1789,7 @@
                 FT_Byte*  table )
   {
     cmap->data = table;
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -1716,9 +1821,15 @@
   tt_cmap0_validate( FT_Byte*      table,
                      FT_Validator  valid )
   {
-    FT_Byte*  p      = table + 2;
-    FT_UInt   length = TT_NEXT_USHORT( p );
+    FT_Byte*  p;
+    FT_UInt   length;
 
+
+    if ( table + 2 + 2 > valid->limit )
+      FT_INVALID_TOO_SHORT;
+
+    p      = table + 2;           /* skip format */
+    length = TT_NEXT_USHORT( p );
 
     if ( table + length > valid->limit || length < 262 )
       FT_INVALID_TOO_SHORT;
@@ -1738,7 +1849,7 @@
       }
     }
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -1753,7 +1864,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   tt_cmap0_char_next( TT_CMap     cmap,
                       FT_UInt32  *pchar_code )
   {
@@ -1763,7 +1874,7 @@
     FT_UInt    gindex   = 0;
 
 
-    table += 6;  /* go to glyph ids */
+    table += 6;  /* go to glyph IDs */
     while ( ++charcode < 256 )
     {
       gindex = table[charcode];
@@ -1786,27 +1897,31 @@
     FT_Byte*  p = cmap->data + 4;
 
 
+    cmap_info->format   = 0;
     cmap_info->language = (FT_ULong)TT_PEEK_USHORT( p );
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
-  FT_CALLBACK_TABLE_DEF
-  const TT_CMap_ClassRec  tt_cmap0_class_rec =
-  {
-    {
-      sizeof ( TT_CMapRec ),
+  FT_DEFINE_TT_CMAP(
+    tt_cmap0_class_rec,
+    sizeof ( TT_CMapRec ),
 
-      (FT_CMap_InitFunc)     tt_cmap_init,
-      (FT_CMap_DoneFunc)     NULL,
-      (FT_CMap_CharIndexFunc)tt_cmap0_char_index,
-      (FT_CMap_CharNextFunc) tt_cmap0_char_next
-    },
+    (FT_CMap_InitFunc)     tt_cmap_init,
+    (FT_CMap_DoneFunc)     NULL,
+    (FT_CMap_CharIndexFunc)tt_cmap0_char_index,
+    (FT_CMap_CharNextFunc) tt_cmap0_char_next,
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
     0,
-    (TT_CMap_ValidateFunc)   tt_cmap0_validate,
-    (TT_CMap_Info_GetFunc)   tt_cmap0_get_info
-  };
+    (TT_CMap_ValidateFunc)tt_cmap0_validate,
+    (TT_CMap_Info_GetFunc)tt_cmap0_get_info )
 
 #endif /* TT_CONFIG_CMAP_FORMAT_0 */
 
@@ -1857,7 +1972,7 @@
   /*   language    4              USHORT          Mac language code        */
   /*   keys        6              USHORT[256]     sub-header keys          */
   /*   subs        518            SUBHEAD[NSUBS]  sub-headers array        */
-  /*   glyph_ids   518+NSUB*8     USHORT[]        glyph id array           */
+  /*   glyph_ids   518+NSUB*8     USHORT[]        glyph ID array           */
   /*                                                                       */
   /* The `keys' table is used to map charcode high-bytes to sub-headers.   */
   /* The value of `NSUBS' is the number of sub-headers defined in the      */
@@ -1886,14 +2001,14 @@
   /*                                                                       */
   /* * The value of `offset' is read.  This is a _byte_ distance from the  */
   /*   location of the `offset' field itself into a slice of the           */
-  /*   `glyph_ids' table.  Let's call it `slice' (it's a USHORT[] too).    */
+  /*   `glyph_ids' table.  Let's call it `slice' (it is a USHORT[] too).   */
   /*                                                                       */
   /* * The value `slice[char.lo - first]' is read.  If it is 0, there is   */
   /*   no glyph for the charcode.  Otherwise, the value of `delta' is      */
   /*   added to it (modulo 65536) to form a new glyph index.               */
   /*                                                                       */
   /* It is up to the validation routine to check that all offsets fall     */
-  /* within the glyph ids table (and not within the `subs' table itself or */
+  /* within the glyph IDs table (and not within the `subs' table itself or */
   /* outside of the CMap).                                                 */
   /*                                                                       */
 
@@ -1903,13 +2018,20 @@
   tt_cmap2_validate( FT_Byte*      table,
                      FT_Validator  valid )
   {
-    FT_Byte*  p      = table + 2;           /* skip format */
-    FT_UInt   length = TT_PEEK_USHORT( p );
-    FT_UInt   n, max_subs;
-    FT_Byte*  keys;                         /* keys table */
-    FT_Byte*  subs;                         /* sub-headers */
-    FT_Byte*  glyph_ids;                    /* glyph id array */
+    FT_Byte*  p;
+    FT_UInt   length;
 
+    FT_UInt   n, max_subs;
+    FT_Byte*  keys;        /* keys table     */
+    FT_Byte*  subs;        /* sub-headers    */
+    FT_Byte*  glyph_ids;   /* glyph ID array */
+
+
+    if ( table + 2 + 2 > valid->limit )
+      FT_INVALID_TOO_SHORT;
+
+    p      = table + 2;           /* skip format */
+    length = TT_NEXT_USHORT( p );
 
     if ( table + length > valid->limit || length < 6 + 512 )
       FT_INVALID_TOO_SHORT;
@@ -1944,15 +2066,18 @@
     /* parse sub-headers */
     for ( n = 0; n <= max_subs; n++ )
     {
-      FT_UInt   first_code, code_count, offset;
-      FT_Int    delta;
-      FT_Byte*  ids;
+      FT_UInt  first_code, code_count, offset;
+      FT_Int   delta;
 
 
       first_code = TT_NEXT_USHORT( p );
       code_count = TT_NEXT_USHORT( p );
       delta      = TT_NEXT_SHORT( p );
       offset     = TT_NEXT_USHORT( p );
+
+      /* many Dynalab fonts have empty sub-headers */
+      if ( code_count == 0 )
+        continue;
 
       /* check range within 0..255 */
       if ( valid->level >= FT_VALIDATE_PARANOID )
@@ -1964,11 +2089,14 @@
       /* check offset */
       if ( offset != 0 )
       {
+        FT_Byte*  ids;
+
+
         ids = p - 2 + offset;
         if ( ids < glyph_ids || ids + code_count*2 > table + length )
           FT_INVALID_OFFSET;
 
-        /* check glyph ids */
+        /* check glyph IDs */
         if ( valid->level >= FT_VALIDATE_TIGHT )
         {
           FT_Byte*  limit = p + code_count * 2;
@@ -1989,7 +2117,7 @@
       }
     }
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -2019,7 +2147,7 @@
         sub = subs;  /* jump to first sub-header */
 
         /* check that the sub-header for this byte is 0, which */
-        /* indicates that it's really a valid one-byte value   */
+        /* indicates that it is really a valid one-byte value  */
         /* Otherwise, return 0                                 */
         /*                                                     */
         p += char_lo * 2;
@@ -2084,7 +2212,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   tt_cmap2_char_next( TT_CMap     cmap,
                       FT_UInt32  *pcharcode )
   {
@@ -2158,27 +2286,31 @@
     FT_Byte*  p = cmap->data + 4;
 
 
+    cmap_info->format   = 2;
     cmap_info->language = (FT_ULong)TT_PEEK_USHORT( p );
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
-  FT_CALLBACK_TABLE_DEF
-  const TT_CMap_ClassRec  tt_cmap2_class_rec =
-  {
-    {
-      sizeof ( TT_CMapRec ),
+  FT_DEFINE_TT_CMAP(
+    tt_cmap2_class_rec,
+    sizeof ( TT_CMapRec ),
 
-      (FT_CMap_InitFunc)     tt_cmap_init,
-      (FT_CMap_DoneFunc)     NULL,
-      (FT_CMap_CharIndexFunc)tt_cmap2_char_index,
-      (FT_CMap_CharNextFunc) tt_cmap2_char_next
-    },
+    (FT_CMap_InitFunc)     tt_cmap_init,
+    (FT_CMap_DoneFunc)     NULL,
+    (FT_CMap_CharIndexFunc)tt_cmap2_char_index,
+    (FT_CMap_CharNextFunc) tt_cmap2_char_next,
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
     2,
-    (TT_CMap_ValidateFunc)   tt_cmap2_validate,
-    (TT_CMap_Info_GetFunc)   tt_cmap2_get_info
-  };
+    (TT_CMap_ValidateFunc)tt_cmap2_validate,
+    (TT_CMap_Info_GetFunc)tt_cmap2_get_info )
 
 #endif /* TT_CONFIG_CMAP_FORMAT_2 */
 
@@ -2224,14 +2356,14 @@
   /*                                                  each segment; can be */
   /*                                                  zero                 */
   /*                                                                       */
-  /*   glyphIds      16+NUM_SEGS*8  USHORT[]          array of glyph id    */
+  /*   glyphIds      16+NUM_SEGS*8  USHORT[]          array of glyph ID    */
   /*                                                  ranges               */
   /*                                                                       */
   /* Character codes are modelled by a series of ordered (increasing)      */
   /* intervals called segments.  Each segment has start and end codes,     */
   /* provided by the `startCount' and `endCount' arrays.  Segments must    */
-  /* not be overlapping and the last segment should always contain the     */
-  /* `0xFFFF' endCount.                                                    */
+  /* not overlap, and the last segment should always contain the value     */
+  /* 0xFFFF for `endCount'.                                                */
   /*                                                                       */
   /* The fields `searchRange', `entrySelector' and `rangeShift' are better */
   /* ignored (they are traces of over-engineering in the TrueType          */
@@ -2244,14 +2376,14 @@
   /* charcode within the segment is obtained by adding the value of        */
   /* `idDelta' directly to the charcode, modulo 65536.                     */
   /*                                                                       */
-  /* Otherwise, a glyph index is taken from the glyph ids sub-array for    */
+  /* Otherwise, a glyph index is taken from the glyph IDs sub-array for    */
   /* the segment, and the value of `idDelta' is added to it.               */
   /*                                                                       */
   /*                                                                       */
-  /* Finally, note that certain fonts contain invalid charmaps that        */
-  /* contain end=0xFFFF, start=0xFFFF, delta=0x0001, offset=0xFFFF at the  */
-  /* of their charmaps (e.g. opens___.ttf which comes with OpenOffice.org) */
-  /* we need special code to deal with them correctly...                   */
+  /* Finally, note that a lot of fonts contain an invalid last segment,    */
+  /* where `start' and `end' are correctly set to 0xFFFF but both `delta'  */
+  /* and `offset' are incorrect (e.g., `opens___.ttf' which comes with     */
+  /* OpenOffice.org).  We need special code to deal with them correctly.   */
   /*                                                                       */
 
 #ifdef TT_CONFIG_CMAP_FORMAT_4
@@ -2283,10 +2415,10 @@
 
     p                  = table + 6;
     cmap->num_ranges   = FT_PEEK_USHORT( p ) >> 1;
-    cmap->cur_charcode = 0xFFFFFFFFUL;
+    cmap->cur_charcode = (FT_UInt32)0xFFFFFFFFUL;
     cmap->cur_gindex   = 0;
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -2316,6 +2448,23 @@
       p     += num_ranges * 2;
       offset = FT_PEEK_USHORT( p );
 
+      /* some fonts have an incorrect last segment; */
+      /* we have to catch it                        */
+      if ( range_index     >= num_ranges - 1 &&
+           cmap->cur_start == 0xFFFFU        &&
+           cmap->cur_end   == 0xFFFFU        )
+      {
+        TT_Face   face  = (TT_Face)cmap->cmap.cmap.charmap.face;
+        FT_Byte*  limit = face->cmap_table + face->cmap_size;
+
+
+        if ( offset && p + offset + 2 > limit )
+        {
+          cmap->cur_delta = 1;
+          offset          = 0;
+        }
+      }
+
       if ( offset != 0xFFFFU )
       {
         cmap->cur_values = offset ? p + offset : NULL;
@@ -2339,12 +2488,12 @@
   tt_cmap4_next( TT_CMap4  cmap )
   {
     FT_UInt  charcode;
-    
+
 
     if ( cmap->cur_charcode >= 0xFFFFUL )
       goto Fail;
 
-    charcode = cmap->cur_charcode + 1;
+    charcode = (FT_UInt)cmap->cur_charcode + 1;
 
     if ( charcode < cmap->cur_start )
       charcode = cmap->cur_start;
@@ -2406,7 +2555,7 @@
     }
 
   Fail:
-    cmap->cur_charcode = 0xFFFFFFFFUL;
+    cmap->cur_charcode = (FT_UInt32)0xFFFFFFFFUL;
     cmap->cur_gindex   = 0;
   }
 
@@ -2415,12 +2564,19 @@
   tt_cmap4_validate( FT_Byte*      table,
                      FT_Validator  valid )
   {
-    FT_Byte*  p      = table + 2;               /* skip format */
-    FT_UInt   length = TT_NEXT_USHORT( p );
+    FT_Byte*  p;
+    FT_UInt   length;
+
     FT_Byte   *ends, *starts, *offsets, *deltas, *glyph_ids;
     FT_UInt   num_segs;
-    FT_Error  error = SFNT_Err_Ok;
+    FT_Error  error = FT_Err_Ok;
 
+
+    if ( table + 2 + 2 > valid->limit )
+      FT_INVALID_TOO_SHORT;
+
+    p      = table + 2;           /* skip format */
+    length = TT_NEXT_USHORT( p );
 
     if ( length < 16 )
       FT_INVALID_TOO_SHORT;
@@ -2454,7 +2610,7 @@
     /*                                                             */
     if ( valid->level >= FT_VALIDATE_PARANOID )
     {
-      /* check the values of 'searchRange', 'entrySelector', 'rangeShift' */
+      /* check the values of `searchRange', `entrySelector', `rangeShift' */
       FT_UInt  search_range   = TT_NEXT_USHORT( p );
       FT_UInt  entry_selector = TT_NEXT_USHORT( p );
       FT_UInt  range_shift    = TT_NEXT_USHORT( p );
@@ -2481,7 +2637,7 @@
     offsets   = deltas  + num_segs * 2;
     glyph_ids = offsets + num_segs * 2;
 
-    /* check last segment, its end count must be FFFF */
+    /* check last segment; its end count value must be 0xFFFF */
     if ( valid->level >= FT_VALIDATE_PARANOID )
     {
       p = ends + ( num_segs - 1 ) * 2;
@@ -2490,29 +2646,30 @@
     }
 
     {
-      FT_UInt  start, end, offset, n;
-      FT_UInt  last_start = 0, last_end = 0;
-      FT_Int   delta;
+      FT_UInt   start, end, offset, n;
+      FT_UInt   last_start = 0, last_end = 0;
+      FT_Int    delta;
+      FT_Byte*  p_start   = starts;
+      FT_Byte*  p_end     = ends;
+      FT_Byte*  p_delta   = deltas;
+      FT_Byte*  p_offset  = offsets;
 
 
       for ( n = 0; n < num_segs; n++ )
       {
-        p = starts + n * 2;
-        start = TT_PEEK_USHORT( p );
-        p = ends + n * 2;
-        end = TT_PEEK_USHORT( p );
-        p = deltas + n * 2;
-        delta = TT_PEEK_SHORT( p );
-        p = offsets + n * 2;
-        offset = TT_PEEK_USHORT( p );
+        p      = p_offset;
+        start  = TT_NEXT_USHORT( p_start );
+        end    = TT_NEXT_USHORT( p_end );
+        delta  = TT_NEXT_SHORT( p_delta );
+        offset = TT_NEXT_USHORT( p_offset );
 
         if ( start > end )
           FT_INVALID_DATA;
 
-        /* this test should be performed at default validation level;  */
-        /* unfortunately, some popular Asian fonts present overlapping */
-        /* ranges in their charmaps                                    */
-        /*                                                             */
+        /* this test should be performed at default validation level; */
+        /* unfortunately, some popular Asian fonts have overlapping   */
+        /* ranges in their charmaps                                   */
+        /*                                                            */
         if ( start <= last_end && n > 0 )
         {
           if ( valid->level >= FT_VALIDATE_TIGHT )
@@ -2520,7 +2677,7 @@
           else
           {
             /* allow overlapping segments, provided their start points */
-            /* and end points, respectively, are in ascending order.   */
+            /* and end points, respectively, are in ascending order    */
             /*                                                         */
             if ( last_start > start || last_end > end )
               error |= TT_CMAP_FLAG_UNSORTED;
@@ -2531,16 +2688,27 @@
 
         if ( offset && offset != 0xFFFFU )
         {
-          p += offset;  /* start of glyph id array */
+          p += offset;  /* start of glyph ID array */
 
-          /* check that we point within the glyph ids table only */
+          /* check that we point within the glyph IDs table only */
           if ( valid->level >= FT_VALIDATE_TIGHT )
           {
             if ( p < glyph_ids                                ||
                  p + ( end - start + 1 ) * 2 > table + length )
               FT_INVALID_DATA;
           }
-          else
+          /* Some fonts handle the last segment incorrectly.  In */
+          /* theory, 0xFFFF might point to an ordinary glyph --  */
+          /* a cmap 4 is versatile and could be used for any     */
+          /* encoding, not only Unicode.  However, reality shows */
+          /* that far too many fonts are sloppy and incorrectly  */
+          /* set all fields but `start' and `end' for the last   */
+          /* segment if it contains only a single character.     */
+          /*                                                     */
+          /* We thus omit the test here, delaying it to the      */
+          /* routines which actually access the cmap.            */
+          else if ( n != num_segs - 1                       ||
+                    !( start == 0xFFFFU && end == 0xFFFFU ) )
           {
             if ( p < glyph_ids                              ||
                  p + ( end - start + 1 ) * 2 > valid->limit )
@@ -2568,12 +2736,12 @@
         }
         else if ( offset == 0xFFFFU )
         {
-          /* Some fonts (erroneously?) use a range offset of 0xFFFF */
+          /* some fonts (erroneously?) use a range offset of 0xFFFF */
           /* to mean missing glyph in cmap table                    */
           /*                                                        */
-          if ( valid->level >= FT_VALIDATE_PARANOID                     ||
-               n != num_segs - 1                                        ||
-               !( start == 0xFFFFU && end == 0xFFFFU && delta == 0x1U ) )
+          if ( valid->level >= FT_VALIDATE_PARANOID    ||
+               n != num_segs - 1                       ||
+               !( start == 0xFFFFU && end == 0xFFFFU ) )
             FT_INVALID_DATA;
         }
 
@@ -2587,9 +2755,9 @@
 
 
   static FT_UInt
-  tt_cmap4_char_map_linear( TT_CMap   cmap,
+  tt_cmap4_char_map_linear( TT_CMap     cmap,
                             FT_UInt32*  pcharcode,
-                            FT_Bool   next )
+                            FT_Bool     next )
   {
     FT_UInt    num_segs2, start, end, offset;
     FT_Int     delta;
@@ -2614,7 +2782,7 @@
     for ( ; charcode <= 0xFFFFU; charcode++ )
     {
       FT_Byte*  q;
-      
+
 
       p = cmap->data + 14;               /* ends table   */
       q = cmap->data + 16 + num_segs2;   /* starts table */
@@ -2630,6 +2798,22 @@
           delta   = TT_PEEK_SHORT( p );
           p      += num_segs2;
           offset  = TT_PEEK_USHORT( p );
+
+          /* some fonts have an incorrect last segment; */
+          /* we have to catch it                        */
+          if ( i >= num_segs - 1                  &&
+               start == 0xFFFFU && end == 0xFFFFU )
+          {
+            TT_Face   face  = (TT_Face)cmap->cmap.charmap.face;
+            FT_Byte*  limit = face->cmap_table + face->cmap_size;
+
+
+            if ( offset && p + offset + 2 > limit )
+            {
+              delta  = 1;
+              offset = 0;
+            }
+          }
 
           if ( offset == 0xFFFFU )
             continue;
@@ -2660,17 +2844,17 @@
 
 
   static FT_UInt
-  tt_cmap4_char_map_binary( TT_CMap   cmap,
+  tt_cmap4_char_map_binary( TT_CMap     cmap,
                             FT_UInt32*  pcharcode,
-                            FT_Bool   next )
+                            FT_Bool     next )
   {
     FT_UInt   num_segs2, start, end, offset;
     FT_Int    delta;
     FT_UInt   max, min, mid, num_segs;
-    FT_UInt32 charcode = *pcharcode;
+    FT_UInt   charcode = (FT_UInt)*pcharcode;
     FT_UInt   gindex   = 0;
     FT_Byte*  p;
-    
+
 
     p = cmap->data + 6;
     num_segs2 = FT_PAD_FLOOR( TT_PEEK_USHORT( p ), 2 );
@@ -2710,6 +2894,22 @@
         p     += num_segs2;
         offset = TT_PEEK_USHORT( p );
 
+        /* some fonts have an incorrect last segment; */
+        /* we have to catch it                        */
+        if ( mid >= num_segs - 1                &&
+             start == 0xFFFFU && end == 0xFFFFU )
+        {
+          TT_Face   face  = (TT_Face)cmap->cmap.charmap.face;
+          FT_Byte*  limit = face->cmap_table + face->cmap_size;
+
+
+          if ( offset && p + offset + 2 > limit )
+          {
+            delta  = 1;
+            offset = 0;
+          }
+        }
+
         /* search the first segment containing `charcode' */
         if ( cmap->flags & TT_CMAP_FLAG_OVERLAPPING )
         {
@@ -2725,14 +2925,19 @@
           /* search in segments before the current segment */
           for ( i = max ; i > 0; i-- )
           {
-            FT_UInt  prev_end;
+            FT_UInt   prev_end;
+            FT_Byte*  old_p;
 
 
-            p = cmap->data + 14 + ( i - 1 ) * 2;
+            old_p    = p;
+            p        = cmap->data + 14 + ( i - 1 ) * 2;
             prev_end = TT_PEEK_USHORT( p );
 
             if ( charcode > prev_end )
+            {
+              p = old_p;
               break;
+            }
 
             end    = prev_end;
             p     += 2 + num_segs2;
@@ -2888,7 +3093,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   tt_cmap4_char_next( TT_CMap     cmap,
                       FT_UInt32  *pchar_code )
   {
@@ -2928,26 +3133,30 @@
     FT_Byte*  p = cmap->data + 4;
 
 
+    cmap_info->format   = 4;
     cmap_info->language = (FT_ULong)TT_PEEK_USHORT( p );
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
-  FT_CALLBACK_TABLE_DEF
-  const TT_CMap_ClassRec  tt_cmap4_class_rec =
-  {
-    {
-      sizeof ( TT_CMap4Rec ),
-      (FT_CMap_InitFunc)     tt_cmap4_init,
-      (FT_CMap_DoneFunc)     NULL,
-      (FT_CMap_CharIndexFunc)tt_cmap4_char_index,
-      (FT_CMap_CharNextFunc) tt_cmap4_char_next
-    },
+  FT_DEFINE_TT_CMAP(
+    tt_cmap4_class_rec,
+    sizeof ( TT_CMap4Rec ),
+    (FT_CMap_InitFunc)     tt_cmap4_init,
+    (FT_CMap_DoneFunc)     NULL,
+    (FT_CMap_CharIndexFunc)tt_cmap4_char_index,
+    (FT_CMap_CharNextFunc) tt_cmap4_char_next,
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
     4,
-    (TT_CMap_ValidateFunc)   tt_cmap4_validate,
-    (TT_CMap_Info_GetFunc)   tt_cmap4_get_info
-  };
+    (TT_CMap_ValidateFunc)tt_cmap4_validate,
+    (TT_CMap_Info_GetFunc)tt_cmap4_get_info )
 
 #endif /* TT_CONFIG_CMAP_FORMAT_4 */
 
@@ -2973,7 +3182,7 @@
   /*                                                                       */
   /*   first        6              USHORT           first segment code     */
   /*   count        8              USHORT           segment size in chars  */
-  /*   glyphIds     10             USHORT[count]    glyph ids              */
+  /*   glyphIds     10             USHORT[count]    glyph IDs              */
   /*                                                                       */
   /* A very simplified segment mapping.                                    */
   /*                                                                       */
@@ -3014,7 +3223,7 @@
       }
     }
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -3039,7 +3248,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   tt_cmap6_char_next( TT_CMap     cmap,
                       FT_UInt32  *pchar_code )
   {
@@ -3087,27 +3296,31 @@
     FT_Byte*  p = cmap->data + 4;
 
 
+    cmap_info->format   = 6;
     cmap_info->language = (FT_ULong)TT_PEEK_USHORT( p );
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
-  FT_CALLBACK_TABLE_DEF
-  const TT_CMap_ClassRec  tt_cmap6_class_rec =
-  {
-    {
-      sizeof ( TT_CMapRec ),
+  FT_DEFINE_TT_CMAP(
+    tt_cmap6_class_rec,
+    sizeof ( TT_CMapRec ),
 
-      (FT_CMap_InitFunc)     tt_cmap_init,
-      (FT_CMap_DoneFunc)     NULL,
-      (FT_CMap_CharIndexFunc)tt_cmap6_char_index,
-      (FT_CMap_CharNextFunc) tt_cmap6_char_next
-    },
+    (FT_CMap_InitFunc)     tt_cmap_init,
+    (FT_CMap_DoneFunc)     NULL,
+    (FT_CMap_CharIndexFunc)tt_cmap6_char_index,
+    (FT_CMap_CharNextFunc) tt_cmap6_char_next,
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
     6,
-    (TT_CMap_ValidateFunc)   tt_cmap6_validate,
-    (TT_CMap_Info_GetFunc)   tt_cmap6_get_info
-  };
+    (TT_CMap_ValidateFunc)tt_cmap6_validate,
+    (TT_CMap_Info_GetFunc)tt_cmap6_get_info )
 
 #endif /* TT_CONFIG_CMAP_FORMAT_6 */
 
@@ -3117,7 +3330,7 @@
   /*****                                                               *****/
   /*****                          FORMAT 8                             *****/
   /*****                                                               *****/
-  /***** It's hard to completely understand what the OpenType spec     *****/
+  /***** It is hard to completely understand what the OpenType spec    *****/
   /***** says about this format, but here is my conclusion.            *****/
   /*****                                                               *****/
   /***** The purpose of this format is to easily map UTF-16 text to    *****/
@@ -3132,7 +3345,7 @@
   /*****     `char_hi' and `char_lo' must be in the Surrogates Area.   *****/
   /*****      Area.                                                    *****/
   /*****                                                               *****/
-  /***** The 'is32' table embedded in the charmap indicates whether a  *****/
+  /***** The `is32' table embedded in the charmap indicates whether a  *****/
   /***** given 16-bit value is in the surrogates area or not.          *****/
   /*****                                                               *****/
   /***** So, for any given `char_code', we can assert the following:   *****/
@@ -3153,17 +3366,17 @@
   /*   NAME        OFFSET         TYPE        DESCRIPTION                  */
   /*                                                                       */
   /*   format      0              USHORT      must be 8                    */
-  /*   reseved     2              USHORT      reserved                     */
+  /*   reserved    2              USHORT      reserved                     */
   /*   length      4              ULONG       length in bytes              */
   /*   language    8              ULONG       Mac language code            */
   /*   is32        12             BYTE[8192]  32-bitness bitmap            */
   /*   count       8204           ULONG       number of groups             */
   /*                                                                       */
-  /* This header is followed by 'count' groups of the following format:    */
+  /* This header is followed by `count' groups of the following format:    */
   /*                                                                       */
   /*   start       0              ULONG       first charcode               */
   /*   end         4              ULONG       last charcode                */
-  /*   startId     8              ULONG       start glyph id for the group */
+  /*   startId     8              ULONG       start glyph ID for the group */
   /*                                                                       */
 
 #ifdef TT_CONFIG_CMAP_FORMAT_8
@@ -3182,7 +3395,7 @@
       FT_INVALID_TOO_SHORT;
 
     length = TT_NEXT_ULONG( p );
-    if ( table + length > valid->limit || length < 8208 )
+    if ( length > (FT_UInt32)( valid->limit - table ) || length < 8192 + 16 )
       FT_INVALID_TOO_SHORT;
 
     is32       = table + 12;
@@ -3258,7 +3471,7 @@
       }
     }
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -3292,7 +3505,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   tt_cmap8_char_next( TT_CMap     cmap,
                       FT_UInt32  *pchar_code )
   {
@@ -3340,27 +3553,31 @@
     FT_Byte*  p = cmap->data + 8;
 
 
+    cmap_info->format   = 8;
     cmap_info->language = (FT_ULong)TT_PEEK_ULONG( p );
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
-  FT_CALLBACK_TABLE_DEF
-  const TT_CMap_ClassRec  tt_cmap8_class_rec =
-  {
-    {
-      sizeof ( TT_CMapRec ),
+  FT_DEFINE_TT_CMAP(
+    tt_cmap8_class_rec,
+    sizeof ( TT_CMapRec ),
 
-      (FT_CMap_InitFunc)     tt_cmap_init,
-      (FT_CMap_DoneFunc)     NULL,
-      (FT_CMap_CharIndexFunc)tt_cmap8_char_index,
-      (FT_CMap_CharNextFunc) tt_cmap8_char_next
-    },
+    (FT_CMap_InitFunc)     tt_cmap_init,
+    (FT_CMap_DoneFunc)     NULL,
+    (FT_CMap_CharIndexFunc)tt_cmap8_char_index,
+    (FT_CMap_CharNextFunc) tt_cmap8_char_next,
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
     8,
-    (TT_CMap_ValidateFunc)   tt_cmap8_validate,
-    (TT_CMap_Info_GetFunc)   tt_cmap8_get_info
-  };
+    (TT_CMap_ValidateFunc)tt_cmap8_validate,
+    (TT_CMap_Info_GetFunc)tt_cmap8_get_info )
 
 #endif /* TT_CONFIG_CMAP_FORMAT_8 */
 
@@ -3407,7 +3624,8 @@
     p      = table + 16;
     count  = TT_NEXT_ULONG( p );
 
-    if ( table + length > valid->limit || length < 20 + count * 2 )
+    if ( length > (FT_ULong)( valid->limit - table ) ||
+         length < 20 + count * 2                     )
       FT_INVALID_TOO_SHORT;
 
     /* check glyph indices */
@@ -3424,7 +3642,7 @@
       }
     }
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -3449,7 +3667,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   tt_cmap10_char_next( TT_CMap     cmap,
                        FT_UInt32  *pchar_code )
   {
@@ -3488,27 +3706,31 @@
     FT_Byte*  p = cmap->data + 8;
 
 
+    cmap_info->format   = 10;
     cmap_info->language = (FT_ULong)TT_PEEK_ULONG( p );
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
-  FT_CALLBACK_TABLE_DEF
-  const TT_CMap_ClassRec  tt_cmap10_class_rec =
-  {
-    {
-      sizeof ( TT_CMapRec ),
+  FT_DEFINE_TT_CMAP(
+    tt_cmap10_class_rec,
+    sizeof ( TT_CMapRec ),
 
-      (FT_CMap_InitFunc)     tt_cmap_init,
-      (FT_CMap_DoneFunc)     NULL,
-      (FT_CMap_CharIndexFunc)tt_cmap10_char_index,
-      (FT_CMap_CharNextFunc) tt_cmap10_char_next
-    },
+    (FT_CMap_InitFunc)     tt_cmap_init,
+    (FT_CMap_DoneFunc)     NULL,
+    (FT_CMap_CharIndexFunc)tt_cmap10_char_index,
+    (FT_CMap_CharNextFunc) tt_cmap10_char_next,
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
     10,
-    (TT_CMap_ValidateFunc)   tt_cmap10_validate,
-    (TT_CMap_Info_GetFunc)   tt_cmap10_get_info
-  };
+    (TT_CMap_ValidateFunc)tt_cmap10_validate,
+    (TT_CMap_Info_GetFunc)tt_cmap10_get_info )
 
 #endif /* TT_CONFIG_CMAP_FORMAT_10 */
 
@@ -3539,7 +3761,7 @@
   /*                                                                       */
   /*   start       0          ULONG      first charcode                    */
   /*   end         4          ULONG      last charcode                     */
-  /*   startId     8          ULONG      start glyph id for the group      */
+  /*   startId     8          ULONG      start glyph ID for the group      */
   /*                                                                       */
 
 #ifdef TT_CONFIG_CMAP_FORMAT_12
@@ -3567,7 +3789,7 @@
 
     cmap->valid      = 0;
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -3575,9 +3797,9 @@
   tt_cmap12_validate( FT_Byte*      table,
                       FT_Validator  valid )
   {
-    FT_Byte*   p;
-    FT_ULong   length;
-    FT_ULong   num_groups;
+    FT_Byte*  p;
+    FT_ULong  length;
+    FT_ULong  num_groups;
 
 
     if ( table + 16 > valid->limit )
@@ -3589,7 +3811,8 @@
     p          = table + 12;
     num_groups = TT_NEXT_ULONG( p );
 
-    if ( table + length > valid->limit || length < 16 + 12 * num_groups )
+    if ( length > (FT_ULong)( valid->limit - table ) ||
+         length < 16 + 12 * num_groups               )
       FT_INVALID_TOO_SHORT;
 
     /* check groups, they must be in increasing order */
@@ -3619,7 +3842,7 @@
       }
     }
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -3639,8 +3862,6 @@
       goto Fail;
 
     char_code = cmap->cur_charcode + 1;
-
-    n = cmap->cur_group;
 
     for ( n = cmap->cur_group; n < cmap->num_groups; n++ )
     {
@@ -3766,7 +3987,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   tt_cmap12_char_next( TT_CMap     cmap,
                        FT_UInt32  *pchar_code )
   {
@@ -3784,8 +4005,10 @@
       if ( cmap12->valid )
       {
         gindex = cmap12->cur_gindex;
+
+        /* XXX: check cur_charcode overflow is expected */
         if ( gindex )
-          *pchar_code = cmap12->cur_charcode;
+          *pchar_code = (FT_UInt32)cmap12->cur_charcode;
       }
       else
         gindex = 0;
@@ -3793,7 +4016,8 @@
     else
       gindex = tt_cmap12_char_map_binary( cmap, pchar_code, 1 );
 
-    return gindex;
+    /* XXX: check gindex overflow is expected */
+    return (FT_UInt32)gindex;
   }
 
 
@@ -3804,64 +4028,1161 @@
     FT_Byte*  p = cmap->data + 8;
 
 
+    cmap_info->format   = 12;
     cmap_info->language = (FT_ULong)TT_PEEK_ULONG( p );
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
-  FT_CALLBACK_TABLE_DEF
-  const TT_CMap_ClassRec  tt_cmap12_class_rec =
-  {
-    {
-      sizeof ( TT_CMap12Rec ),
+  FT_DEFINE_TT_CMAP(
+    tt_cmap12_class_rec,
+    sizeof ( TT_CMap12Rec ),
 
-      (FT_CMap_InitFunc)     tt_cmap12_init,
-      (FT_CMap_DoneFunc)     NULL,
-      (FT_CMap_CharIndexFunc)tt_cmap12_char_index,
-      (FT_CMap_CharNextFunc) tt_cmap12_char_next
-    },
+    (FT_CMap_InitFunc)     tt_cmap12_init,
+    (FT_CMap_DoneFunc)     NULL,
+    (FT_CMap_CharIndexFunc)tt_cmap12_char_index,
+    (FT_CMap_CharNextFunc) tt_cmap12_char_next,
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
     12,
-    (TT_CMap_ValidateFunc)   tt_cmap12_validate,
-    (TT_CMap_Info_GetFunc)   tt_cmap12_get_info
-  };
-
+    (TT_CMap_ValidateFunc)tt_cmap12_validate,
+    (TT_CMap_Info_GetFunc)tt_cmap12_get_info )
 
 #endif /* TT_CONFIG_CMAP_FORMAT_12 */
 
 
-  static const TT_CMap_Class  tt_cmap_classes[] =
+  /*************************************************************************/
+  /*************************************************************************/
+  /*****                                                               *****/
+  /*****                          FORMAT 13                            *****/
+  /*****                                                               *****/
+  /*************************************************************************/
+  /*************************************************************************/
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* TABLE OVERVIEW                                                        */
+  /* --------------                                                        */
+  /*                                                                       */
+  /*   NAME        OFFSET     TYPE       DESCRIPTION                       */
+  /*                                                                       */
+  /*   format      0          USHORT     must be 13                        */
+  /*   reserved    2          USHORT     reserved                          */
+  /*   length      4          ULONG      length in bytes                   */
+  /*   language    8          ULONG      Mac language code                 */
+  /*   count       12         ULONG      number of groups                  */
+  /*               16                                                      */
+  /*                                                                       */
+  /* This header is followed by `count' groups of the following format:    */
+  /*                                                                       */
+  /*   start       0          ULONG      first charcode                    */
+  /*   end         4          ULONG      last charcode                     */
+  /*   glyphId     8          ULONG      glyph ID for the whole group      */
+  /*                                                                       */
+
+#ifdef TT_CONFIG_CMAP_FORMAT_13
+
+  typedef struct  TT_CMap13Rec_
   {
-#ifdef TT_CONFIG_CMAP_FORMAT_0
-    &tt_cmap0_class_rec,
-#endif
+    TT_CMapRec  cmap;
+    FT_Bool     valid;
+    FT_ULong    cur_charcode;
+    FT_UInt     cur_gindex;
+    FT_ULong    cur_group;
+    FT_ULong    num_groups;
 
-#ifdef TT_CONFIG_CMAP_FORMAT_2
-    &tt_cmap2_class_rec,
-#endif
+  } TT_CMap13Rec, *TT_CMap13;
 
-#ifdef TT_CONFIG_CMAP_FORMAT_4
-    &tt_cmap4_class_rec,
-#endif
 
-#ifdef TT_CONFIG_CMAP_FORMAT_6
-    &tt_cmap6_class_rec,
-#endif
+  FT_CALLBACK_DEF( FT_Error )
+  tt_cmap13_init( TT_CMap13  cmap,
+                  FT_Byte*   table )
+  {
+    cmap->cmap.data  = table;
 
-#ifdef TT_CONFIG_CMAP_FORMAT_8
-    &tt_cmap8_class_rec,
-#endif
+    table           += 12;
+    cmap->num_groups = FT_PEEK_ULONG( table );
 
-#ifdef TT_CONFIG_CMAP_FORMAT_10
-    &tt_cmap10_class_rec,
-#endif
+    cmap->valid      = 0;
 
-#ifdef TT_CONFIG_CMAP_FORMAT_12
-    &tt_cmap12_class_rec,
-#endif
+    return FT_Err_Ok;
+  }
+
+
+  FT_CALLBACK_DEF( FT_Error )
+  tt_cmap13_validate( FT_Byte*      table,
+                      FT_Validator  valid )
+  {
+    FT_Byte*  p;
+    FT_ULong  length;
+    FT_ULong  num_groups;
+
+
+    if ( table + 16 > valid->limit )
+      FT_INVALID_TOO_SHORT;
+
+    p      = table + 4;
+    length = TT_NEXT_ULONG( p );
+
+    p          = table + 12;
+    num_groups = TT_NEXT_ULONG( p );
+
+    if ( length > (FT_ULong)( valid->limit - table ) ||
+         length < 16 + 12 * num_groups               )
+      FT_INVALID_TOO_SHORT;
+
+    /* check groups, they must be in increasing order */
+    {
+      FT_ULong  n, start, end, glyph_id, last = 0;
+
+
+      for ( n = 0; n < num_groups; n++ )
+      {
+        start    = TT_NEXT_ULONG( p );
+        end      = TT_NEXT_ULONG( p );
+        glyph_id = TT_NEXT_ULONG( p );
+
+        if ( start > end )
+          FT_INVALID_DATA;
+
+        if ( n > 0 && start <= last )
+          FT_INVALID_DATA;
+
+        if ( valid->level >= FT_VALIDATE_TIGHT )
+        {
+          if ( glyph_id >= TT_VALID_GLYPH_COUNT( valid ) )
+            FT_INVALID_GLYPH_ID;
+        }
+
+        last = end;
+      }
+    }
+
+    return FT_Err_Ok;
+  }
+
+
+  /* search the index of the charcode next to cmap->cur_charcode */
+  /* cmap->cur_group should be set up properly by caller         */
+  /*                                                             */
+  static void
+  tt_cmap13_next( TT_CMap13  cmap )
+  {
+    FT_Byte*  p;
+    FT_ULong  start, end, glyph_id, char_code;
+    FT_ULong  n;
+    FT_UInt   gindex;
+
+
+    if ( cmap->cur_charcode >= 0xFFFFFFFFUL )
+      goto Fail;
+
+    char_code = cmap->cur_charcode + 1;
+
+    for ( n = cmap->cur_group; n < cmap->num_groups; n++ )
+    {
+      p        = cmap->cmap.data + 16 + 12 * n;
+      start    = TT_NEXT_ULONG( p );
+      end      = TT_NEXT_ULONG( p );
+      glyph_id = TT_PEEK_ULONG( p );
+
+      if ( char_code < start )
+        char_code = start;
+
+      if ( char_code <= end )
+      {
+        gindex = (FT_UInt)glyph_id;
+
+        if ( gindex )
+        {
+          cmap->cur_charcode = char_code;;
+          cmap->cur_gindex   = gindex;
+          cmap->cur_group    = n;
+
+          return;
+        }
+      }
+    }
+
+  Fail:
+    cmap->valid = 0;
+  }
+
+
+  static FT_UInt
+  tt_cmap13_char_map_binary( TT_CMap     cmap,
+                             FT_UInt32*  pchar_code,
+                             FT_Bool     next )
+  {
+    FT_UInt    gindex     = 0;
+    FT_Byte*   p          = cmap->data + 12;
+    FT_UInt32  num_groups = TT_PEEK_ULONG( p );
+    FT_UInt32  char_code  = *pchar_code;
+    FT_UInt32  start, end;
+    FT_UInt32  max, min, mid;
+
+
+    if ( !num_groups )
+      return 0;
+
+    /* make compiler happy */
+    mid = num_groups;
+    end = 0xFFFFFFFFUL;
+
+    if ( next )
+      char_code++;
+
+    min = 0;
+    max = num_groups;
+
+    /* binary search */
+    while ( min < max )
+    {
+      mid = ( min + max ) >> 1;
+      p   = cmap->data + 16 + 12 * mid;
+
+      start = TT_NEXT_ULONG( p );
+      end   = TT_NEXT_ULONG( p );
+
+      if ( char_code < start )
+        max = mid;
+      else if ( char_code > end )
+        min = mid + 1;
+      else
+      {
+        gindex = (FT_UInt)TT_PEEK_ULONG( p );
+
+        break;
+      }
+    }
+
+    if ( next )
+    {
+      TT_CMap13  cmap13 = (TT_CMap13)cmap;
+
+
+      /* if `char_code' is not in any group, then `mid' is */
+      /* the group nearest to `char_code'                  */
+
+      if ( char_code > end )
+      {
+        mid++;
+        if ( mid == num_groups )
+          return 0;
+      }
+
+      cmap13->valid        = 1;
+      cmap13->cur_charcode = char_code;
+      cmap13->cur_group    = mid;
+
+      if ( !gindex )
+      {
+        tt_cmap13_next( cmap13 );
+
+        if ( cmap13->valid )
+          gindex = cmap13->cur_gindex;
+      }
+      else
+        cmap13->cur_gindex = gindex;
+
+      if ( gindex )
+        *pchar_code = cmap13->cur_charcode;
+    }
+
+    return gindex;
+  }
+
+
+  FT_CALLBACK_DEF( FT_UInt )
+  tt_cmap13_char_index( TT_CMap    cmap,
+                        FT_UInt32  char_code )
+  {
+    return tt_cmap13_char_map_binary( cmap, &char_code, 0 );
+  }
+
+
+  FT_CALLBACK_DEF( FT_UInt32 )
+  tt_cmap13_char_next( TT_CMap     cmap,
+                       FT_UInt32  *pchar_code )
+  {
+    TT_CMap13  cmap13 = (TT_CMap13)cmap;
+    FT_UInt    gindex;
+
+
+    if ( cmap13->cur_charcode >= 0xFFFFFFFFUL )
+      return 0;
+
+    /* no need to search */
+    if ( cmap13->valid && cmap13->cur_charcode == *pchar_code )
+    {
+      tt_cmap13_next( cmap13 );
+      if ( cmap13->valid )
+      {
+        gindex = cmap13->cur_gindex;
+        if ( gindex )
+          *pchar_code = cmap13->cur_charcode;
+      }
+      else
+        gindex = 0;
+    }
+    else
+      gindex = tt_cmap13_char_map_binary( cmap, pchar_code, 1 );
+
+    return gindex;
+  }
+
+
+  FT_CALLBACK_DEF( FT_Error )
+  tt_cmap13_get_info( TT_CMap       cmap,
+                      TT_CMapInfo  *cmap_info )
+  {
+    FT_Byte*  p = cmap->data + 8;
+
+
+    cmap_info->format   = 13;
+    cmap_info->language = (FT_ULong)TT_PEEK_ULONG( p );
+
+    return FT_Err_Ok;
+  }
+
+
+  FT_DEFINE_TT_CMAP(
+    tt_cmap13_class_rec,
+    sizeof ( TT_CMap13Rec ),
+
+    (FT_CMap_InitFunc)     tt_cmap13_init,
+    (FT_CMap_DoneFunc)     NULL,
+    (FT_CMap_CharIndexFunc)tt_cmap13_char_index,
+    (FT_CMap_CharNextFunc) tt_cmap13_char_next,
 
     NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
+    13,
+    (TT_CMap_ValidateFunc)tt_cmap13_validate,
+    (TT_CMap_Info_GetFunc)tt_cmap13_get_info )
+
+#endif /* TT_CONFIG_CMAP_FORMAT_13 */
+
+
+  /*************************************************************************/
+  /*************************************************************************/
+  /*****                                                               *****/
+  /*****                           FORMAT 14                           *****/
+  /*****                                                               *****/
+  /*************************************************************************/
+  /*************************************************************************/
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* TABLE OVERVIEW                                                        */
+  /* --------------                                                        */
+  /*                                                                       */
+  /*   NAME         OFFSET  TYPE    DESCRIPTION                            */
+  /*                                                                       */
+  /*   format         0     USHORT  must be 14                             */
+  /*   length         2     ULONG   table length in bytes                  */
+  /*   numSelector    6     ULONG   number of variation sel. records       */
+  /*                                                                       */
+  /* Followed by numSelector records, each of which looks like             */
+  /*                                                                       */
+  /*   varSelector    0     UINT24  Unicode codepoint of sel.              */
+  /*   defaultOff     3     ULONG   offset to a default UVS table          */
+  /*                                describing any variants to be found in */
+  /*                                the normal Unicode subtable.           */
+  /*   nonDefOff      7     ULONG   offset to a non-default UVS table      */
+  /*                                describing any variants not in the     */
+  /*                                standard cmap, with GIDs here          */
+  /* (either offset may be 0 NULL)                                         */
+  /*                                                                       */
+  /* Selectors are sorted by code point.                                   */
+  /*                                                                       */
+  /* A default Unicode Variation Selector (UVS) subtable is just a list of */
+  /* ranges of code points which are to be found in the standard cmap.  No */
+  /* glyph IDs (GIDs) here.                                                */
+  /*                                                                       */
+  /*   numRanges      0     ULONG   number of ranges following             */
+  /*                                                                       */
+  /* A range looks like                                                    */
+  /*                                                                       */
+  /*   uniStart       0     UINT24  code point of the first character in   */
+  /*                                this range                             */
+  /*   additionalCnt  3     UBYTE   count of additional characters in this */
+  /*                                range (zero means a range of a single  */
+  /*                                character)                             */
+  /*                                                                       */
+  /* Ranges are sorted by `uniStart'.                                      */
+  /*                                                                       */
+  /* A non-default Unicode Variation Selector (UVS) subtable is a list of  */
+  /* mappings from codepoint to GID.                                       */
+  /*                                                                       */
+  /*   numMappings    0     ULONG   number of mappings                     */
+  /*                                                                       */
+  /* A range looks like                                                    */
+  /*                                                                       */
+  /*   uniStart       0     UINT24  code point of the first character in   */
+  /*                                this range                             */
+  /*   GID            3     USHORT  and its GID                            */
+  /*                                                                       */
+  /* Ranges are sorted by `uniStart'.                                      */
+
+#ifdef TT_CONFIG_CMAP_FORMAT_14
+
+  typedef struct  TT_CMap14Rec_
+  {
+    TT_CMapRec  cmap;
+    FT_ULong    num_selectors;
+
+    /* This array is used to store the results of various
+     * cmap 14 query functions.  The data is overwritten
+     * on each call to these functions.
+     */
+    FT_UInt32   max_results;
+    FT_UInt32*  results;
+    FT_Memory   memory;
+
+  } TT_CMap14Rec, *TT_CMap14;
+
+
+  FT_CALLBACK_DEF( void )
+  tt_cmap14_done( TT_CMap14  cmap )
+  {
+    FT_Memory  memory = cmap->memory;
+
+
+    cmap->max_results = 0;
+    if ( memory != NULL && cmap->results != NULL )
+      FT_FREE( cmap->results );
+  }
+
+
+  static FT_Error
+  tt_cmap14_ensure( TT_CMap14  cmap,
+                    FT_UInt32  num_results,
+                    FT_Memory  memory )
+  {
+    FT_UInt32  old_max = cmap->max_results;
+    FT_Error   error   = FT_Err_Ok;
+
+
+    if ( num_results > cmap->max_results )
+    {
+       cmap->memory = memory;
+
+       if ( FT_QRENEW_ARRAY( cmap->results, old_max, num_results ) )
+         return error;
+
+       cmap->max_results = num_results;
+    }
+
+    return error;
+  }
+
+
+  FT_CALLBACK_DEF( FT_Error )
+  tt_cmap14_init( TT_CMap14  cmap,
+                  FT_Byte*   table )
+  {
+    cmap->cmap.data = table;
+
+    table               += 6;
+    cmap->num_selectors  = FT_PEEK_ULONG( table );
+    cmap->max_results    = 0;
+    cmap->results        = NULL;
+
+    return FT_Err_Ok;
+  }
+
+
+  FT_CALLBACK_DEF( FT_Error )
+  tt_cmap14_validate( FT_Byte*      table,
+                      FT_Validator  valid )
+  {
+    FT_Byte*  p;
+    FT_ULong  length;
+    FT_ULong  num_selectors;
+
+
+    if ( table + 2 + 4 + 4 > valid->limit )
+      FT_INVALID_TOO_SHORT;
+
+    p             = table + 2;
+    length        = TT_NEXT_ULONG( p );
+    num_selectors = TT_NEXT_ULONG( p );
+
+    if ( length > (FT_ULong)( valid->limit - table ) ||
+         length < 10 + 11 * num_selectors            )
+      FT_INVALID_TOO_SHORT;
+
+    /* check selectors, they must be in increasing order */
+    {
+      /* we start lastVarSel at 1 because a variant selector value of 0
+       * isn't valid.
+       */
+      FT_ULong  n, lastVarSel = 1;
+
+
+      for ( n = 0; n < num_selectors; n++ )
+      {
+        FT_ULong  varSel    = TT_NEXT_UINT24( p );
+        FT_ULong  defOff    = TT_NEXT_ULONG( p );
+        FT_ULong  nondefOff = TT_NEXT_ULONG( p );
+
+
+        if ( defOff >= length || nondefOff >= length )
+          FT_INVALID_TOO_SHORT;
+
+        if ( varSel < lastVarSel )
+          FT_INVALID_DATA;
+
+        lastVarSel = varSel + 1;
+
+        /* check the default table (these glyphs should be reached     */
+        /* through the normal Unicode cmap, no GIDs, just check order) */
+        if ( defOff != 0 )
+        {
+          FT_Byte*  defp      = table + defOff;
+          FT_ULong  numRanges = TT_NEXT_ULONG( defp );
+          FT_ULong  i;
+          FT_ULong  lastBase  = 0;
+
+
+          if ( defp + numRanges * 4 > valid->limit )
+            FT_INVALID_TOO_SHORT;
+
+          for ( i = 0; i < numRanges; ++i )
+          {
+            FT_ULong  base = TT_NEXT_UINT24( defp );
+            FT_ULong  cnt  = FT_NEXT_BYTE( defp );
+
+
+            if ( base + cnt >= 0x110000UL )              /* end of Unicode */
+              FT_INVALID_DATA;
+
+            if ( base < lastBase )
+              FT_INVALID_DATA;
+
+            lastBase = base + cnt + 1U;
+          }
+        }
+
+        /* and the non-default table (these glyphs are specified here) */
+        if ( nondefOff != 0 )
+        {
+          FT_Byte*  ndp         = table + nondefOff;
+          FT_ULong  numMappings = TT_NEXT_ULONG( ndp );
+          FT_ULong  i, lastUni  = 0;
+
+
+          if ( numMappings * 4 > (FT_ULong)( valid->limit - ndp ) )
+            FT_INVALID_TOO_SHORT;
+
+          for ( i = 0; i < numMappings; ++i )
+          {
+            FT_ULong  uni = TT_NEXT_UINT24( ndp );
+            FT_ULong  gid = TT_NEXT_USHORT( ndp );
+
+
+            if ( uni >= 0x110000UL )                     /* end of Unicode */
+              FT_INVALID_DATA;
+
+            if ( uni < lastUni )
+              FT_INVALID_DATA;
+
+            lastUni = uni + 1U;
+
+            if ( valid->level >= FT_VALIDATE_TIGHT    &&
+                 gid >= TT_VALID_GLYPH_COUNT( valid ) )
+              FT_INVALID_GLYPH_ID;
+          }
+        }
+      }
+    }
+
+    return FT_Err_Ok;
+  }
+
+
+  FT_CALLBACK_DEF( FT_UInt )
+  tt_cmap14_char_index( TT_CMap    cmap,
+                        FT_UInt32  char_code )
+  {
+    FT_UNUSED( cmap );
+    FT_UNUSED( char_code );
+
+    /* This can't happen */
+    return 0;
+  }
+
+
+  FT_CALLBACK_DEF( FT_UInt32 )
+  tt_cmap14_char_next( TT_CMap     cmap,
+                       FT_UInt32  *pchar_code )
+  {
+    FT_UNUSED( cmap );
+
+    /* This can't happen */
+    *pchar_code = 0;
+    return 0;
+  }
+
+
+  FT_CALLBACK_DEF( FT_Error )
+  tt_cmap14_get_info( TT_CMap       cmap,
+                      TT_CMapInfo  *cmap_info )
+  {
+    FT_UNUSED( cmap );
+
+    cmap_info->format   = 14;
+    /* subtable 14 does not define a language field */
+    cmap_info->language = 0xFFFFFFFFUL;
+
+    return FT_Err_Ok;
+  }
+
+
+  static FT_UInt
+  tt_cmap14_char_map_def_binary( FT_Byte    *base,
+                                 FT_UInt32   char_code )
+  {
+    FT_UInt32  numRanges = TT_PEEK_ULONG( base );
+    FT_UInt32  max, min;
+
+
+    min = 0;
+    max = numRanges;
+
+    base += 4;
+
+    /* binary search */
+    while ( min < max )
+    {
+      FT_UInt32  mid   = ( min + max ) >> 1;
+      FT_Byte*   p     = base + 4 * mid;
+      FT_ULong   start = TT_NEXT_UINT24( p );
+      FT_UInt    cnt   = FT_NEXT_BYTE( p );
+
+
+      if ( char_code < start )
+        max = mid;
+      else if ( char_code > start+cnt )
+        min = mid + 1;
+      else
+        return TRUE;
+    }
+
+    return FALSE;
+  }
+
+
+  static FT_UInt
+  tt_cmap14_char_map_nondef_binary( FT_Byte    *base,
+                                    FT_UInt32   char_code )
+  {
+    FT_UInt32  numMappings = TT_PEEK_ULONG( base );
+    FT_UInt32  max, min;
+
+
+    min = 0;
+    max = numMappings;
+
+    base += 4;
+
+    /* binary search */
+    while ( min < max )
+    {
+      FT_UInt32  mid = ( min + max ) >> 1;
+      FT_Byte*   p   = base + 5 * mid;
+      FT_UInt32  uni = (FT_UInt32)TT_NEXT_UINT24( p );
+
+
+      if ( char_code < uni )
+        max = mid;
+      else if ( char_code > uni )
+        min = mid + 1;
+      else
+        return TT_PEEK_USHORT( p );
+    }
+
+    return 0;
+  }
+
+
+  static FT_Byte*
+  tt_cmap14_find_variant( FT_Byte    *base,
+                          FT_UInt32   variantCode )
+  {
+    FT_UInt32  numVar = TT_PEEK_ULONG( base );
+    FT_UInt32  max, min;
+
+
+    min = 0;
+    max = numVar;
+
+    base += 4;
+
+    /* binary search */
+    while ( min < max )
+    {
+      FT_UInt32  mid    = ( min + max ) >> 1;
+      FT_Byte*   p      = base + 11 * mid;
+      FT_ULong   varSel = TT_NEXT_UINT24( p );
+
+
+      if ( variantCode < varSel )
+        max = mid;
+      else if ( variantCode > varSel )
+        min = mid + 1;
+      else
+        return p;
+    }
+
+    return NULL;
+  }
+
+
+  FT_CALLBACK_DEF( FT_UInt )
+  tt_cmap14_char_var_index( TT_CMap    cmap,
+                            TT_CMap    ucmap,
+                            FT_UInt32  charcode,
+                            FT_UInt32  variantSelector )
+  {
+    FT_Byte*  p = tt_cmap14_find_variant( cmap->data + 6, variantSelector );
+    FT_ULong  defOff;
+    FT_ULong  nondefOff;
+
+
+    if ( !p )
+      return 0;
+
+    defOff    = TT_NEXT_ULONG( p );
+    nondefOff = TT_PEEK_ULONG( p );
+
+    if ( defOff != 0                                                    &&
+         tt_cmap14_char_map_def_binary( cmap->data + defOff, charcode ) )
+    {
+      /* This is the default variant of this charcode.  GID not stored */
+      /* here; stored in the normal Unicode charmap instead.           */
+      return ucmap->cmap.clazz->char_index( &ucmap->cmap, charcode );
+    }
+
+    if ( nondefOff != 0 )
+      return tt_cmap14_char_map_nondef_binary( cmap->data + nondefOff,
+                                               charcode );
+
+    return 0;
+  }
+
+
+  FT_CALLBACK_DEF( FT_Int )
+  tt_cmap14_char_var_isdefault( TT_CMap    cmap,
+                                FT_UInt32  charcode,
+                                FT_UInt32  variantSelector )
+  {
+    FT_Byte*  p = tt_cmap14_find_variant( cmap->data + 6, variantSelector );
+    FT_ULong  defOff;
+    FT_ULong  nondefOff;
+
+
+    if ( !p )
+      return -1;
+
+    defOff    = TT_NEXT_ULONG( p );
+    nondefOff = TT_NEXT_ULONG( p );
+
+    if ( defOff != 0                                                    &&
+         tt_cmap14_char_map_def_binary( cmap->data + defOff, charcode ) )
+      return 1;
+
+    if ( nondefOff != 0                                            &&
+         tt_cmap14_char_map_nondef_binary( cmap->data + nondefOff,
+                                           charcode ) != 0         )
+      return 0;
+
+    return -1;
+  }
+
+
+  FT_CALLBACK_DEF( FT_UInt32* )
+  tt_cmap14_variants( TT_CMap    cmap,
+                      FT_Memory  memory )
+  {
+    TT_CMap14   cmap14 = (TT_CMap14)cmap;
+    FT_UInt32   count  = cmap14->num_selectors;
+    FT_Byte*    p      = cmap->data + 10;
+    FT_UInt32*  result;
+    FT_UInt32   i;
+
+
+    if ( tt_cmap14_ensure( cmap14, ( count + 1 ), memory ) )
+      return NULL;
+
+    result = cmap14->results;
+    for ( i = 0; i < count; ++i )
+    {
+      result[i] = (FT_UInt32)TT_NEXT_UINT24( p );
+      p        += 8;
+    }
+    result[i] = 0;
+
+    return result;
+  }
+
+
+  FT_CALLBACK_DEF( FT_UInt32 * )
+  tt_cmap14_char_variants( TT_CMap    cmap,
+                           FT_Memory  memory,
+                           FT_UInt32  charCode )
+  {
+    TT_CMap14   cmap14 = (TT_CMap14)  cmap;
+    FT_UInt32   count  = cmap14->num_selectors;
+    FT_Byte*    p      = cmap->data + 10;
+    FT_UInt32*  q;
+
+
+    if ( tt_cmap14_ensure( cmap14, ( count + 1 ), memory ) )
+      return NULL;
+
+    for ( q = cmap14->results; count > 0; --count )
+    {
+      FT_UInt32  varSel    = TT_NEXT_UINT24( p );
+      FT_ULong   defOff    = TT_NEXT_ULONG( p );
+      FT_ULong   nondefOff = TT_NEXT_ULONG( p );
+
+
+      if ( ( defOff != 0                                               &&
+             tt_cmap14_char_map_def_binary( cmap->data + defOff,
+                                            charCode )                 ) ||
+           ( nondefOff != 0                                            &&
+             tt_cmap14_char_map_nondef_binary( cmap->data + nondefOff,
+                                               charCode ) != 0         ) )
+      {
+        q[0] = varSel;
+        q++;
+      }
+    }
+    q[0] = 0;
+
+    return cmap14->results;
+  }
+
+
+  static FT_UInt
+  tt_cmap14_def_char_count( FT_Byte  *p )
+  {
+    FT_UInt32  numRanges = (FT_UInt32)TT_NEXT_ULONG( p );
+    FT_UInt    tot       = 0;
+
+
+    p += 3;  /* point to the first `cnt' field */
+    for ( ; numRanges > 0; numRanges-- )
+    {
+      tot += 1 + p[0];
+      p   += 4;
+    }
+
+    return tot;
+  }
+
+
+  static FT_UInt32*
+  tt_cmap14_get_def_chars( TT_CMap    cmap,
+                           FT_Byte*   p,
+                           FT_Memory  memory )
+  {
+    TT_CMap14   cmap14 = (TT_CMap14) cmap;
+    FT_UInt32   numRanges;
+    FT_UInt     cnt;
+    FT_UInt32*  q;
+
+
+    cnt       = tt_cmap14_def_char_count( p );
+    numRanges = (FT_UInt32)TT_NEXT_ULONG( p );
+
+    if ( tt_cmap14_ensure( cmap14, ( cnt + 1 ), memory ) )
+      return NULL;
+
+    for ( q = cmap14->results; numRanges > 0; --numRanges )
+    {
+      FT_UInt32  uni = (FT_UInt32)TT_NEXT_UINT24( p );
+
+
+      cnt = FT_NEXT_BYTE( p ) + 1;
+      do
+      {
+        q[0]  = uni;
+        uni  += 1;
+        q    += 1;
+
+      } while ( --cnt != 0 );
+    }
+    q[0] = 0;
+
+    return cmap14->results;
+  }
+
+
+  static FT_UInt32*
+  tt_cmap14_get_nondef_chars( TT_CMap     cmap,
+                              FT_Byte    *p,
+                              FT_Memory   memory )
+  {
+    TT_CMap14   cmap14 = (TT_CMap14) cmap;
+    FT_UInt32   numMappings;
+    FT_UInt     i;
+    FT_UInt32  *ret;
+
+
+    numMappings = (FT_UInt32)TT_NEXT_ULONG( p );
+
+    if ( tt_cmap14_ensure( cmap14, ( numMappings + 1 ), memory ) )
+      return NULL;
+
+    ret = cmap14->results;
+    for ( i = 0; i < numMappings; ++i )
+    {
+      ret[i] = (FT_UInt32)TT_NEXT_UINT24( p );
+      p += 2;
+    }
+    ret[i] = 0;
+
+    return ret;
+  }
+
+
+  FT_CALLBACK_DEF( FT_UInt32 * )
+  tt_cmap14_variant_chars( TT_CMap    cmap,
+                           FT_Memory  memory,
+                           FT_UInt32  variantSelector )
+  {
+    FT_Byte    *p  = tt_cmap14_find_variant( cmap->data + 6,
+                                             variantSelector );
+    FT_Int      i;
+    FT_ULong    defOff;
+    FT_ULong    nondefOff;
+
+
+    if ( !p )
+      return NULL;
+
+    defOff    = TT_NEXT_ULONG( p );
+    nondefOff = TT_NEXT_ULONG( p );
+
+    if ( defOff == 0 && nondefOff == 0 )
+      return NULL;
+
+    if ( defOff == 0 )
+      return tt_cmap14_get_nondef_chars( cmap, cmap->data + nondefOff,
+                                         memory );
+    else if ( nondefOff == 0 )
+      return tt_cmap14_get_def_chars( cmap, cmap->data + defOff,
+                                      memory );
+    else
+    {
+      /* Both a default and a non-default glyph set?  That's probably not */
+      /* good font design, but the spec allows for it...                  */
+      TT_CMap14  cmap14 = (TT_CMap14) cmap;
+      FT_UInt32  numRanges;
+      FT_UInt32  numMappings;
+      FT_UInt32  duni;
+      FT_UInt32  dcnt;
+      FT_UInt32  nuni;
+      FT_Byte*   dp;
+      FT_UInt    di, ni, k;
+
+      FT_UInt32  *ret;
+
+
+      p  = cmap->data + nondefOff;
+      dp = cmap->data + defOff;
+
+      numMappings = (FT_UInt32)TT_NEXT_ULONG( p );
+      dcnt        = tt_cmap14_def_char_count( dp );
+      numRanges   = (FT_UInt32)TT_NEXT_ULONG( dp );
+
+      if ( numMappings == 0 )
+        return tt_cmap14_get_def_chars( cmap, cmap->data + defOff,
+                                        memory );
+      if ( dcnt == 0 )
+        return tt_cmap14_get_nondef_chars( cmap, cmap->data + nondefOff,
+                                           memory );
+
+      if ( tt_cmap14_ensure( cmap14, ( dcnt + numMappings + 1 ), memory ) )
+        return NULL;
+
+      ret  = cmap14->results;
+      duni = (FT_UInt32)TT_NEXT_UINT24( dp );
+      dcnt = FT_NEXT_BYTE( dp );
+      di   = 1;
+      nuni = (FT_UInt32)TT_NEXT_UINT24( p );
+      p   += 2;
+      ni   = 1;
+      i    = 0;
+
+      for ( ;; )
+      {
+        if ( nuni > duni + dcnt )
+        {
+          for ( k = 0; k <= dcnt; ++k )
+            ret[i++] = duni + k;
+
+          ++di;
+
+          if ( di > numRanges )
+            break;
+
+          duni = (FT_UInt32)TT_NEXT_UINT24( dp );
+          dcnt = FT_NEXT_BYTE( dp );
+        }
+        else
+        {
+          if ( nuni < duni )
+            ret[i++] = nuni;
+          /* If it is within the default range then ignore it -- */
+          /* that should not have happened                       */
+          ++ni;
+          if ( ni > numMappings )
+            break;
+
+          nuni = (FT_UInt32)TT_NEXT_UINT24( p );
+          p += 2;
+        }
+      }
+
+      if ( ni <= numMappings )
+      {
+        /* If we get here then we have run out of all default ranges.   */
+        /* We have read one non-default mapping which we haven't stored */
+        /* and there may be others that need to be read.                */
+        ret[i++] = nuni;
+        while ( ni < numMappings )
+        {
+          ret[i++] = (FT_UInt32)TT_NEXT_UINT24( p );
+          p += 2;
+          ++ni;
+        }
+      }
+      else if ( di <= numRanges )
+      {
+        /* If we get here then we have run out of all non-default     */
+        /* mappings.  We have read one default range which we haven't */
+        /* stored and there may be others that need to be read.       */
+        for ( k = 0; k <= dcnt; ++k )
+          ret[i++] = duni + k;
+
+        while ( di < numRanges )
+        {
+          duni = (FT_UInt32)TT_NEXT_UINT24( dp );
+          dcnt = FT_NEXT_BYTE( dp );
+
+          for ( k = 0; k <= dcnt; ++k )
+            ret[i++] = duni + k;
+          ++di;
+        }
+      }
+
+      ret[i] = 0;
+
+      return ret;
+    }
+  }
+
+
+  FT_DEFINE_TT_CMAP(
+    tt_cmap14_class_rec,
+    sizeof ( TT_CMap14Rec ),
+
+    (FT_CMap_InitFunc)     tt_cmap14_init,
+    (FT_CMap_DoneFunc)     tt_cmap14_done,
+    (FT_CMap_CharIndexFunc)tt_cmap14_char_index,
+    (FT_CMap_CharNextFunc) tt_cmap14_char_next,
+
+    /* Format 14 extension functions */
+    (FT_CMap_CharVarIndexFunc)    tt_cmap14_char_var_index,
+    (FT_CMap_CharVarIsDefaultFunc)tt_cmap14_char_var_isdefault,
+    (FT_CMap_VariantListFunc)     tt_cmap14_variants,
+    (FT_CMap_CharVariantListFunc) tt_cmap14_char_variants,
+    (FT_CMap_VariantCharListFunc) tt_cmap14_variant_chars,
+
+    14,
+    (TT_CMap_ValidateFunc)tt_cmap14_validate,
+    (TT_CMap_Info_GetFunc)tt_cmap14_get_info )
+
+#endif /* TT_CONFIG_CMAP_FORMAT_14 */
+
+
+#ifndef FT_CONFIG_OPTION_PIC
+
+  static const TT_CMap_Class  tt_cmap_classes[] =
+  {
+#define TTCMAPCITEM( a )  &a,
+#include "ttcmapc.h"
+    NULL,
   };
+
+#else /*FT_CONFIG_OPTION_PIC*/
+
+  void
+  FT_Destroy_Class_tt_cmap_classes( FT_Library      library,
+                                    TT_CMap_Class*  clazz )
+  {
+    FT_Memory  memory = library->memory;
+
+
+    if ( clazz )
+      FT_FREE( clazz );
+  }
+
+
+  FT_Error
+  FT_Create_Class_tt_cmap_classes( FT_Library       library,
+                                   TT_CMap_Class**  output_class )
+  {
+    TT_CMap_Class*     clazz  = NULL;
+    TT_CMap_ClassRec*  recs;
+    FT_Error           error;
+    FT_Memory          memory = library->memory;
+
+    int  i = 0;
+
+
+#define TTCMAPCITEM( a ) i++;
+#include "ttcmapc.h"
+
+    /* allocate enough space for both the pointers */
+    /* plus terminator and the class instances     */
+    if ( FT_ALLOC( clazz, sizeof ( *clazz ) * ( i + 1 ) +
+                          sizeof ( TT_CMap_ClassRec ) * i ) )
+      return error;
+
+    /* the location of the class instances follows the array of pointers */
+    recs = (TT_CMap_ClassRec*)( (char*)clazz +
+                                sizeof ( *clazz ) * ( i + 1 ) );
+    i    = 0;
+
+#undef TTCMAPCITEM
+#define  TTCMAPCITEM( a )             \
+    FT_Init_Class_ ## a( &recs[i] );  \
+    clazz[i] = &recs[i];              \
+    i++;
+#include "ttcmapc.h"
+
+    clazz[i] = NULL;
+
+    *output_class = clazz;
+    return FT_Err_Ok;
+  }
+
+#endif /*FT_CONFIG_OPTION_PIC*/
 
 
   /* parse the `cmap' table and build the corresponding TT_CMap objects */
@@ -3874,21 +5195,33 @@
     FT_Byte*           limit = table + face->cmap_size;
     FT_UInt volatile   num_cmaps;
     FT_Byte* volatile  p     = table;
+    FT_Library         library = FT_FACE_LIBRARY( face );
+
+    FT_UNUSED( library );
 
 
-    if ( p + 4 > limit )
-      return SFNT_Err_Invalid_Table;
+    if ( !p || p + 4 > limit )
+      return FT_THROW( Invalid_Table );
 
     /* only recognize format 0 */
     if ( TT_NEXT_USHORT( p ) != 0 )
     {
       p -= 2;
-      FT_ERROR(( "tt_face_build_cmaps: unsupported `cmap' table format = %d\n",
+      FT_ERROR(( "tt_face_build_cmaps:"
+                 " unsupported `cmap' table format = %d\n",
                  TT_PEEK_USHORT( p ) ));
-      return SFNT_Err_Invalid_Table;
+      return FT_THROW( Invalid_Table );
     }
 
     num_cmaps = TT_NEXT_USHORT( p );
+
+#ifdef FT_MAX_CHARMAP_CACHEABLE
+    if ( num_cmaps > FT_MAX_CHARMAP_CACHEABLE )
+      FT_ERROR(( "tt_face_build_cmaps: too many cmap subtables (%d)\n"
+                 "                     subtable #%d and higher are loaded"
+                 "                     but cannot be searched\n",
+                 num_cmaps, FT_MAX_CHARMAP_CACHEABLE + 1 ));
+#endif
 
     for ( ; num_cmaps > 0 && p + 8 <= limit; num_cmaps-- )
     {
@@ -3904,9 +5237,9 @@
 
       if ( offset && offset <= face->cmap_size - 2 )
       {
-        FT_Byte*                       cmap   = table + offset;
+        FT_Byte* volatile              cmap   = table + offset;
         volatile FT_UInt               format = TT_PEEK_USHORT( cmap );
-        const TT_CMap_Class* volatile  pclazz = tt_cmap_classes;
+        const TT_CMap_Class* volatile  pclazz = TT_CMAP_CLASSES_GET;
         TT_CMap_Class volatile         clazz;
 
 
@@ -3916,7 +5249,7 @@
           if ( clazz->format == format )
           {
             volatile TT_ValidatorRec  valid;
-            volatile FT_Error         error = SFNT_Err_Ok;
+            volatile FT_Error         error = FT_Err_Ok;
 
 
             ft_validator_init( FT_VALIDATOR( &valid ), cmap, limit,
@@ -3924,7 +5257,7 @@
 
             valid.num_glyphs = (FT_UInt)face->max_profile.numGlyphs;
 
-            if ( ft_setjmp( FT_VALIDATOR( &valid )->jump_buffer ) == 0 )
+            if ( ft_setjmp( FT_VALIDATOR( &valid )->jump_buffer) == 0 )
             {
               /* validate this cmap sub-table */
               error = clazz->validate( cmap, FT_VALIDATOR( &valid ) );
@@ -3934,6 +5267,10 @@
             {
               FT_CMap  ttcmap;
 
+
+              /* It might make sense to store the single variation         */
+              /* selector cmap somewhere special.  But it would have to be */
+              /* in the public FT_FaceRec, and we can't change that.       */
 
               if ( !FT_CMap_New( (FT_CMap_Class)clazz,
                                  cmap, &charmap, &ttcmap ) )
@@ -3945,16 +5282,22 @@
             }
             else
             {
-              FT_ERROR(( "tt_face_build_cmaps:" ));
-              FT_ERROR(( " broken cmap sub-table ignored!\n" ));
+              FT_TRACE0(( "tt_face_build_cmaps:"
+                          " broken cmap sub-table ignored\n" ));
             }
             break;
           }
         }
+
+        if ( *pclazz == NULL )
+        {
+          FT_TRACE0(( "tt_face_build_cmaps:"
+                      " unsupported cmap sub-table ignored\n" ));
+        }
       }
     }
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -3971,7 +5314,6 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  ttkern.c                                                               */
@@ -3979,7 +5321,7 @@
 /*    Load the basic TrueType kerning table.  This doesn't handle          */
 /*    kerning data within the GPOS table at the moment.                    */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2007, 2009, 2010, 2013 by                               */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -3996,7 +5338,6 @@
 #include FT_INTERNAL_STREAM_H
 #include FT_TRUETYPE_TAGS_H
 #include "ttkern.h"
-#include "ttload.h"
 
 #include "sferrors.h"
 
@@ -4014,8 +5355,6 @@
 #undef  TT_KERN_INDEX
 #define TT_KERN_INDEX( g1, g2 )  ( ( (FT_ULong)(g1) << 16 ) | (g2) )
 
-
-#ifdef FT_OPTIMIZE_MEMORY
 
   FT_LOCAL_DEF( FT_Error )
   tt_face_load_kern( TT_Face    face,
@@ -4036,14 +5375,16 @@
 
     if ( table_size < 4 )  /* the case of a malformed table */
     {
-      FT_ERROR(( "kerning table is too small - ignored\n" ));
-      error = SFNT_Err_Table_Missing;
+      FT_ERROR(( "tt_face_load_kern:"
+                 " kerning table is too small - ignored\n" ));
+      error = FT_THROW( Table_Missing );
       goto Exit;
     }
 
     if ( FT_FRAME_EXTRACT( table_size, face->kern_table ) )
     {
-      FT_ERROR(( "could not extract kerning table\n" ));
+      FT_ERROR(( "tt_face_load_kern:"
+                 " could not extract kerning table\n" ));
       goto Exit;
     }
 
@@ -4060,9 +5401,9 @@
 
     for ( nn = 0; nn < num_tables; nn++ )
     {
-      FT_UInt    num_pairs, /*version, */length, coverage;
+      FT_UInt    num_pairs, length, coverage;
       FT_Byte*   p_next;
-      FT_UInt32  mask = 1UL << nn;
+      FT_UInt32  mask = (FT_UInt32)1UL << nn;
 
 
       if ( p + 6 > p_limit )
@@ -4070,7 +5411,7 @@
 
       p_next = p;
 
-      /*version  = FT_NEXT_USHORT( p );*/
+      p += 2; /* skip version */
       length   = FT_NEXT_USHORT( p );
       coverage = FT_NEXT_USHORT( p );
 
@@ -4078,6 +5419,9 @@
         break;
 
       p_next += length;
+
+      if ( p_next > p_limit )  /* handle broken table */
+        p_next = p_limit;
 
       /* only use horizontal kerning tables */
       if ( ( coverage & ~8 ) != 0x0001 ||
@@ -4087,8 +5431,8 @@
       num_pairs = FT_NEXT_USHORT( p );
       p        += 6;
 
-      if ( p + 6 * num_pairs > p_limit )
-        goto NextTable;
+      if ( ( p_next - p ) < 6 * (int)num_pairs ) /* handle broken count */
+        num_pairs = (FT_UInt)( ( p_next - p ) / 6 );
 
       avail |= mask;
 
@@ -4098,8 +5442,8 @@
        */
       if ( num_pairs > 0 )
       {
-        FT_UInt  count;
-        FT_UInt  old_pair;
+        FT_ULong  count;
+        FT_ULong  old_pair;
 
 
         old_pair = FT_NEXT_ULONG( p );
@@ -4155,20 +5499,24 @@
                        FT_UInt  right_glyph )
   {
     FT_Int    result = 0;
-    FT_UInt   count, mask = 1;
+    FT_UInt   count, mask;
     FT_Byte*  p       = face->kern_table;
+    FT_Byte*  p_limit = p + face->kern_table_size;
 
 
     p   += 4;
     mask = 0x0001;
 
-    for ( count = face->num_kern_tables; count > 0; count--, mask <<= 1 )
+    for ( count = face->num_kern_tables;
+          count > 0 && p + 6 <= p_limit;
+          count--, mask <<= 1 )
     {
       FT_Byte* base     = p;
-      FT_Byte* next     = base;
+      FT_Byte* next;
       FT_UInt  version  = FT_NEXT_USHORT( p );
       FT_UInt  length   = FT_NEXT_USHORT( p );
       FT_UInt  coverage = FT_NEXT_USHORT( p );
+      FT_UInt  num_pairs;
       FT_Int   value    = 0;
 
       FT_UNUSED( version );
@@ -4176,21 +5524,27 @@
 
       next = base + length;
 
+      if ( next > p_limit )  /* handle broken table */
+        next = p_limit;
+
       if ( ( face->kern_avail_bits & mask ) == 0 )
         goto NextTable;
 
       if ( p + 8 > next )
         goto NextTable;
 
+      num_pairs = FT_NEXT_USHORT( p );
+      p        += 6;
+
+      if ( ( next - p ) < 6 * (int)num_pairs )  /* handle broken count  */
+        num_pairs = (FT_UInt)( ( next - p ) / 6 );
+
       switch ( coverage >> 8 )
       {
       case 0:
         {
-          FT_UInt   num_pairs = FT_NEXT_USHORT( p );
-          FT_ULong  key0      = TT_KERN_INDEX( left_glyph, right_glyph );
+          FT_ULong  key0 = TT_KERN_INDEX( left_glyph, right_glyph );
 
-
-          p += 6;
 
           if ( face->kern_order_bits & mask )   /* binary search */
           {
@@ -4251,7 +5605,7 @@
       goto NextTable;
 
     Found:
-      if ( coverage & 8 ) /* overide or add */
+      if ( coverage & 8 ) /* override or add */
         result = value;
       else
         result += value;
@@ -4263,217 +5617,16 @@
     return result;
   }
 
-#else /* !OPTIMIZE_MEMORY */
-
-  FT_CALLBACK_DEF( int )
-  tt_kern_pair_compare( const void*  a,
-                        const void*  b );
-
-
-  FT_LOCAL_DEF( FT_Error )
-  tt_face_load_kern( TT_Face    face,
-                     FT_Stream  stream )
-  {
-    FT_Error   error;
-    FT_Memory  memory = stream->memory;
-
-    FT_UInt    n, num_tables;
-
-
-    /* the kern table is optional; exit silently if it is missing */
-    error = face->goto_table( face, TTAG_kern, stream, 0 );
-    if ( error )
-      return SFNT_Err_Ok;
-
-    if ( FT_FRAME_ENTER( 4L ) )
-      goto Exit;
-
-    (void)FT_GET_USHORT();         /* version */
-    num_tables = FT_GET_USHORT();
-
-    FT_FRAME_EXIT();
-
-    for ( n = 0; n < num_tables; n++ )
-    {
-      FT_UInt  coverage;
-      FT_UInt  length;
-
-
-      if ( FT_FRAME_ENTER( 6L ) )
-        goto Exit;
-
-      (void)FT_GET_USHORT();           /* version                 */
-      length   = FT_GET_USHORT() - 6;  /* substract header length */
-      coverage = FT_GET_USHORT();
-
-      FT_FRAME_EXIT();
-
-      if ( coverage == 0x0001 )
-      {
-        FT_UInt        num_pairs;
-        TT_Kern0_Pair  pair;
-        TT_Kern0_Pair  limit;
-
-
-        /* found a horizontal format 0 kerning table! */
-        if ( FT_FRAME_ENTER( 8L ) )
-          goto Exit;
-
-        num_pairs = FT_GET_USHORT();
-
-        /* skip the rest */
-
-        FT_FRAME_EXIT();
-
-        /* allocate array of kerning pairs */
-        if ( FT_QNEW_ARRAY( face->kern_pairs, num_pairs ) ||
-             FT_FRAME_ENTER( 6L * num_pairs )             )
-          goto Exit;
-
-        pair  = face->kern_pairs;
-        limit = pair + num_pairs;
-        for ( ; pair < limit; pair++ )
-        {
-          pair->left  = FT_GET_USHORT();
-          pair->right = FT_GET_USHORT();
-          pair->value = FT_GET_USHORT();
-        }
-
-        FT_FRAME_EXIT();
-
-        face->num_kern_pairs   = num_pairs;
-        face->kern_table_index = n;
-
-        /* ensure that the kerning pair table is sorted (yes, some */
-        /* fonts have unsorted tables!)                            */
-
-        if ( num_pairs > 0 )
-        {
-          TT_Kern0_Pair  pair0 = face->kern_pairs;
-          FT_ULong       prev  = TT_KERN_INDEX( pair0->left, pair0->right );
-
-
-          for ( pair0++; pair0 < limit; pair0++ )
-          {
-            FT_ULong  next = TT_KERN_INDEX( pair0->left, pair0->right );
-
-
-            if ( next < prev )
-              goto SortIt;
-
-            prev = next;
-          }
-          goto Exit;
-
-        SortIt:
-          ft_qsort( (void*)face->kern_pairs, (int)num_pairs,
-                    sizeof ( TT_Kern0_PairRec ), tt_kern_pair_compare );
-        }
-
-        goto Exit;
-      }
-
-      if ( FT_STREAM_SKIP( length ) )
-        goto Exit;
-    }
-
-    /* no kern table found -- doesn't matter */
-    face->kern_table_index = -1;
-    face->num_kern_pairs   = 0;
-    face->kern_pairs       = NULL;
-
-  Exit:
-    return error;
-  }
-
-
-  FT_CALLBACK_DEF( int )
-  tt_kern_pair_compare( const void*  a,
-                        const void*  b )
-  {
-    TT_Kern0_Pair  pair1 = (TT_Kern0_Pair)a;
-    TT_Kern0_Pair  pair2 = (TT_Kern0_Pair)b;
-
-    FT_ULong  index1 = TT_KERN_INDEX( pair1->left, pair1->right );
-    FT_ULong  index2 = TT_KERN_INDEX( pair2->left, pair2->right );
-
-    return index1 < index2 ? -1
-                           : ( index1 > index2 ? 1
-                                               : 0 );
-  }
-
-
-  FT_LOCAL_DEF( void )
-  tt_face_done_kern( TT_Face  face )
-  {
-    FT_Memory  memory = face->root.stream->memory;
-
-
-    FT_FREE( face->kern_pairs );
-    face->num_kern_pairs = 0;
-  }
-
-
-  FT_LOCAL_DEF( FT_Int )
-  tt_face_get_kerning( TT_Face  face,
-                       FT_UInt  left_glyph,
-                       FT_UInt  right_glyph )
-  {
-    FT_Int         result = 0;
-    TT_Kern0_Pair  pair;
-
-
-    if ( face && face->kern_pairs )
-    {
-      /* there are some kerning pairs in this font file! */
-      FT_ULong  search_tag = TT_KERN_INDEX( left_glyph, right_glyph );
-      FT_Long   left, right;
-
-
-      left  = 0;
-      right = face->num_kern_pairs - 1;
-
-      while ( left <= right )
-      {
-        FT_Long   middle = left + ( ( right - left ) >> 1 );
-        FT_ULong  cur_pair;
-
-
-        pair     = face->kern_pairs + middle;
-        cur_pair = TT_KERN_INDEX( pair->left, pair->right );
-
-        if ( cur_pair == search_tag )
-          goto Found;
-
-        if ( cur_pair < search_tag )
-          left = middle + 1;
-        else
-          right = middle - 1;
-      }
-    }
-
-  Exit:
-    return result;
-
-  Found:
-    result = pair->value;
-    goto Exit;
-  }
-
-#endif /* !OPTIMIZE_MEMORY */
-
-
 #undef TT_KERN_INDEX
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  sfobjs.c                                                               */
 /*                                                                         */
 /*    SFNT object management (base).                                       */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2008, 2010-2013 by                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -4495,6 +5648,8 @@
 #include FT_TRUETYPE_IDS_H
 #include FT_TRUETYPE_TAGS_H
 #include FT_SERVICE_POSTSCRIPT_CMAPS_H
+#include FT_SFNT_NAMES_H
+#include FT_GZIP_H
 #include "sferrors.h"
 
 #ifdef TT_CONFIG_OPTION_BDF
@@ -4518,9 +5673,9 @@
   tt_name_entry_ascii_from_utf16( TT_NameEntry  entry,
                                   FT_Memory     memory )
   {
-    FT_String*  string;
+    FT_String*  string = NULL;
     FT_UInt     len, code, n;
-    FT_Byte*    read = (FT_Byte*)entry->string;
+    FT_Byte*    read   = (FT_Byte*)entry->string;
     FT_Error    error;
 
 
@@ -4532,44 +5687,17 @@
     for ( n = 0; n < len; n++ )
     {
       code = FT_NEXT_USHORT( read );
+
+      if ( code == 0 )
+        break;
+
       if ( code < 32 || code > 127 )
         code = '?';
 
       string[n] = (char)code;
     }
 
-    string[len] = 0;
-
-    return string;
-  }
-
-
-  /* convert a UCS-4 name entry to ASCII */
-  static FT_String*
-  tt_name_entry_ascii_from_ucs4( TT_NameEntry  entry,
-                                 FT_Memory     memory )
-  {
-    FT_String*  string;
-    FT_UInt     len, code, n;
-    FT_Byte*    read = (FT_Byte*)entry->string;
-    FT_Error    error;
-
-
-    len = (FT_UInt)entry->stringLength / 4;
-
-    if ( FT_NEW_ARRAY( string, len + 1 ) )
-      return NULL;
-
-    for ( n = 0; n < len; n++ )
-    {
-      code = (FT_UInt)FT_NEXT_ULONG( read );
-      if ( code < 32 || code > 127 )
-        code = '?';
-
-      string[n] = (char)code;
-    }
-
-    string[len] = 0;
+    string[n] = 0;
 
     return string;
   }
@@ -4580,9 +5708,9 @@
   tt_name_entry_ascii_from_other( TT_NameEntry  entry,
                                   FT_Memory     memory )
   {
-    FT_String*  string;
+    FT_String*  string = NULL;
     FT_UInt     len, code, n;
-    FT_Byte*    read = (FT_Byte*)entry->string;
+    FT_Byte*    read   = (FT_Byte*)entry->string;
     FT_Error    error;
 
 
@@ -4594,13 +5722,17 @@
     for ( n = 0; n < len; n++ )
     {
       code = *read++;
+
+      if ( code == 0 )
+        break;
+
       if ( code < 32 || code > 127 )
         code = '?';
 
       string[n] = (char)code;
     }
 
-    string[len] = 0;
+    string[n] = 0;
 
     return string;
   }
@@ -4623,25 +5755,35 @@
   /*                                                                       */
   /*    nameid :: The name id of the name record to return.                */
   /*                                                                       */
-  /* <Return>                                                              */
-  /*    Character string.  NULL if no name is present.                     */
+  /* <InOut>                                                               */
+  /*    name   :: The address of a string pointer.  NULL if no name is     */
+  /*              present.                                                 */
   /*                                                                       */
-  static FT_String*
-  tt_face_get_name( TT_Face    face,
-                    FT_UShort  nameid )
+  /* <Return>                                                              */
+  /*    FreeType error code.  0 means success.                             */
+  /*                                                                       */
+  static FT_Error
+  tt_face_get_name( TT_Face      face,
+                    FT_UShort    nameid,
+                    FT_String**  name )
   {
     FT_Memory         memory = face->root.memory;
+    FT_Error          error  = FT_Err_Ok;
     FT_String*        result = NULL;
     FT_UShort         n;
     TT_NameEntryRec*  rec;
-    FT_Int            found_apple   = -1;
-    FT_Int            found_win     = -1;
-    FT_Int            found_unicode = -1;
+    FT_Int            found_apple         = -1;
+    FT_Int            found_apple_roman   = -1;
+    FT_Int            found_apple_english = -1;
+    FT_Int            found_win           = -1;
+    FT_Int            found_unicode       = -1;
 
     FT_Bool           is_english = 0;
 
     TT_NameEntry_ConvertFunc  convert;
 
+
+    FT_ASSERT( name );
 
     rec = face->name_table.names;
     for ( n = 0; n < face->num_names; n++, rec++ )
@@ -4649,7 +5791,7 @@
       /* According to the OpenType 1.3 specification, only Microsoft or  */
       /* Apple platform IDs might be used in the `name' table.  The      */
       /* `Unicode' platform is reserved for the `cmap' table, and the    */
-      /* `Iso' one is deprecated.                                        */
+      /* `ISO' one is deprecated.                                        */
       /*                                                                 */
       /* However, the Apple TrueType specification doesn't say the same  */
       /* thing and goes to suggest that all Unicode `name' table entries */
@@ -4669,9 +5811,14 @@
           break;
 
         case TT_PLATFORM_MACINTOSH:
+          /* This is a bit special because some fonts will use either    */
+          /* an English language id, or a Roman encoding id, to indicate */
+          /* the English version of its font name.                       */
+          /*                                                             */
           if ( rec->languageID == TT_MAC_LANGID_ENGLISH )
-            found_apple = n;
-
+            found_apple_english = n;
+          else if ( rec->encodingID == TT_MAC_ID_ROMAN )
+            found_apple_roman = n;
           break;
 
         case TT_PLATFORM_MICROSOFT:
@@ -4701,6 +5848,10 @@
       }
     }
 
+    found_apple = found_apple_roman;
+    if ( found_apple_english >= 0 )
+      found_apple = found_apple_english;
+
     /* some fonts contain invalid Unicode or Macintosh formatted entries; */
     /* we will thus favor names encoded in Windows formats if available   */
     /* (provided it is an English name)                                   */
@@ -4711,13 +5862,19 @@
       rec = face->name_table.names + found_win;
       switch ( rec->encodingID )
       {
+        /* all Unicode strings are encoded using UTF-16BE */
       case TT_MS_ID_UNICODE_CS:
       case TT_MS_ID_SYMBOL_CS:
         convert = tt_name_entry_ascii_from_utf16;
         break;
 
       case TT_MS_ID_UCS_4:
-        convert = tt_name_entry_ascii_from_ucs4;
+        /* Apparently, if this value is found in a name table entry, it is */
+        /* documented as `full Unicode repertoire'.  Experience with the   */
+        /* MsGothic font shipped with Windows Vista shows that this really */
+        /* means UTF-16 encoded names (UCS-4 values are only used within   */
+        /* charmaps).                                                      */
+        convert = tt_name_entry_ascii_from_utf16;
         break;
 
       default:
@@ -4739,10 +5896,7 @@
     {
       if ( rec->string == NULL )
       {
-        FT_Error   error  = SFNT_Err_Ok;
         FT_Stream  stream = face->name_table.stream;
-
-        FT_UNUSED( error );
 
 
         if ( FT_QNEW_ARRAY ( rec->string, rec->stringLength ) ||
@@ -4760,7 +5914,8 @@
     }
 
   Exit:
-    return result;
+    *name = result;
+    return error;
   }
 
 
@@ -4768,7 +5923,7 @@
   sfnt_find_encoding( int  platform_id,
                       int  encoding_id )
   {
-    typedef struct  TEncoding
+    typedef struct  TEncoding_
     {
       int          platform_id;
       int          encoding_id;
@@ -4815,6 +5970,380 @@
   }
 
 
+#define WRITE_BYTE( p, v )     \
+          do                   \
+          {                    \
+            *(p)++ = (v) >> 0; \
+                               \
+          } while ( 0 )
+
+#define WRITE_USHORT( p, v )   \
+          do                   \
+          {                    \
+            *(p)++ = (v) >> 8; \
+            *(p)++ = (v) >> 0; \
+                               \
+          } while ( 0 )
+
+#define WRITE_ULONG( p, v )     \
+          do                    \
+          {                     \
+            *(p)++ = (FT_Byte)((v) >> 24); \
+            *(p)++ = (FT_Byte)((v) >> 16); \
+            *(p)++ = (FT_Byte)((v) >>  8); \
+            *(p)++ = (FT_Byte)((v) >>  0); \
+                                \
+          } while ( 0 )
+
+
+  static void
+  sfnt_stream_close( FT_Stream  stream )
+  {
+    FT_Memory  memory = stream->memory;
+
+
+    FT_FREE( stream->base );
+
+    stream->size  = 0;
+    stream->base  = 0;
+    stream->close = 0;
+  }
+
+
+  FT_CALLBACK_DEF( int )
+  compare_offsets( const void*  a,
+                   const void*  b )
+  {
+    WOFF_Table  table1 = *(WOFF_Table*)a;
+    WOFF_Table  table2 = *(WOFF_Table*)b;
+
+    FT_ULong  offset1 = table1->Offset;
+    FT_ULong  offset2 = table2->Offset;
+
+
+    if ( offset1 > offset2 )
+      return 1;
+    else if ( offset1 < offset2 )
+      return -1;
+    else
+      return 0;
+  }
+
+
+  /* Replace `face->root.stream' with a stream containing the extracted */
+  /* SFNT of a WOFF font.                                               */
+
+  static FT_Error
+  woff_open_font( FT_Stream  stream,
+                  TT_Face    face )
+  {
+    FT_Memory       memory = stream->memory;
+    FT_Error        error  = FT_Err_Ok;
+
+    WOFF_HeaderRec  woff;
+    WOFF_Table      tables  = NULL;
+    WOFF_Table*     indices = NULL;
+
+    FT_ULong        woff_offset;
+
+    FT_Byte*        sfnt        = NULL;
+    FT_Stream       sfnt_stream = NULL;
+
+    FT_Byte*        sfnt_header;
+    FT_ULong        sfnt_offset;
+
+    FT_Int          nn;
+    FT_ULong        old_tag = 0;
+
+    static const FT_Frame_Field  woff_header_fields[] =
+    {
+#undef  FT_STRUCTURE
+#define FT_STRUCTURE  WOFF_HeaderRec
+
+      FT_FRAME_START( 44 ),
+        FT_FRAME_ULONG ( signature ),
+        FT_FRAME_ULONG ( flavor ),
+        FT_FRAME_ULONG ( length ),
+        FT_FRAME_USHORT( num_tables ),
+        FT_FRAME_USHORT( reserved ),
+        FT_FRAME_ULONG ( totalSfntSize ),
+        FT_FRAME_USHORT( majorVersion ),
+        FT_FRAME_USHORT( minorVersion ),
+        FT_FRAME_ULONG ( metaOffset ),
+        FT_FRAME_ULONG ( metaLength ),
+        FT_FRAME_ULONG ( metaOrigLength ),
+        FT_FRAME_ULONG ( privOffset ),
+        FT_FRAME_ULONG ( privLength ),
+      FT_FRAME_END
+    };
+
+
+    FT_ASSERT( stream == face->root.stream );
+    FT_ASSERT( FT_STREAM_POS() == 0 );
+
+    if ( FT_STREAM_READ_FIELDS( woff_header_fields, &woff ) )
+      return error;
+
+    /* Make sure we don't recurse back here or hit TTC code. */
+    if ( woff.flavor == TTAG_wOFF || woff.flavor == TTAG_ttcf )
+      return FT_THROW( Invalid_Table );
+
+    /* Miscellaneous checks. */
+    if ( woff.length != stream->size                              ||
+         woff.num_tables == 0                                     ||
+         44 + woff.num_tables * 20UL >= woff.length               ||
+         12 + woff.num_tables * 16UL >= woff.totalSfntSize        ||
+         ( woff.totalSfntSize & 3 ) != 0                          ||
+         ( woff.metaOffset == 0 && ( woff.metaLength != 0     ||
+                                     woff.metaOrigLength != 0 ) ) ||
+         ( woff.metaLength != 0 && woff.metaOrigLength == 0 )     ||
+         ( woff.privOffset == 0 && woff.privLength != 0 )         )
+      return FT_THROW( Invalid_Table );
+
+    if ( FT_ALLOC( sfnt, woff.totalSfntSize ) ||
+         FT_NEW( sfnt_stream )                )
+      goto Exit;
+
+    sfnt_header = sfnt;
+
+    /* Write sfnt header. */
+    {
+      FT_UInt  searchRange, entrySelector, rangeShift, x;
+
+
+      x             = woff.num_tables;
+      entrySelector = 0;
+      while ( x )
+      {
+        x            >>= 1;
+        entrySelector += 1;
+      }
+      entrySelector--;
+
+      searchRange = ( 1 << entrySelector ) * 16;
+      rangeShift  = woff.num_tables * 16 - searchRange;
+
+      WRITE_ULONG ( sfnt_header, woff.flavor );
+      WRITE_USHORT( sfnt_header, woff.num_tables );
+      WRITE_USHORT( sfnt_header, searchRange );
+      WRITE_USHORT( sfnt_header, entrySelector );
+      WRITE_USHORT( sfnt_header, rangeShift );
+    }
+
+    /* While the entries in the sfnt header must be sorted by the */
+    /* tag value, the tables themselves are not.  We thus have to */
+    /* sort them by offset and check that they don't overlap.     */
+
+    if ( FT_NEW_ARRAY( tables, woff.num_tables )  ||
+         FT_NEW_ARRAY( indices, woff.num_tables ) )
+      goto Exit;
+
+    FT_TRACE2(( "\n"
+                "  tag    offset    compLen  origLen  checksum\n"
+                "  -------------------------------------------\n" ));
+
+    if ( FT_FRAME_ENTER( 20L * woff.num_tables ) )
+      goto Exit;
+
+    for ( nn = 0; nn < woff.num_tables; nn++ )
+    {
+      WOFF_Table  table = tables + nn;
+
+      table->Tag        = FT_GET_TAG4();
+      table->Offset     = FT_GET_ULONG();
+      table->CompLength = FT_GET_ULONG();
+      table->OrigLength = FT_GET_ULONG();
+      table->CheckSum   = FT_GET_ULONG();
+
+      FT_TRACE2(( "  %c%c%c%c  %08lx  %08lx  %08lx  %08lx\n",
+                  (FT_Char)( table->Tag >> 24 ),
+                  (FT_Char)( table->Tag >> 16 ),
+                  (FT_Char)( table->Tag >> 8  ),
+                  (FT_Char)( table->Tag       ),
+                  table->Offset,
+                  table->CompLength,
+                  table->OrigLength,
+                  table->CheckSum ));
+
+      if ( table->Tag <= old_tag )
+      {
+        FT_FRAME_EXIT();
+        error = FT_THROW( Invalid_Table );
+        goto Exit;
+      }
+
+      old_tag     = table->Tag;
+      indices[nn] = table;
+    }
+
+    FT_FRAME_EXIT();
+
+    /* Sort by offset. */
+
+    ft_qsort( indices,
+              woff.num_tables,
+              sizeof ( WOFF_Table ),
+              compare_offsets );
+
+    /* Check offsets and lengths. */
+
+    woff_offset = 44 + woff.num_tables * 20L;
+    sfnt_offset = 12 + woff.num_tables * 16L;
+
+    for ( nn = 0; nn < woff.num_tables; nn++ )
+    {
+      WOFF_Table  table = indices[nn];
+
+
+      if ( table->Offset != woff_offset                         ||
+           table->Offset + table->CompLength > woff.length      ||
+           sfnt_offset + table->OrigLength > woff.totalSfntSize ||
+           table->CompLength > table->OrigLength                )
+      {
+        error = FT_THROW( Invalid_Table );
+        goto Exit;
+      }
+
+      table->OrigOffset = sfnt_offset;
+
+      /* The offsets must be multiples of 4. */
+      woff_offset += ( table->CompLength + 3 ) & ~3;
+      sfnt_offset += ( table->OrigLength + 3 ) & ~3;
+    }
+
+    /*
+     * Final checks!
+     *
+     * We don't decode and check the metadata block.
+     * We don't check table checksums either.
+     * But other than those, I think we implement all
+     * `MUST' checks from the spec.
+     */
+
+    if ( woff.metaOffset )
+    {
+      if ( woff.metaOffset != woff_offset                  ||
+           woff.metaOffset + woff.metaLength > woff.length )
+      {
+        error = FT_THROW( Invalid_Table );
+        goto Exit;
+      }
+
+      /* We have padding only ... */
+      woff_offset += woff.metaLength;
+    }
+
+    if ( woff.privOffset )
+    {
+      /* ... if it isn't the last block. */
+      woff_offset = ( woff_offset + 3 ) & ~3;
+
+      if ( woff.privOffset != woff_offset                  ||
+           woff.privOffset + woff.privLength > woff.length )
+      {
+        error = FT_THROW( Invalid_Table );
+        goto Exit;
+      }
+
+      /* No padding for the last block. */
+      woff_offset += woff.privLength;
+    }
+
+    if ( sfnt_offset != woff.totalSfntSize ||
+         woff_offset != woff.length        )
+    {
+      error = FT_THROW( Invalid_Table );
+      goto Exit;
+    }
+
+    /* Write the tables. */
+
+    for ( nn = 0; nn < woff.num_tables; nn++ )
+    {
+      WOFF_Table  table = tables + nn;
+
+
+      /* Write SFNT table entry. */
+      WRITE_ULONG( sfnt_header, table->Tag );
+      WRITE_ULONG( sfnt_header, table->CheckSum );
+      WRITE_ULONG( sfnt_header, table->OrigOffset );
+      WRITE_ULONG( sfnt_header, table->OrigLength );
+
+      /* Write table data. */
+      if ( FT_STREAM_SEEK( table->Offset )     ||
+           FT_FRAME_ENTER( table->CompLength ) )
+        goto Exit;
+
+      if ( table->CompLength == table->OrigLength )
+      {
+        /* Uncompressed data; just copy. */
+        ft_memcpy( sfnt + table->OrigOffset,
+                   stream->cursor,
+                   table->OrigLength );
+      }
+      else
+      {
+        /* Uncompress with zlib. */
+        FT_ULong  output_len = table->OrigLength;
+
+
+        error = FT_Gzip_Uncompress( memory,
+                                    sfnt + table->OrigOffset, &output_len,
+                                    stream->cursor, table->CompLength );
+        if ( error )
+          goto Exit;
+        if ( output_len != table->OrigLength )
+        {
+          error = FT_THROW( Invalid_Table );
+          goto Exit;
+        }
+      }
+
+      FT_FRAME_EXIT();
+
+      /* We don't check whether the padding bytes in the WOFF file are     */
+      /* actually '\0'.  For the output, however, we do set them properly. */
+      sfnt_offset = table->OrigOffset + table->OrigLength;
+      while ( sfnt_offset & 3 )
+      {
+        sfnt[sfnt_offset] = '\0';
+        sfnt_offset++;
+      }
+    }
+
+    /* Ok!  Finally ready.  Swap out stream and return. */
+    FT_Stream_OpenMemory( sfnt_stream, sfnt, woff.totalSfntSize );
+    sfnt_stream->memory = stream->memory;
+    sfnt_stream->close  = sfnt_stream_close;
+
+    FT_Stream_Free(
+      face->root.stream,
+      ( face->root.face_flags & FT_FACE_FLAG_EXTERNAL_STREAM ) != 0 );
+
+    face->root.stream = sfnt_stream;
+
+    face->root.face_flags &= ~FT_FACE_FLAG_EXTERNAL_STREAM;
+
+  Exit:
+    FT_FREE( tables );
+    FT_FREE( indices );
+
+    if ( error )
+    {
+      FT_FREE( sfnt );
+      FT_Stream_Close( sfnt_stream );
+      FT_FREE( sfnt_stream );
+    }
+
+    return error;
+  }
+
+
+#undef WRITE_BYTE
+#undef WRITE_USHORT
+#undef WRITE_ULONG
+
+
   /* Fill in face->ttc_header.  If the font is not a TTC, it is */
   /* synthesized into a TTC with one offset table.              */
   static FT_Error
@@ -4832,7 +6361,7 @@
 
       FT_FRAME_START( 8 ),
         FT_FRAME_LONG( version ),
-        FT_FRAME_LONG( count   ),
+        FT_FRAME_LONG( count   ),  /* this is ULong in the specs */
       FT_FRAME_END
     };
 
@@ -4841,17 +6370,38 @@
     face->ttc_header.version = 0;
     face->ttc_header.count   = 0;
 
+  retry:
     offset = FT_STREAM_POS();
 
     if ( FT_READ_ULONG( tag ) )
       return error;
 
-    if ( tag != 0x00010000UL                      &&
-         tag != TTAG_ttcf                         &&
-         tag != FT_MAKE_TAG( 'O', 'T', 'T', 'O' ) &&
-         tag != TTAG_true                         &&
-         tag != 0x00020000UL                      )
-      return SFNT_Err_Unknown_File_Format;
+    if ( tag == TTAG_wOFF )
+    {
+      FT_TRACE2(( "sfnt_open_font: file is a WOFF; synthesizing SFNT\n" ));
+
+      if ( FT_STREAM_SEEK( offset ) )
+        return error;
+
+      error = woff_open_font( stream, face );
+      if ( error )
+        return error;
+
+      /* Swap out stream and retry! */
+      stream = face->root.stream;
+      goto retry;
+    }
+
+    if ( tag != 0x00010000UL &&
+         tag != TTAG_ttcf    &&
+         tag != TTAG_OTTO    &&
+         tag != TTAG_true    &&
+         tag != TTAG_typ1    &&
+         tag != 0x00020000UL )
+    {
+      FT_TRACE2(( "  not a font using the SFNT container format\n" ));
+      return FT_THROW( Unknown_File_Format );
+    }
 
     face->ttc_header.tag = TTAG_ttcf;
 
@@ -4864,6 +6414,17 @@
 
       if ( FT_STREAM_READ_FIELDS( ttc_header_fields, &face->ttc_header ) )
         return error;
+
+      if ( face->ttc_header.count == 0 )
+        return FT_THROW( Invalid_Table );
+
+      /* a rough size estimate: let's conservatively assume that there   */
+      /* is just a single table info in each subfont header (12 + 16*1 = */
+      /* 28 bytes), thus we have (at least) `12 + 4*count' bytes for the */
+      /* size of the TTC header plus `28*count' bytes for all subfont    */
+      /* headers                                                         */
+      if ( (FT_ULong)face->ttc_header.count > stream->size / ( 28 + 4 ) )
+        return FT_THROW( Array_Too_Large );
 
       /* now read the offsets of each font in the file */
       if ( FT_NEW_ARRAY( face->ttc_header.offsets, face->ttc_header.count ) )
@@ -4884,7 +6445,7 @@
       face->ttc_header.version = 1 << 16;
       face->ttc_header.count   = 1;
 
-      if ( FT_NEW( face->ttc_header.offsets) )
+      if ( FT_NEW( face->ttc_header.offsets ) )
         return error;
 
       face->ttc_header.offsets[0] = offset;
@@ -4916,7 +6477,10 @@
     {
       sfnt = (SFNT_Service)FT_Get_Module_Interface( library, "sfnt" );
       if ( !sfnt )
-        return SFNT_Err_Invalid_File_Format;
+      {
+        FT_ERROR(( "sfnt_init_face: cannot access `sfnt' module\n" ));
+        return FT_THROW( Missing_Module );
+      }
 
       face->sfnt       = sfnt;
       face->goto_table = sfnt->goto_table;
@@ -4924,9 +6488,14 @@
 
     FT_FACE_FIND_GLOBAL_SERVICE( face, face->psnames, POSTSCRIPT_CMAPS );
 
+    FT_TRACE2(( "SFNT driver\n" ));
+
     error = sfnt_open_font( stream, face );
     if ( error )
       return error;
+
+    /* Stream may have changed in sfnt_open_font. */
+    stream = face->root.stream;
 
     FT_TRACE2(( "sfnt_init_face: %08p, %ld\n", face, face_index ));
 
@@ -4934,7 +6503,7 @@
       face_index = 0;
 
     if ( face_index >= face->ttc_header.count )
-        return SFNT_Err_Bad_Argument;
+      return FT_THROW( Invalid_Argument );
 
     if ( FT_STREAM_SEEK( face->ttc_header.offsets[face_index] ) )
       return error;
@@ -4944,41 +6513,52 @@
     if ( error )
       return error;
 
-    face->root.num_faces = face->ttc_header.count;
+    face->root.num_faces  = face->ttc_header.count;
+    face->root.face_index = face_index;
 
     return error;
   }
 
 
-#define LOAD_( x )                                            \
-  do {                                                        \
-    FT_TRACE2(( "`" #x "' " ));                               \
-    FT_TRACE3(( "-->\n" ));                                   \
-                                                              \
-    error = sfnt->load_##x( face, stream );                   \
-                                                              \
-    FT_TRACE2(( "%s\n", ( !error )                            \
-                        ? "loaded"                            \
-                        : ( error == SFNT_Err_Table_Missing ) \
-                          ? "missing"                         \
-                          : "failed to load" ));              \
-    FT_TRACE3(( "\n" ));                                      \
+#define LOAD_( x )                                          \
+  do                                                        \
+  {                                                         \
+    FT_TRACE2(( "`" #x "' " ));                             \
+    FT_TRACE3(( "-->\n" ));                                 \
+                                                            \
+    error = sfnt->load_ ## x( face, stream );               \
+                                                            \
+    FT_TRACE2(( "%s\n", ( !error )                          \
+                        ? "loaded"                          \
+                        : FT_ERR_EQ( error, Table_Missing ) \
+                          ? "missing"                       \
+                          : "failed to load" ));            \
+    FT_TRACE3(( "\n" ));                                    \
   } while ( 0 )
 
-#define LOADM_( x, vertical )                                 \
-  do {                                                        \
-    FT_TRACE2(( "`%s" #x "' ",                                \
-                vertical ? "vertical " : "" ));               \
-    FT_TRACE3(( "-->\n" ));                                   \
-                                                              \
-    error = sfnt->load_##x( face, stream, vertical );         \
-                                                              \
-    FT_TRACE2(( "%s\n", ( !error )                            \
-                        ? "loaded"                            \
-                        : ( error == SFNT_Err_Table_Missing ) \
-                          ? "missing"                         \
-                          : "failed to load" ));              \
-    FT_TRACE3(( "\n" ));                                      \
+#define LOADM_( x, vertical )                               \
+  do                                                        \
+  {                                                         \
+    FT_TRACE2(( "`%s" #x "' ",                              \
+                vertical ? "vertical " : "" ));             \
+    FT_TRACE3(( "-->\n" ));                                 \
+                                                            \
+    error = sfnt->load_ ## x( face, stream, vertical );     \
+                                                            \
+    FT_TRACE2(( "%s\n", ( !error )                          \
+                        ? "loaded"                          \
+                        : FT_ERR_EQ( error, Table_Missing ) \
+                          ? "missing"                       \
+                          : "failed to load" ));            \
+    FT_TRACE3(( "\n" ));                                    \
+  } while ( 0 )
+
+#define GET_NAME( id, field )                                   \
+  do                                                            \
+  {                                                             \
+    error = tt_face_get_name( face, TT_NAME_ID_ ## id, field ); \
+    if ( error )                                                \
+      goto Exit;                                                \
   } while ( 0 )
 
 
@@ -4989,20 +6569,35 @@
                   FT_Int         num_params,
                   FT_Parameter*  params )
   {
-#ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES /* JE */
+    FT_Error      error;
+#ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
     FT_Error      psnames_error;
 #endif
-
-    FT_Error      error/*, psnames_error*/;
     FT_Bool       has_outline;
     FT_Bool       is_apple_sbit;
+    FT_Bool       is_apple_sbix;
+    FT_Bool       ignore_preferred_family    = FALSE;
+    FT_Bool       ignore_preferred_subfamily = FALSE;
 
     SFNT_Service  sfnt = (SFNT_Service)face->sfnt;
 
     FT_UNUSED( face_index );
-    FT_UNUSED( num_params );
-    FT_UNUSED( params );
 
+
+    /* Check parameters */
+
+    {
+      FT_Int  i;
+
+
+      for ( i = 0; i < num_params; i++ )
+      {
+        if ( params[i].tag == FT_PARAM_TAG_IGNORE_PREFERRED_FAMILY )
+          ignore_preferred_family = TRUE;
+        else if ( params[i].tag == FT_PARAM_TAG_IGNORE_PREFERRED_SUBFAMILY )
+          ignore_preferred_subfamily = TRUE;
+      }
+    }
 
     /* Load tables */
 
@@ -5025,15 +6620,23 @@
 
     /* do we have outlines in there? */
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
-    has_outline   = FT_BOOL( face->root.internal->incremental_interface != 0 ||
-                             tt_face_lookup_table( face, TTAG_glyf )    != 0 ||
-                             tt_face_lookup_table( face, TTAG_CFF )     != 0 );
+    has_outline = FT_BOOL( face->root.internal->incremental_interface != 0 ||
+                           tt_face_lookup_table( face, TTAG_glyf )    != 0 ||
+                           tt_face_lookup_table( face, TTAG_CFF )     != 0 );
 #else
-    has_outline   = FT_BOOL( tt_face_lookup_table( face, TTAG_glyf ) != 0 ||
-                             tt_face_lookup_table( face, TTAG_CFF )  != 0 );
+    has_outline = FT_BOOL( tt_face_lookup_table( face, TTAG_glyf ) != 0 ||
+                           tt_face_lookup_table( face, TTAG_CFF )  != 0 );
 #endif
 
     is_apple_sbit = 0;
+    is_apple_sbix = !face->goto_table( face, TTAG_sbix, stream, 0 );
+
+    /* Apple 'sbix' color bitmaps are rendered scaled and then the 'glyf'
+     * outline rendered on top.  We don't support that yet, so just ignore
+     * the 'glyf' outline and advertise it as a bitmap-only font. */
+    if ( is_apple_sbix )
+      has_outline = FALSE;
+
 
     /* if this font doesn't contain outlines, we try to load */
     /* a `bhed' table                                        */
@@ -5045,7 +6648,7 @@
 
     /* load the font header (`head' table) if this isn't an Apple */
     /* sbit font file                                             */
-    if ( !is_apple_sbit )
+    if ( !is_apple_sbit || is_apple_sbix )
     {
       LOAD_( head );
       if ( error )
@@ -5054,7 +6657,7 @@
 
     if ( face->header.Units_Per_EM == 0 )
     {
-      error = SFNT_Err_Invalid_Table;
+      error = FT_THROW( Invalid_Table );
 
       goto Exit;
     }
@@ -5068,7 +6671,8 @@
     /* don't check for errors                            */
     LOAD_( name );
     LOAD_( post );
-#ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES /* JE */
+
+#ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
     psnames_error = error;
 #endif
 
@@ -5081,9 +6685,9 @@
       if ( !error )
       {
         LOADM_( hmtx, 0 );
-        if ( error == SFNT_Err_Table_Missing )
+        if ( FT_ERR_EQ( error, Table_Missing ) )
         {
-          error = SFNT_Err_Hmtx_Table_Missing;
+          error = FT_THROW( Hmtx_Table_Missing );
 
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
           /* If this is an incrementally loaded font and there are */
@@ -5093,22 +6697,38 @@
                  get_glyph_metrics                                 )
           {
             face->horizontal.number_Of_HMetrics = 0;
-            error = SFNT_Err_Ok;
+            error                               = FT_Err_Ok;
           }
 #endif
         }
       }
-      else if ( error == SFNT_Err_Table_Missing )
+      else if ( FT_ERR_EQ( error, Table_Missing ) )
       {
         /* No `hhea' table necessary for SFNT Mac fonts. */
         if ( face->format_tag == TTAG_true )
         {
           FT_TRACE2(( "This is an SFNT Mac font.\n" ));
+
           has_outline = 0;
-          error = SFNT_Err_Ok;
+          error       = FT_Err_Ok;
         }
         else
-          error = SFNT_Err_Horiz_Header_Missing;
+        {
+          error = FT_THROW( Horiz_Header_Missing );
+
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
+          /* If this is an incrementally loaded font and there are */
+          /* overriding metrics, tolerate a missing `hhea' table.  */
+          if ( face->root.internal->incremental_interface          &&
+               face->root.internal->incremental_interface->funcs->
+                 get_glyph_metrics                                 )
+          {
+            face->horizontal.number_Of_HMetrics = 0;
+            error                               = FT_Err_Ok;
+          }
+#endif
+
+        }
       }
 
       if ( error )
@@ -5123,31 +6743,30 @@
           face->vertical_info = 1;
       }
 
-      if ( error && error != SFNT_Err_Table_Missing )
+      if ( error && FT_ERR_NEQ( error, Table_Missing ) )
         goto Exit;
 
       LOAD_( os2 );
       if ( error )
       {
-        if ( error != SFNT_Err_Table_Missing )
-          goto Exit;
-
+        /* we treat the table as missing if there are any errors */
         face->os2.version = 0xFFFFU;
       }
-
     }
 
     /* the optional tables */
 
-    /* embedded bitmap support. */
+    /* embedded bitmap support */
     if ( sfnt->load_eblc )
     {
       LOAD_( eblc );
       if ( error )
       {
-        /* return an error if this font file has no outlines */
-        if ( error == SFNT_Err_Table_Missing && has_outline )
-          error = SFNT_Err_Ok;
+        /* a font which contains neither bitmaps nor outlines is */
+        /* still valid (although rather useless in most cases);  */
+        /* however, you can find such stripped fonts in PDFs     */
+        if ( FT_ERR_EQ( error, Table_Missing ) )
+          error = FT_Err_Ok;
         else
           goto Exit;
       }
@@ -5156,7 +6775,7 @@
     LOAD_( pclt );
     if ( error )
     {
-      if ( error != SFNT_Err_Table_Missing )
+      if ( FT_ERR_NEQ( error, Table_Missing ) )
         goto Exit;
 
       face->pclt.Version = 0;
@@ -5166,32 +6785,57 @@
     LOAD_( gasp );
     LOAD_( kern );
 
-    error = SFNT_Err_Ok;
-
     face->root.num_glyphs = face->max_profile.numGlyphs;
 
-    face->root.family_name = tt_face_get_name( face,
-                                               TT_NAME_ID_PREFERRED_FAMILY );
-    if ( !face->root.family_name )
-      face->root.family_name = tt_face_get_name( face,
-                                                 TT_NAME_ID_FONT_FAMILY );
+    /* Bit 8 of the `fsSelection' field in the `OS/2' table denotes  */
+    /* a WWS-only font face.  `WWS' stands for `weight', width', and */
+    /* `slope', a term used by Microsoft's Windows Presentation      */
+    /* Foundation (WPF).  This flag has been introduced in version   */
+    /* 1.5 of the OpenType specification (May 2008).                 */
 
-    face->root.style_name = tt_face_get_name( face,
-                                              TT_NAME_ID_PREFERRED_SUBFAMILY );
-    if ( !face->root.style_name )
-      face->root.style_name  = tt_face_get_name( face,
-                                                 TT_NAME_ID_FONT_SUBFAMILY );
+    face->root.family_name = NULL;
+    face->root.style_name  = NULL;
+    if ( face->os2.version != 0xFFFFU && face->os2.fsSelection & 256 )
+    {
+      if ( !ignore_preferred_family )
+        GET_NAME( PREFERRED_FAMILY, &face->root.family_name );
+      if ( !face->root.family_name )
+        GET_NAME( FONT_FAMILY, &face->root.family_name );
+
+      if ( !ignore_preferred_subfamily )
+        GET_NAME( PREFERRED_SUBFAMILY, &face->root.style_name );
+      if ( !face->root.style_name )
+        GET_NAME( FONT_SUBFAMILY, &face->root.style_name );
+    }
+    else
+    {
+      GET_NAME( WWS_FAMILY, &face->root.family_name );
+      if ( !face->root.family_name && !ignore_preferred_family )
+        GET_NAME( PREFERRED_FAMILY, &face->root.family_name );
+      if ( !face->root.family_name )
+        GET_NAME( FONT_FAMILY, &face->root.family_name );
+
+      GET_NAME( WWS_SUBFAMILY, &face->root.style_name );
+      if ( !face->root.style_name && !ignore_preferred_subfamily )
+        GET_NAME( PREFERRED_SUBFAMILY, &face->root.style_name );
+      if ( !face->root.style_name )
+        GET_NAME( FONT_SUBFAMILY, &face->root.style_name );
+    }
 
     /* now set up root fields */
     {
-      FT_Face    root = &face->root;
-      FT_Int32   flags = root->face_flags;
+      FT_Face  root  = &face->root;
+      FT_Long  flags = root->face_flags;
 
 
       /*********************************************************************/
       /*                                                                   */
       /* Compute face flags.                                               */
       /*                                                                   */
+      if ( face->sbit_table_type == TT_SBIT_TABLE_TYPE_CBLC ||
+           face->sbit_table_type == TT_SBIT_TABLE_TYPE_SBIX )
+        flags |= FT_FACE_FLAG_COLOR;      /* color glyphs */
+
       if ( has_outline == TRUE )
         flags |= FT_FACE_FLAG_SCALABLE;   /* scalable outlines */
 
@@ -5201,7 +6845,7 @@
                FT_FACE_FLAG_HORIZONTAL;   /* horizontal data   */
 
 #ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
-      if ( psnames_error == SFNT_Err_Ok &&
+      if ( !psnames_error                             &&
            face->postscript.FormatType != 0x00030000L )
         flags |= FT_FACE_FLAG_GLYPH_NAMES;
 #endif
@@ -5233,19 +6877,26 @@
       /*                                                                   */
       /* Compute style flags.                                              */
       /*                                                                   */
+
       flags = 0;
       if ( has_outline == TRUE && face->os2.version != 0xFFFFU )
       {
-        /* we have an OS/2 table; use the `fsSelection' field */
-        if ( face->os2.fsSelection & 1 )
+        /* We have an OS/2 table; use the `fsSelection' field.  Bit 9 */
+        /* indicates an oblique font face.  This flag has been        */
+        /* introduced in version 1.5 of the OpenType specification.   */
+
+        if ( face->os2.fsSelection & 512 )       /* bit 9 */
+          flags |= FT_STYLE_FLAG_ITALIC;
+        else if ( face->os2.fsSelection & 1 )    /* bit 0 */
           flags |= FT_STYLE_FLAG_ITALIC;
 
-        if ( face->os2.fsSelection & 32 )
+        if ( face->os2.fsSelection & 32 )        /* bit 5 */
           flags |= FT_STYLE_FLAG_BOLD;
       }
       else
       {
         /* this is an old Mac font, use the header field */
+
         if ( face->header.Mac_Style & 1 )
           flags |= FT_STYLE_FLAG_BOLD;
 
@@ -5290,95 +6941,6 @@
         }
       }
 
-
-      /*********************************************************************/
-      /*                                                                   */
-      /*  Set up metrics.                                                  */
-      /*                                                                   */
-      if ( has_outline == TRUE )
-      {
-        /* XXX What about if outline header is missing */
-        /*     (e.g. sfnt wrapped bitmap)?             */
-        root->bbox.xMin    = face->header.xMin;
-        root->bbox.yMin    = face->header.yMin;
-        root->bbox.xMax    = face->header.xMax;
-        root->bbox.yMax    = face->header.yMax;
-        root->units_per_EM = face->header.Units_Per_EM;
-
-
-        /* XXX: Computing the ascender/descender/height is very different */
-        /*      from what the specification tells you.  Apparently, we    */
-        /*      must be careful because                                   */
-        /*                                                                */
-        /*      - not all fonts have an OS/2 table; in this case, we take */
-        /*        the values in the horizontal header.  However, these    */
-        /*        values very often are not reliable.                     */
-        /*                                                                */
-        /*      - otherwise, the correct typographic values are in the    */
-        /*        sTypoAscender, sTypoDescender & sTypoLineGap fields.    */
-        /*                                                                */
-        /*        However, certains fonts have these fields set to 0.     */
-        /*        Rather, they have usWinAscent & usWinDescent correctly  */
-        /*        set (but with different values).                        */
-        /*                                                                */
-        /*      As an example, Arial Narrow is implemented through four   */
-        /*      files ARIALN.TTF, ARIALNI.TTF, ARIALNB.TTF & ARIALNBI.TTF */
-        /*                                                                */
-        /*      Strangely, all fonts have the same values in their        */
-        /*      sTypoXXX fields, except ARIALNB which sets them to 0.     */
-        /*                                                                */
-        /*      On the other hand, they all have different                */
-        /*      usWinAscent/Descent values -- as a conclusion, the OS/2   */
-        /*      table cannot be used to compute the text height reliably! */
-        /*                                                                */
-
-        /* The ascender/descender/height are computed from the OS/2 table */
-        /* when found.  Otherwise, they're taken from the horizontal      */
-        /* header.                                                        */
-        /*                                                                */
-
-        root->ascender  = face->horizontal.Ascender;
-        root->descender = face->horizontal.Descender;
-
-        root->height    = (FT_Short)( root->ascender - root->descender +
-                                      face->horizontal.Line_Gap );
-
-#if 0
-        /* if the line_gap is 0, we add an extra 15% to the text height --  */
-        /* this computation is based on various versions of Times New Roman */
-        if ( face->horizontal.Line_Gap == 0 )
-          root->height = (FT_Short)( ( root->height * 115 + 50 ) / 100 );
-#endif
-
-#if 0
-
-        /* some fonts have the OS/2 "sTypoAscender", "sTypoDescender" & */
-        /* "sTypoLineGap" fields set to 0, like ARIALNB.TTF             */
-        if ( face->os2.version != 0xFFFFU && root->ascender )
-        {
-          FT_Int  height;
-
-
-          root->ascender  =  face->os2.sTypoAscender;
-          root->descender = -face->os2.sTypoDescender;
-
-          height = root->ascender + root->descender + face->os2.sTypoLineGap;
-          if ( height > root->height )
-            root->height = height;
-        }
-
-#endif /* 0 */
-
-        root->max_advance_width   = face->horizontal.advance_Width_Max;
-
-        root->max_advance_height  = (FT_Short)( face->vertical_info
-                                      ? face->vertical.advance_Height_Max
-                                      : root->height );
-
-        root->underline_position  = face->postscript.underlinePosition;
-        root->underline_thickness = face->postscript.underlineThickness;
-      }
-
 #ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 
       /*
@@ -5390,11 +6952,7 @@
         FT_UInt  i, count;
 
 
-#if defined FT_OPTIMIZE_MEMORY && !defined FT_CONFIG_OPTION_OLD_INTERNALS
         count = face->sbit_num_strikes;
-#else
-        count = (FT_UInt)face->num_sbit_strikes;
-#endif
 
         if ( count > 0 )
         {
@@ -5406,7 +6964,7 @@
 
           if ( em_size == 0 || face->os2.version == 0xFFFFU )
           {
-            avgwidth = 0;
+            avgwidth = 1;
             em_size = 1;
           }
 
@@ -5440,6 +6998,97 @@
 
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
+      /* a font with no bitmaps and no outlines is scalable; */
+      /* it has only empty glyphs then                       */
+      if ( !FT_HAS_FIXED_SIZES( root ) && !FT_IS_SCALABLE( root ) )
+        root->face_flags |= FT_FACE_FLAG_SCALABLE;
+
+
+      /*********************************************************************/
+      /*                                                                   */
+      /*  Set up metrics.                                                  */
+      /*                                                                   */
+      if ( FT_IS_SCALABLE( root ) )
+      {
+        /* XXX What about if outline header is missing */
+        /*     (e.g. sfnt wrapped bitmap)?             */
+        root->bbox.xMin    = face->header.xMin;
+        root->bbox.yMin    = face->header.yMin;
+        root->bbox.xMax    = face->header.xMax;
+        root->bbox.yMax    = face->header.yMax;
+        root->units_per_EM = face->header.Units_Per_EM;
+
+
+        /* XXX: Computing the ascender/descender/height is very different */
+        /*      from what the specification tells you.  Apparently, we    */
+        /*      must be careful because                                   */
+        /*                                                                */
+        /*      - not all fonts have an OS/2 table; in this case, we take */
+        /*        the values in the horizontal header.  However, these    */
+        /*        values very often are not reliable.                     */
+        /*                                                                */
+        /*      - otherwise, the correct typographic values are in the    */
+        /*        sTypoAscender, sTypoDescender & sTypoLineGap fields.    */
+        /*                                                                */
+        /*        However, certain fonts have these fields set to 0.      */
+        /*        Rather, they have usWinAscent & usWinDescent correctly  */
+        /*        set (but with different values).                        */
+        /*                                                                */
+        /*      As an example, Arial Narrow is implemented through four   */
+        /*      files ARIALN.TTF, ARIALNI.TTF, ARIALNB.TTF & ARIALNBI.TTF */
+        /*                                                                */
+        /*      Strangely, all fonts have the same values in their        */
+        /*      sTypoXXX fields, except ARIALNB which sets them to 0.     */
+        /*                                                                */
+        /*      On the other hand, they all have different                */
+        /*      usWinAscent/Descent values -- as a conclusion, the OS/2   */
+        /*      table cannot be used to compute the text height reliably! */
+        /*                                                                */
+
+        /* The ascender and descender are taken from the `hhea' table. */
+        /* If zero, they are taken from the `OS/2' table.              */
+
+        root->ascender  = face->horizontal.Ascender;
+        root->descender = face->horizontal.Descender;
+
+        root->height = (FT_Short)( root->ascender - root->descender +
+                                   face->horizontal.Line_Gap );
+
+        if ( !( root->ascender || root->descender ) )
+        {
+          if ( face->os2.version != 0xFFFFU )
+          {
+            if ( face->os2.sTypoAscender || face->os2.sTypoDescender )
+            {
+              root->ascender  = face->os2.sTypoAscender;
+              root->descender = face->os2.sTypoDescender;
+
+              root->height = (FT_Short)( root->ascender - root->descender +
+                                         face->os2.sTypoLineGap );
+            }
+            else
+            {
+              root->ascender  =  (FT_Short)face->os2.usWinAscent;
+              root->descender = -(FT_Short)face->os2.usWinDescent;
+
+              root->height = (FT_UShort)( root->ascender - root->descender );
+            }
+          }
+        }
+
+        root->max_advance_width  = face->horizontal.advance_Width_Max;
+        root->max_advance_height = (FT_Short)( face->vertical_info
+                                     ? face->vertical.advance_Height_Max
+                                     : root->height );
+
+        /* See http://www.microsoft.com/OpenType/OTSpec/post.htm -- */
+        /* Adjust underline position from top edge to centre of     */
+        /* stroke to convert TrueType meaning to FreeType meaning.  */
+        root->underline_position  = face->postscript.underlinePosition -
+                                    face->postscript.underlineThickness / 2;
+        root->underline_thickness = face->postscript.underlineThickness;
+      }
+
     }
 
   Exit:
@@ -5451,14 +7100,21 @@
 
 #undef LOAD_
 #undef LOADM_
+#undef GET_NAME
 
 
   FT_LOCAL_DEF( void )
   sfnt_done_face( TT_Face  face )
   {
-    FT_Memory     memory = face->root.memory;
-    SFNT_Service  sfnt   = (SFNT_Service)face->sfnt;
+    FT_Memory     memory;
+    SFNT_Service  sfnt;
 
+
+    if ( !face )
+      return;
+
+    memory = face->root.memory;
+    sfnt   = (SFNT_Service)face->sfnt;
 
     if ( sfnt )
     {
@@ -5497,7 +7153,6 @@
     }
 
     /* freeing the horizontal metrics */
-#if defined FT_OPTIMIZE_MEMORY && !defined FT_CONFIG_OPTION_OLD_INTERNALS
     {
       FT_Stream  stream = FT_FACE_STREAM( face );
 
@@ -5507,10 +7162,6 @@
       face->horz_metrics_size = 0;
       face->vert_metrics_size = 0;
     }
-#else
-    FT_FREE( face->horizontal.long_metrics );
-    FT_FREE( face->horizontal.short_metrics );
-#endif
 
     /* freeing the vertical ones, if any */
     if ( face->vertical_info )
@@ -5525,7 +7176,8 @@
     face->gasp.numRanges = 0;
 
     /* freeing the name table */
-    sfnt->free_name( face );
+    if ( sfnt )
+      sfnt->free_name( face );
 
     /* freeing family and style name */
     FT_FREE( face->root.family_name );
@@ -5542,14 +7194,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  sfdriver.c                                                             */
 /*                                                                         */
 /*    High-level SFNT driver interface (body).                             */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2007, 2009-2014 by                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -5562,12 +7213,14 @@
 
 
 #include "ft2build.h"
+#include FT_INTERNAL_DEBUG_H
 #include FT_INTERNAL_SFNT_H
 #include FT_INTERNAL_OBJECTS_H
 
 #include "sfdriver.h"
 #include "ttload.h"
 #include "sfobjs.h"
+#include "sfntpic.h"
 
 #include "sferrors.h"
 
@@ -5594,10 +7247,20 @@
 #include FT_SERVICE_TT_CMAP_H
 
 
- /*
-  *  SFNT TABLE SERVICE
-  *
-  */
+  /*************************************************************************/
+  /*                                                                       */
+  /* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+  /* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+  /* messages during execution.                                            */
+  /*                                                                       */
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_sfdriver
+
+
+  /*
+   *  SFNT TABLE SERVICE
+   *
+   */
 
   static void*
   get_sfnt_table( TT_Face      face,
@@ -5648,35 +7311,41 @@
   sfnt_table_info( TT_Face    face,
                    FT_UInt    idx,
                    FT_ULong  *tag,
+                   FT_ULong  *offset,
                    FT_ULong  *length )
   {
-    if ( !tag || !length )
-      return SFNT_Err_Invalid_Argument;
+    if ( !offset || !length )
+      return FT_THROW( Invalid_Argument );
 
-    if ( idx >= face->num_tables )
-      return SFNT_Err_Table_Missing;
+    if ( !tag )
+      *length = face->num_tables;
+    else
+    {
+      if ( idx >= face->num_tables )
+        return FT_THROW( Table_Missing );
 
-    *tag    = face->dir_tables[idx].Tag;
-    *length = face->dir_tables[idx].Length;
+      *tag    = face->dir_tables[idx].Tag;
+      *offset = face->dir_tables[idx].Offset;
+      *length = face->dir_tables[idx].Length;
+    }
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
-  static const FT_Service_SFNT_TableRec  sfnt_service_sfnt_table =
-  {
+  FT_DEFINE_SERVICE_SFNT_TABLEREC(
+    sfnt_service_sfnt_table,
     (FT_SFNT_TableLoadFunc)tt_face_load_any,
     (FT_SFNT_TableGetFunc) get_sfnt_table,
-    (FT_SFNT_TableInfoFunc)sfnt_table_info
-  };
+    (FT_SFNT_TableInfoFunc)sfnt_table_info )
 
 
 #ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
 
- /*
-  *  GLYPH DICT SERVICE
-  *
-  */
+  /*
+   *  GLYPH DICT SERVICE
+   *
+   */
 
   static FT_Error
   sfnt_get_glyph_name( TT_Face     face,
@@ -5689,35 +7358,60 @@
 
 
     error = tt_face_get_ps_name( face, glyph_index, &gname );
-    if ( !error && buffer_max > 0 )
-    {
-      FT_UInt  len = (FT_UInt)( ft_strlen( gname ) );
-
-
-      if ( len >= buffer_max )
-        len = buffer_max - 1;
-
-      FT_MEM_COPY( buffer, gname, len );
-      ((FT_Byte*)buffer)[len] = 0;
-    }
+    if ( !error )
+      FT_STRCPYN( buffer, gname, buffer_max );
 
     return error;
   }
 
 
-  static const FT_Service_GlyphDictRec  sfnt_service_glyph_dict =
+  static FT_UInt
+  sfnt_get_name_index( TT_Face     face,
+                       FT_String*  glyph_name )
   {
+    FT_Face  root = &face->root;
+
+    FT_UInt  i, max_gid = FT_UINT_MAX;
+
+
+    if ( root->num_glyphs < 0 )
+      return 0;
+    else if ( (FT_ULong)root->num_glyphs < FT_UINT_MAX )
+      max_gid = (FT_UInt)root->num_glyphs;
+    else
+      FT_TRACE0(( "Ignore glyph names for invalid GID 0x%08x - 0x%08x\n",
+                  FT_UINT_MAX, root->num_glyphs ));
+
+    for ( i = 0; i < max_gid; i++ )
+    {
+      FT_String*  gname;
+      FT_Error    error = tt_face_get_ps_name( face, i, &gname );
+
+
+      if ( error )
+        continue;
+
+      if ( !ft_strcmp( glyph_name, gname ) )
+        return i;
+    }
+
+    return 0;
+  }
+
+
+  FT_DEFINE_SERVICE_GLYPHDICTREC(
+    sfnt_service_glyph_dict,
     (FT_GlyphDict_GetNameFunc)  sfnt_get_glyph_name,
-    (FT_GlyphDict_NameIndexFunc)NULL
-  };
+    (FT_GlyphDict_NameIndexFunc)sfnt_get_name_index )
+
 
 #endif /* TT_CONFIG_OPTION_POSTSCRIPT_NAMES */
 
 
- /*
-  *  POSTSCRIPT NAME SERVICE
-  *
-  */
+  /*
+   *  POSTSCRIPT NAME SERVICE
+   *
+   */
 
   static const char*
   sfnt_get_ps_name( TT_Face  face )
@@ -5759,7 +7453,7 @@
       FT_Memory         memory = face->root.memory;
       TT_NameEntryRec*  name   = face->name_table.names + found_win;
       FT_UInt           len    = name->stringLength / 2;
-      FT_Error          error  = SFNT_Err_Ok;
+      FT_Error          error  = FT_Err_Ok;
 
       FT_UNUSED( error );
 
@@ -5768,7 +7462,7 @@
       {
         FT_Stream   stream = face->name_table.stream;
         FT_String*  r      = (FT_String*)result;
-        FT_Byte*    p      = (FT_Byte*)name->string;
+        FT_Byte*    p;
 
 
         if ( FT_STREAM_SEEK( name->stringOffset ) ||
@@ -5801,7 +7495,7 @@
       FT_Memory         memory = face->root.memory;
       TT_NameEntryRec*  name   = face->name_table.names + found_apple;
       FT_UInt           len    = name->stringLength;
-      FT_Error          error  = SFNT_Err_Ok;
+      FT_Error          error  = FT_Err_Ok;
 
       FT_UNUSED( error );
 
@@ -5829,19 +7523,18 @@
     return result;
   }
 
-  static const FT_Service_PsFontNameRec  sfnt_service_ps_name =
-  {
-    (FT_PsName_GetFunc)sfnt_get_ps_name
-  };
+
+  FT_DEFINE_SERVICE_PSFONTNAMEREC(
+    sfnt_service_ps_name,
+    (FT_PsName_GetFunc)sfnt_get_ps_name )
 
 
   /*
    *  TT CMAP INFO
    */
-  static const FT_Service_TTCMapsRec  tt_service_get_cmap_info =
-  {
-    (TT_CMap_Info_GetFunc)tt_get_cmap_info
-  };
+  FT_DEFINE_SERVICE_TTCMAPSREC(
+    tt_service_get_cmap_info,
+    (TT_CMap_Info_GetFunc)tt_get_cmap_info )
 
 
 #ifdef TT_CONFIG_OPTION_BDF
@@ -5874,7 +7567,7 @@
           *acharset_registry = registry.u.atom;
         }
         else
-          error = FT_Err_Invalid_Argument;
+          error = FT_THROW( Invalid_Argument );
       }
     }
 
@@ -5882,11 +7575,11 @@
   }
 
 
-  static const FT_Service_BDFRec  sfnt_service_bdf =
-  {
-    (FT_BDF_GetCharsetIdFunc) sfnt_get_charset_id,
-    (FT_BDF_GetPropertyFunc)  tt_face_find_bdf_prop,
-  };
+  FT_DEFINE_SERVICE_BDFRec(
+    sfnt_service_bdf,
+    (FT_BDF_GetCharsetIdFunc)sfnt_get_charset_id,
+    (FT_BDF_GetPropertyFunc) tt_face_find_bdf_prop )
+
 
 #endif /* TT_CONFIG_OPTION_BDF */
 
@@ -5895,163 +7588,73 @@
    *  SERVICE LIST
    */
 
-  static const FT_ServiceDescRec  sfnt_services[] =
-  {
-    { FT_SERVICE_ID_SFNT_TABLE,           &sfnt_service_sfnt_table },
-    { FT_SERVICE_ID_POSTSCRIPT_FONT_NAME, &sfnt_service_ps_name },
-#ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
-    { FT_SERVICE_ID_GLYPH_DICT,           &sfnt_service_glyph_dict },
+#if defined TT_CONFIG_OPTION_POSTSCRIPT_NAMES && defined TT_CONFIG_OPTION_BDF
+  FT_DEFINE_SERVICEDESCREC5(
+    sfnt_services,
+    FT_SERVICE_ID_SFNT_TABLE,           &SFNT_SERVICE_SFNT_TABLE_GET,
+    FT_SERVICE_ID_POSTSCRIPT_FONT_NAME, &SFNT_SERVICE_PS_NAME_GET,
+    FT_SERVICE_ID_GLYPH_DICT,           &SFNT_SERVICE_GLYPH_DICT_GET,
+    FT_SERVICE_ID_BDF,                  &SFNT_SERVICE_BDF_GET,
+    FT_SERVICE_ID_TT_CMAP,              &TT_SERVICE_CMAP_INFO_GET )
+#elif defined TT_CONFIG_OPTION_POSTSCRIPT_NAMES
+  FT_DEFINE_SERVICEDESCREC4(
+    sfnt_services,
+    FT_SERVICE_ID_SFNT_TABLE,           &SFNT_SERVICE_SFNT_TABLE_GET,
+    FT_SERVICE_ID_POSTSCRIPT_FONT_NAME, &SFNT_SERVICE_PS_NAME_GET,
+    FT_SERVICE_ID_GLYPH_DICT,           &SFNT_SERVICE_GLYPH_DICT_GET,
+    FT_SERVICE_ID_TT_CMAP,              &TT_SERVICE_CMAP_INFO_GET )
+#elif defined TT_CONFIG_OPTION_BDF
+  FT_DEFINE_SERVICEDESCREC4(
+    sfnt_services,
+    FT_SERVICE_ID_SFNT_TABLE,           &SFNT_SERVICE_SFNT_TABLE_GET,
+    FT_SERVICE_ID_POSTSCRIPT_FONT_NAME, &SFNT_SERVICE_PS_NAME_GET,
+    FT_SERVICE_ID_BDF,                  &SFNT_SERVICE_BDF_GET,
+    FT_SERVICE_ID_TT_CMAP,              &TT_SERVICE_CMAP_INFO_GET )
+#else
+  FT_DEFINE_SERVICEDESCREC3(
+    sfnt_services,
+    FT_SERVICE_ID_SFNT_TABLE,           &SFNT_SERVICE_SFNT_TABLE_GET,
+    FT_SERVICE_ID_POSTSCRIPT_FONT_NAME, &SFNT_SERVICE_PS_NAME_GET,
+    FT_SERVICE_ID_TT_CMAP,              &TT_SERVICE_CMAP_INFO_GET )
 #endif
-#ifdef TT_CONFIG_OPTION_BDF
-    { FT_SERVICE_ID_BDF,                  &sfnt_service_bdf },
-#endif
-    { FT_SERVICE_ID_TT_CMAP,              &tt_service_get_cmap_info },
-
-    { NULL, NULL }
-  };
 
 
   FT_CALLBACK_DEF( FT_Module_Interface )
   sfnt_get_interface( FT_Module    module,
                       const char*  module_interface )
   {
+    /* SFNT_SERVICES_GET derefers `library' in PIC mode */
+#ifdef FT_CONFIG_OPTION_PIC
+    FT_Library  library;
+
+
+    if ( !module )
+      return NULL;
+    library = module->library;
+    if ( !library )
+      return NULL;
+#else
     FT_UNUSED( module );
+#endif
 
-    return ft_service_list_lookup( sfnt_services, module_interface );
+    return ft_service_list_lookup( SFNT_SERVICES_GET, module_interface );
   }
 
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
+#ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
+#define PUT_EMBEDDED_BITMAPS( a )  a
+#else
+#define PUT_EMBEDDED_BITMAPS( a )  NULL
+#endif
 
-  FT_CALLBACK_DEF( FT_Error )
-  tt_face_load_sfnt_header_stub( TT_Face      face,
-                                 FT_Stream    stream,
-                                 FT_Long      face_index,
-                                 SFNT_Header  header )
-  {
-    FT_UNUSED( face );
-    FT_UNUSED( stream );
-    FT_UNUSED( face_index );
-    FT_UNUSED( header );
+#ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
+#define PUT_PS_NAMES( a )  a
+#else
+#define PUT_PS_NAMES( a )  NULL
+#endif
 
-    return FT_Err_Unimplemented_Feature;
-  }
-
-
-  FT_CALLBACK_DEF( FT_Error )
-  tt_face_load_directory_stub( TT_Face      face,
-                               FT_Stream    stream,
-                               SFNT_Header  header )
-  {
-    FT_UNUSED( face );
-    FT_UNUSED( stream );
-    FT_UNUSED( header );
-
-    return FT_Err_Unimplemented_Feature;
-  }
-
-
-  FT_CALLBACK_DEF( FT_Error )
-  tt_face_load_hdmx_stub( TT_Face    face,
-                          FT_Stream  stream )
-  {
-    FT_UNUSED( face );
-    FT_UNUSED( stream );
-    
-    return FT_Err_Unimplemented_Feature;
-  }                          
-
-
-  FT_CALLBACK_DEF( void )
-  tt_face_free_hdmx_stub( TT_Face  face )
-  {
-    FT_UNUSED( face );
-  }
-
-
-  FT_CALLBACK_DEF( FT_Error )
-  tt_face_set_sbit_strike_stub( TT_Face    face,
-                                FT_UInt    x_ppem,
-                                FT_UInt    y_ppem,
-                                FT_ULong*  astrike_index )
-  {
-    /*
-     * We simply forge a FT_Size_Request and call the real function
-     * that does all the work.
-     *
-     * This stub might be called by libXfont in the X.Org Xserver,
-     * compiled against version 2.1.8 or newer.
-     */
-
-    FT_Size_RequestRec  req;
-
-
-    req.type           = FT_SIZE_REQUEST_TYPE_NOMINAL;
-    req.width          = (FT_F26Dot6)x_ppem;
-    req.height         = (FT_F26Dot6)y_ppem;
-    req.horiResolution = 0;
-    req.vertResolution = 0;
-
-    *astrike_index = 0x7FFFFFFFUL;
-
-    return tt_face_set_sbit_strike( face, &req, astrike_index );    
-  }                                
-
-
-  FT_CALLBACK_DEF( FT_Error )
-  tt_face_load_sbit_stub( TT_Face    face,
-                          FT_Stream  stream )
-  {
-    FT_UNUSED( face );
-    FT_UNUSED( stream );
-    
-    /*
-     *  This function was originally implemented to load the sbit table. 
-     *  However, it has been replaced by `tt_face_load_eblc', and this stub
-     *  is only there for some rogue clients which would want to call it
-     *  directly (which doesn't make much sense).
-     */
-    return FT_Err_Unimplemented_Feature;
-  }                          
-
-
-  FT_CALLBACK_DEF( void )
-  tt_face_free_sbit_stub( TT_Face  face )
-  {
-    /* nothing to do in this stub */
-    FT_UNUSED( face );
-  }
-  
-  
-  FT_CALLBACK_DEF( FT_Error )
-  tt_face_load_charmap_stub( TT_Face    face,
-                             void*      cmap,
-                             FT_Stream  input )
-  {
-    FT_UNUSED( face );
-    FT_UNUSED( cmap );
-    FT_UNUSED( input );
-    
-    return FT_Err_Unimplemented_Feature;
-  }                             
-
-
-  FT_CALLBACK_DEF( FT_Error )
-  tt_face_free_charmap_stub( TT_Face  face,
-                             void*    cmap )
-  {
-    FT_UNUSED( face );
-    FT_UNUSED( cmap );
-    
-    return 0;
-  }                             
-  
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
-
-
-  static
-  const SFNT_Interface  sfnt_interface =
-  {
+  FT_DEFINE_SFNT_INTERFACE(
+    sfnt_interface,
     tt_face_goto_table,
 
     sfnt_init_face,
@@ -6060,11 +7663,6 @@
     sfnt_get_interface,
 
     tt_face_load_any,
-
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-    tt_face_load_sfnt_header_stub,
-    tt_face_load_directory_stub,
-#endif
 
     tt_face_load_head,
     tt_face_load_hhea,
@@ -6076,111 +7674,65 @@
     tt_face_load_name,
     tt_face_free_name,
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-    tt_face_load_hdmx_stub,
-    tt_face_free_hdmx_stub,
-#endif
-
     tt_face_load_kern,
     tt_face_load_gasp,
     tt_face_load_pclt,
 
-#ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
     /* see `ttload.h' */
-    tt_face_load_bhed,
-#else
-    0,
-#endif
+    PUT_EMBEDDED_BITMAPS( tt_face_load_bhed ),
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-    tt_face_set_sbit_strike_stub,
-    tt_face_load_sbit_stub,
+    PUT_EMBEDDED_BITMAPS( tt_face_load_sbit_image ),
 
-    tt_find_sbit_image,
-    tt_load_sbit_metrics,
-#endif
-
-#ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
-    tt_face_load_sbit_image,
-#else
-    0,
-#endif
-
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-    tt_face_free_sbit_stub,
-#endif
-
-#ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
     /* see `ttpost.h' */
-    tt_face_get_ps_name,
-    tt_face_free_ps_names,
-#else
-    0,
-    0,
-#endif
-
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-    tt_face_load_charmap_stub,
-    tt_face_free_charmap_stub,
-#endif
+    PUT_PS_NAMES( tt_face_get_ps_name   ),
+    PUT_PS_NAMES( tt_face_free_ps_names ),
 
     /* since version 2.1.8 */
-
     tt_face_get_kerning,
 
     /* since version 2.2 */
-
     tt_face_load_font_dir,
     tt_face_load_hmtx,
 
-#ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
     /* see `ttsbit.h' and `sfnt.h' */
-    tt_face_load_eblc,
-    tt_face_free_eblc,
+    PUT_EMBEDDED_BITMAPS( tt_face_load_sbit ),
+    PUT_EMBEDDED_BITMAPS( tt_face_free_sbit ),
 
-    tt_face_set_sbit_strike,
-    tt_face_load_strike_metrics,
-#else
-    0,
-    0,
-    0,
-    0,
-#endif    
+    PUT_EMBEDDED_BITMAPS( tt_face_set_sbit_strike     ),
+    PUT_EMBEDDED_BITMAPS( tt_face_load_strike_metrics ),
 
     tt_face_get_metrics
-  };
+  )
 
 
-  FT_CALLBACK_TABLE_DEF
-  const FT_Module_Class  sfnt_module_class =
-  {
+  FT_DEFINE_MODULE(
+    sfnt_module_class,
+
     0,  /* not a font driver or renderer */
-    sizeof( FT_ModuleRec ),
+    sizeof ( FT_ModuleRec ),
 
     "sfnt",     /* driver name                            */
     0x10000L,   /* driver version 1.0                     */
     0x20000L,   /* driver requires FreeType 2.0 or higher */
 
-    (const void*)&sfnt_interface,  /* module specific interface */
+    (const void*)&SFNT_INTERFACE_GET,  /* module specific interface */
 
     (FT_Module_Constructor)0,
     (FT_Module_Destructor) 0,
-    (FT_Module_Requester)  sfnt_get_interface
-  };
+    (FT_Module_Requester)  sfnt_get_interface )
 
 
 /* END */
 
-
 #ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 /***************************************************************************/
 /*                                                                         */
-/*  ttsbit.c                                                               */
+/*  pngshim.c                                                              */
 /*                                                                         */
-/*    TrueType and OpenType embedded bitmap support (body).                */
+/*    PNG Bitmap glyph support.                                            */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
+/*  Copyright 2013 by Google, Inc.                                         */
+/*  Written by Stuart Gill and Behdad Esfahbod.                            */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
 /*  modified, and distributed under the terms of the FreeType project      */
@@ -6190,28 +7742,390 @@
 /*                                                                         */
 /***************************************************************************/
 
-#include "ft2build.h"
-#include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
-#include FT_TRUETYPE_TAGS_H
-
-  /*
-   *  Alas, the memory-optimized sbit loader can't be used when implementing
-   *  the `old internals' hack
-   */
-#if defined FT_OPTIMIZE_MEMORY && !defined FT_CONFIG_OPTION_OLD_INTERNALS
-
-#include "ttsbit0.c"
-
-#else /* !OPTIMIZE_MEMORY || OLD_INTERNALS */
 
 #include "ft2build.h"
 #include FT_INTERNAL_DEBUG_H
 #include FT_INTERNAL_STREAM_H
 #include FT_TRUETYPE_TAGS_H
+#include FT_CONFIG_STANDARD_LIBRARY_H
+
+
+#ifdef FT_CONFIG_OPTION_USE_PNG
+
+  /* We always include <stjmp.h>, so make libpng shut up! */
+#define PNG_SKIP_SETJMP_CHECK 1
+#include <png.h>
+#include "pngshim.h"
+
+#include "sferrors.h"
+
+
+  /* This code is freely based on cairo-png.c.  There's so many ways */
+  /* to call libpng, and the way cairo does it is defacto standard.  */
+
+  static int
+  multiply_alpha( int  alpha,
+                  int  color )
+  {
+    int  temp = ( alpha * color ) + 0x80;
+
+
+    return ( temp + ( temp >> 8 ) ) >> 8;
+  }
+
+
+  /* Premultiplies data and converts RGBA bytes => native endian. */
+  static void
+  premultiply_data( png_structp    png,
+                    png_row_infop  row_info,
+                    png_bytep      data )
+  {
+    unsigned int  i;
+
+    FT_UNUSED( png );
+
+
+    for ( i = 0; i < row_info->rowbytes; i += 4 )
+    {
+      unsigned char*  base  = &data[i];
+      unsigned int    alpha = base[3];
+
+
+      if ( alpha == 0 )
+        base[0] = base[1] = base[2] = base[3] = 0;
+
+      else
+      {
+        unsigned int  red   = base[0];
+        unsigned int  green = base[1];
+        unsigned int  blue  = base[2];
+
+
+        if ( alpha != 0xFF )
+        {
+          red   = multiply_alpha( alpha, red   );
+          green = multiply_alpha( alpha, green );
+          blue  = multiply_alpha( alpha, blue  );
+        }
+
+        base[0] = blue;
+        base[1] = green;
+        base[2] = red;
+        base[3] = alpha;
+      }
+    }
+  }
+
+
+  /* Converts RGBx bytes to BGRA. */
+  static void
+  convert_bytes_to_data( png_structp    png,
+                         png_row_infop  row_info,
+                         png_bytep      data )
+  {
+    unsigned int  i;
+
+    FT_UNUSED( png );
+
+
+    for ( i = 0; i < row_info->rowbytes; i += 4 )
+    {
+      unsigned char*  base  = &data[i];
+      unsigned int    red   = base[0];
+      unsigned int    green = base[1];
+      unsigned int    blue  = base[2];
+
+
+      base[0] = blue;
+      base[1] = green;
+      base[2] = red;
+      base[3] = 0xFF;
+    }
+  }
+
+
+  /* Use error callback to avoid png writing to stderr. */
+  static void
+  error_callback( png_structp      png,
+                  png_const_charp  error_msg )
+  {
+    FT_Error*  error = (FT_Error*)png_get_error_ptr( png );
+
+    FT_UNUSED( error_msg );
+
+
+    *error = FT_THROW( Out_Of_Memory );
+#ifdef PNG_SETJMP_SUPPORTED
+    longjmp( png_jmpbuf( png ), 1 );
+#endif
+    /* if we get here, then we have no choice but to abort ... */
+  }
+
+
+  /* Use warning callback to avoid png writing to stderr. */
+  static void
+  warning_callback( png_structp      png,
+                    png_const_charp  error_msg )
+  {
+    FT_UNUSED( png );
+    FT_UNUSED( error_msg );
+
+    /* Just ignore warnings. */
+  }
+
+
+  static void
+  read_data_from_FT_Stream( png_structp  png,
+                            png_bytep    data,
+                            png_size_t   length )
+  {
+    FT_Error   error;
+    png_voidp  p      = png_get_io_ptr( png );
+    FT_Stream  stream = (FT_Stream)p;
+
+
+    if ( FT_FRAME_ENTER( length ) )
+    {
+      FT_Error*  e = (FT_Error*)png_get_error_ptr( png );
+
+
+      *e = FT_THROW( Invalid_Stream_Read );
+      png_error( png, NULL );
+
+      return;
+    }
+
+    memcpy( data, stream->cursor, length );
+
+    FT_FRAME_EXIT();
+  }
+
+
+  FT_LOCAL_DEF( FT_Error )
+  Load_SBit_Png( FT_GlyphSlot     slot,
+                 FT_Int           x_offset,
+                 FT_Int           y_offset,
+                 FT_Int           pix_bits,
+                 TT_SBit_Metrics  metrics,
+                 FT_Memory        memory,
+                 FT_Byte*         data,
+                 FT_UInt          png_len,
+                 FT_Bool          populate_map_and_metrics )
+  {
+    FT_Bitmap    *map   = &slot->bitmap;
+    FT_Error      error = FT_Err_Ok;
+    FT_StreamRec  stream;
+
+    png_structp  png;
+    png_infop    info;
+    png_uint_32  imgWidth, imgHeight;
+
+    int         bitdepth, color_type, interlace;
+    FT_Int      i;
+    png_byte*  *rows = NULL; /* pacify compiler */
+
+
+    if ( x_offset < 0 ||
+         y_offset < 0 )
+    {
+      error = FT_THROW( Invalid_Argument );
+      goto Exit;
+    }
+
+    if ( !populate_map_and_metrics                   &&
+         ( x_offset + metrics->width  > map->width ||
+           y_offset + metrics->height > map->rows  ||
+           pix_bits != 32                          ||
+           map->pixel_mode != FT_PIXEL_MODE_BGRA   ) )
+    {
+      error = FT_THROW( Invalid_Argument );
+      goto Exit;
+    }
+
+    FT_Stream_OpenMemory( &stream, data, png_len );
+
+    png = png_create_read_struct( PNG_LIBPNG_VER_STRING,
+                                  &error,
+                                  error_callback,
+                                  warning_callback );
+    if ( !png )
+    {
+      error = FT_THROW( Out_Of_Memory );
+      goto Exit;
+    }
+
+    info = png_create_info_struct( png );
+    if ( !info )
+    {
+      error = FT_THROW( Out_Of_Memory );
+      png_destroy_read_struct( &png, NULL, NULL );
+      goto Exit;
+    }
+
+    if ( ft_setjmp( png_jmpbuf( png ) ) )
+    {
+      error = FT_THROW( Invalid_File_Format );
+      goto DestroyExit;
+    }
+
+    png_set_read_fn( png, &stream, read_data_from_FT_Stream );
+
+    png_read_info( png, info );
+    png_get_IHDR( png, info,
+                  &imgWidth, &imgHeight,
+                  &bitdepth, &color_type, &interlace,
+                  NULL, NULL );
+
+    if ( error                                        ||
+         ( !populate_map_and_metrics                &&
+           ( (FT_Int)imgWidth  != metrics->width  ||
+             (FT_Int)imgHeight != metrics->height ) ) )
+      goto DestroyExit;
+
+    if ( populate_map_and_metrics )
+    {
+      FT_Long  size;
+
+
+      metrics->width  = (FT_Int)imgWidth;
+      metrics->height = (FT_Int)imgHeight;
+
+      map->width      = metrics->width;
+      map->rows       = metrics->height;
+      map->pixel_mode = FT_PIXEL_MODE_BGRA;
+      map->pitch      = map->width * 4;
+      map->num_grays  = 256;
+
+      size = map->rows * map->pitch;
+
+      error = ft_glyphslot_alloc_bitmap( slot, size );
+      if ( error )
+        goto DestroyExit;
+    }
+
+    /* convert palette/gray image to rgb */
+    if ( color_type == PNG_COLOR_TYPE_PALETTE )
+      png_set_palette_to_rgb( png );
+
+    /* expand gray bit depth if needed */
+    if ( color_type == PNG_COLOR_TYPE_GRAY )
+    {
+#if PNG_LIBPNG_VER >= 10209
+      png_set_expand_gray_1_2_4_to_8( png );
+#else
+      png_set_gray_1_2_4_to_8( png );
+#endif
+    }
+
+    /* transform transparency to alpha */
+    if ( png_get_valid(png, info, PNG_INFO_tRNS ) )
+      png_set_tRNS_to_alpha( png );
+
+    if ( bitdepth == 16 )
+      png_set_strip_16( png );
+
+    if ( bitdepth < 8 )
+      png_set_packing( png );
+
+    /* convert grayscale to RGB */
+    if ( color_type == PNG_COLOR_TYPE_GRAY       ||
+         color_type == PNG_COLOR_TYPE_GRAY_ALPHA )
+      png_set_gray_to_rgb( png );
+
+    if ( interlace != PNG_INTERLACE_NONE )
+      png_set_interlace_handling( png );
+
+    png_set_filler( png, 0xFF, PNG_FILLER_AFTER );
+
+    /* recheck header after setting EXPAND options */
+    png_read_update_info(png, info );
+    png_get_IHDR( png, info,
+                  &imgWidth, &imgHeight,
+                  &bitdepth, &color_type, &interlace,
+                  NULL, NULL );
+
+    if ( bitdepth != 8                              ||
+        !( color_type == PNG_COLOR_TYPE_RGB       ||
+           color_type == PNG_COLOR_TYPE_RGB_ALPHA ) )
+    {
+      error = FT_THROW( Invalid_File_Format );
+      goto DestroyExit;
+    }
+
+    switch ( color_type )
+    {
+    default:
+      /* Shouldn't happen, but fall through. */
+
+    case PNG_COLOR_TYPE_RGB_ALPHA:
+      png_set_read_user_transform_fn( png, premultiply_data );
+      break;
+
+    case PNG_COLOR_TYPE_RGB:
+      /* Humm, this smells.  Carry on though. */
+      png_set_read_user_transform_fn( png, convert_bytes_to_data );
+      break;
+    }
+
+    if ( FT_NEW_ARRAY( rows, imgHeight ) )
+    {
+      error = FT_THROW( Out_Of_Memory );
+      goto DestroyExit;
+    }
+
+    for ( i = 0; i < (FT_Int)imgHeight; i++ )
+      rows[i] = map->buffer + ( y_offset + i ) * map->pitch + x_offset * 4;
+
+    png_read_image( png, rows );
+
+    FT_FREE( rows );
+
+    png_read_end( png, info );
+
+  DestroyExit:
+    png_destroy_read_struct( &png, &info, NULL );
+    FT_Stream_Close( &stream );
+
+  Exit:
+    return error;
+  }
+
+#endif /* FT_CONFIG_OPTION_USE_PNG */
+
+
+/* END */
+/***************************************************************************/
+/*                                                                         */
+/*  ttsbit.c                                                               */
+/*                                                                         */
+/*    TrueType and OpenType embedded bitmap support (body).                */
+/*                                                                         */
+/*  Copyright 2005-2009, 2013, 2014 by                                     */
+/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
+/*                                                                         */
+/*  Copyright 2013 by Google, Inc.                                         */
+/*  Google Author(s): Behdad Esfahbod.                                     */
+/*                                                                         */
+/*  This file is part of the FreeType project, and may only be used,       */
+/*  modified, and distributed under the terms of the FreeType project      */
+/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
+/*  this file you indicate that you have read the license and              */
+/*  understand and accept it fully.                                        */
+/*                                                                         */
+/***************************************************************************/
+
+
+#include "ft2build.h"
+#include FT_INTERNAL_DEBUG_H
+#include FT_INTERNAL_STREAM_H
+#include FT_TRUETYPE_TAGS_H
+#include FT_BITMAP_H
 #include "ttsbit.h"
 
 #include "sferrors.h"
+
+#include "ttmtx.h"
+#include "pngshim.h"
 
 
   /*************************************************************************/
@@ -6224,595 +8138,172 @@
 #define FT_COMPONENT  trace_ttsbit
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    blit_sbit                                                          */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Blits a bitmap from an input stream into a given target.  Supports */
-  /*    x and y offsets as well as byte padded lines.                      */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    target      :: The target bitmap/pixmap.                           */
-  /*                                                                       */
-  /*    source      :: The input packed bitmap data.                       */
-  /*                                                                       */
-  /*    line_bits   :: The number of bits per line.                        */
-  /*                                                                       */
-  /*    byte_padded :: A flag which is true if lines are byte-padded.      */
-  /*                                                                       */
-  /*    x_offset    :: The horizontal offset.                              */
-  /*                                                                       */
-  /*    y_offset    :: The vertical offset.                                */
-  /*                                                                       */
-  /* <Note>                                                                */
-  /*    IMPORTANT: The x and y offsets are relative to the top corner of   */
-  /*               the target bitmap (unlike the normal TrueType           */
-  /*               convention).  A positive y offset indicates a downwards */
-  /*               direction!                                              */
-  /*                                                                       */
-  static void
-  blit_sbit( FT_Bitmap*  target,
-             FT_Byte*    source,
-             FT_Int      line_bits,
-             FT_Bool     byte_padded,
-             FT_Int      x_offset,
-             FT_Int      y_offset )
-  {
-    FT_Byte*   line_buff;
-    FT_Int     line_incr;
-    FT_Int     height;
-
-    FT_UShort  acc;
-    FT_UInt    loaded;
-
-
-    /* first of all, compute starting write position */
-    line_incr = target->pitch;
-    line_buff = target->buffer;
-
-    if ( line_incr < 0 )
-      line_buff -= line_incr * ( target->rows - 1 );
-
-    line_buff += ( x_offset >> 3 ) + y_offset * line_incr;
-
-    /***********************************************************************/
-    /*                                                                     */
-    /* We use the extra-classic `accumulator' trick to extract the bits    */
-    /* from the source byte stream.                                        */
-    /*                                                                     */
-    /* Namely, the variable `acc' is a 16-bit accumulator containing the   */
-    /* last `loaded' bits from the input stream.  The bits are shifted to  */
-    /* the upmost position in `acc'.                                       */
-    /*                                                                     */
-    /***********************************************************************/
-
-    acc    = 0;  /* clear accumulator   */
-    loaded = 0;  /* no bits were loaded */
-
-    for ( height = target->rows; height > 0; height-- )
-    {
-      FT_Byte*  cur   = line_buff;        /* current write cursor          */
-      FT_Int    count = line_bits;        /* # of bits to extract per line */
-      FT_Byte   shift = (FT_Byte)( x_offset & 7 ); /* current write shift  */
-      FT_Byte   space = (FT_Byte)( 8 - shift );
-
-
-      /* first of all, read individual source bytes */
-      if ( count >= 8 )
-      {
-        count -= 8;
-        {
-          do
-          {
-            FT_Byte  val;
-
-
-            /* ensure that there are at least 8 bits in the accumulator */
-            if ( loaded < 8 )
-            {
-              acc    |= (FT_UShort)((FT_UShort)*source++ << ( 8 - loaded ));
-              loaded += 8;
-            }
-
-            /* now write one byte */
-            val = (FT_Byte)( acc >> 8 );
-            if ( shift )
-            {
-              cur[0] |= (FT_Byte)( val >> shift );
-              cur[1] |= (FT_Byte)( val << space );
-            }
-            else
-              cur[0] |= val;
-
-            cur++;
-            acc   <<= 8;  /* remove bits from accumulator */
-            loaded -= 8;
-            count  -= 8;
-
-          } while ( count >= 0 );
-        }
-
-        /* restore `count' to correct value */
-        count += 8;
-      }
-
-      /* now write remaining bits (count < 8) */
-      if ( count > 0 )
-      {
-        FT_Byte  val;
-
-
-        /* ensure that there are at least `count' bits in the accumulator */
-        if ( (FT_Int)loaded < count )
-        {
-          acc    |= (FT_UShort)((FT_UShort)*source++ << ( 8 - loaded ));
-          loaded += 8;
-        }
-
-        /* now write remaining bits */
-        val     = (FT_Byte)( ( (FT_Byte)( acc >> 8 ) ) & ~( 0xFF >> count ) );
-        cur[0] |= (FT_Byte)( val >> shift );
-
-        if ( count > space )
-          cur[1] |= (FT_Byte)( val << space );
-
-        acc   <<= count;
-        loaded -= count;
-      }
-
-      /* now, skip to next line */
-      if ( byte_padded )
-      {
-        acc    = 0;
-        loaded = 0;   /* clear accumulator on byte-padded lines */
-      }
-
-      line_buff += line_incr;
-    }
-  }
-
-
-  static const FT_Frame_Field  sbit_metrics_fields[] =
-  {
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  TT_SBit_MetricsRec
-
-    FT_FRAME_START( 8 ),
-      FT_FRAME_BYTE( height ),
-      FT_FRAME_BYTE( width ),
-
-      FT_FRAME_CHAR( horiBearingX ),
-      FT_FRAME_CHAR( horiBearingY ),
-      FT_FRAME_BYTE( horiAdvance ),
-
-      FT_FRAME_CHAR( vertBearingX ),
-      FT_FRAME_CHAR( vertBearingY ),
-      FT_FRAME_BYTE( vertAdvance ),
-    FT_FRAME_END
-  };
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    TT_Load_SBit_Const_Metrics                                         */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Loads the metrics for `EBLC' index tables format 2 and 5.          */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    range  :: The target range.                                        */
-  /*                                                                       */
-  /*    stream :: The input stream.                                        */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.                             */
-  /*                                                                       */
-  static FT_Error
-  Load_SBit_Const_Metrics( TT_SBit_Range  range,
-                           FT_Stream      stream )
+  FT_LOCAL_DEF( FT_Error )
+  tt_face_load_sbit( TT_Face    face,
+                     FT_Stream  stream )
   {
     FT_Error  error;
+    FT_ULong  table_size;
 
 
-    if ( FT_READ_ULONG( range->image_size ) )
-      return error;
+    face->sbit_table       = NULL;
+    face->sbit_table_size  = 0;
+    face->sbit_table_type  = TT_SBIT_TABLE_TYPE_NONE;
+    face->sbit_num_strikes = 0;
 
-    return FT_STREAM_READ_FIELDS( sbit_metrics_fields, &range->metrics );
-  }
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    TT_Load_SBit_Range_Codes                                           */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Loads the range codes for `EBLC' index tables format 4 and 5.      */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    range        :: The target range.                                  */
-  /*                                                                       */
-  /*    stream       :: The input stream.                                  */
-  /*                                                                       */
-  /*    load_offsets :: A flag whether to load the glyph offset table.     */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.                             */
-  /*                                                                       */
-  static FT_Error
-  Load_SBit_Range_Codes( TT_SBit_Range  range,
-                         FT_Stream      stream,
-                         FT_Bool        load_offsets )
-  {
-    FT_Error   error;
-    FT_ULong   count, n, size;
-    FT_Memory  memory = stream->memory;
-
-
-    if ( FT_READ_ULONG( count ) )
-      goto Exit;
-
-    range->num_glyphs = count;
-
-    /* Allocate glyph offsets table if needed */
-    if ( load_offsets )
-    {
-      if ( FT_NEW_ARRAY( range->glyph_offsets, count ) )
-        goto Exit;
-
-      size = count * 4L;
-    }
+    error = face->goto_table( face, TTAG_CBLC, stream, &table_size );
+    if ( !error )
+      face->sbit_table_type = TT_SBIT_TABLE_TYPE_CBLC;
     else
-      size = count * 2L;
-
-    /* Allocate glyph codes table and access frame */
-    if ( FT_NEW_ARRAY ( range->glyph_codes, count ) ||
-         FT_FRAME_ENTER( size )                     )
-      goto Exit;
-
-    for ( n = 0; n < count; n++ )
     {
-      range->glyph_codes[n] = FT_GET_USHORT();
-
-      if ( load_offsets )
-        range->glyph_offsets[n] = (FT_ULong)range->image_offset +
-                                  FT_GET_USHORT();
+      error = face->goto_table( face, TTAG_EBLC, stream, &table_size );
+      if ( error )
+        error = face->goto_table( face, TTAG_bloc, stream, &table_size );
+      if ( !error )
+        face->sbit_table_type = TT_SBIT_TABLE_TYPE_EBLC;
     }
 
-    FT_FRAME_EXIT();
-
-  Exit:
-    return error;
-  }
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    TT_Load_SBit_Range                                                 */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Loads a given `EBLC' index/range table.                            */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    range  :: The target range.                                        */
-  /*                                                                       */
-  /*    stream :: The input stream.                                        */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.                             */
-  /*                                                                       */
-  static FT_Error
-  Load_SBit_Range( TT_SBit_Range  range,
-                   FT_Stream      stream )
-  {
-    FT_Error   error;
-    FT_Memory  memory = stream->memory;
-
-
-    switch( range->index_format )
+    if ( error )
     {
-    case 1:   /* variable metrics with 4-byte offsets */
-    case 3:   /* variable metrics with 2-byte offsets */
+      error = face->goto_table( face, TTAG_sbix, stream, &table_size );
+      if ( !error )
+        face->sbit_table_type = TT_SBIT_TABLE_TYPE_SBIX;
+    }
+    if ( error )
+      goto Exit;
+
+    if ( table_size < 8 )
+    {
+      FT_ERROR(( "tt_face_load_sbit_strikes: table too short\n" ));
+      error = FT_THROW( Invalid_File_Format );
+      goto Exit;
+    }
+
+    switch ( (FT_UInt)face->sbit_table_type )
+    {
+    case TT_SBIT_TABLE_TYPE_EBLC:
+    case TT_SBIT_TABLE_TYPE_CBLC:
       {
-        FT_ULong  num_glyphs, n;
-        FT_Int    size_elem;
-        FT_Bool   large = FT_BOOL( range->index_format == 1 );
+        FT_Byte*  p;
+        FT_Fixed  version;
+        FT_ULong  num_strikes;
+        FT_UInt   count;
 
 
+        if ( FT_FRAME_EXTRACT( table_size, face->sbit_table ) )
+          goto Exit;
 
-        if ( range->last_glyph < range->first_glyph )
+        face->sbit_table_size = table_size;
+
+        p = face->sbit_table;
+
+        version     = FT_NEXT_ULONG( p );
+        num_strikes = FT_NEXT_ULONG( p );
+
+        if ( ( version & 0xFFFF0000UL ) != 0x00020000UL )
         {
-          error = SFNT_Err_Invalid_File_Format;
+          error = FT_THROW( Unknown_File_Format );
           goto Exit;
         }
 
-        num_glyphs        = range->last_glyph - range->first_glyph + 1L;
-        range->num_glyphs = num_glyphs;
-        num_glyphs++;                       /* XXX: BEWARE - see spec */
-
-        size_elem = large ? 4 : 2;
-
-        if ( FT_NEW_ARRAY( range->glyph_offsets, num_glyphs ) ||
-             FT_FRAME_ENTER( num_glyphs * size_elem )         )
+        if ( num_strikes >= 0x10000UL )
+        {
+          error = FT_THROW( Invalid_File_Format );
           goto Exit;
+        }
 
-        for ( n = 0; n < num_glyphs; n++ )
-          range->glyph_offsets[n] = (FT_ULong)( range->image_offset +
-                                                ( large ? FT_GET_ULONG()
-                                                        : FT_GET_USHORT() ) );
-        FT_FRAME_EXIT();
+        /*
+         *  Count the number of strikes available in the table.  We are a bit
+         *  paranoid there and don't trust the data.
+         */
+        count = (FT_UInt)num_strikes;
+        if ( 8 + 48UL * count > table_size )
+          count = (FT_UInt)( ( table_size - 8 ) / 48 );
+
+        face->sbit_num_strikes = count;
       }
       break;
 
-    case 2:   /* all glyphs have identical metrics */
-      error = Load_SBit_Const_Metrics( range, stream );
-      break;
+    case TT_SBIT_TABLE_TYPE_SBIX:
+      {
+        FT_UShort  version;
+        FT_UShort  flags;
+        FT_ULong   num_strikes;
+        FT_UInt    count;
 
-    case 4:
-      error = Load_SBit_Range_Codes( range, stream, 1 );
-      break;
 
-    case 5:
-      error = Load_SBit_Const_Metrics( range, stream )   ||
-              Load_SBit_Range_Codes( range, stream, 0 );
+        if ( FT_FRAME_ENTER( 8 ) )
+          goto Exit;
+
+        version     = FT_GET_USHORT();
+        flags       = FT_GET_USHORT();
+        num_strikes = FT_GET_ULONG();
+
+        FT_FRAME_EXIT();
+
+        if ( version < 1 )
+        {
+          error = FT_THROW( Unknown_File_Format );
+          goto Exit;
+        }
+        if ( flags != 0x0001 || num_strikes >= 0x10000UL )
+        {
+          error = FT_THROW( Invalid_File_Format );
+          goto Exit;
+        }
+
+        /*
+         *  Count the number of strikes available in the table.  We are a bit
+         *  paranoid there and don't trust the data.
+         */
+        count = (FT_UInt)num_strikes;
+        if ( 8 + 4UL * count > table_size )
+          count = (FT_UInt)( ( table_size - 8 ) / 4 );
+
+        if ( FT_STREAM_SEEK( FT_STREAM_POS() - 8 ) )
+          goto Exit;
+
+        face->sbit_table_size = 8 + count * 4;
+        if ( FT_FRAME_EXTRACT( face->sbit_table_size, face->sbit_table ) )
+          goto Exit;
+
+        face->sbit_num_strikes = count;
+      }
       break;
 
     default:
-      error = SFNT_Err_Invalid_File_Format;
+      error = FT_THROW( Unknown_File_Format );
+      break;
     }
 
+    if ( !error )
+      FT_TRACE3(( "sbit_num_strikes: %u\n", face->sbit_num_strikes ));
+
+    return FT_Err_Ok;
+
   Exit:
+    if ( error )
+    {
+      if ( face->sbit_table )
+        FT_FRAME_RELEASE( face->sbit_table );
+      face->sbit_table_size = 0;
+      face->sbit_table_type = TT_SBIT_TABLE_TYPE_NONE;
+    }
+
     return error;
   }
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    tt_face_load_sbit_strikes                                          */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Loads the table of embedded bitmap sizes for this face.            */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    face   :: The target face object.                                  */
-  /*                                                                       */
-  /*    stream :: The input stream.                                        */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.                             */
-  /*                                                                       */
-  FT_LOCAL_DEF( FT_Error )
-  tt_face_load_eblc( TT_Face    face,
-                     FT_Stream  stream )
-  {
-    FT_Error   error  = 0;
-    FT_Memory  memory = stream->memory;
-    FT_Fixed   version;
-    FT_ULong   num_strikes;
-    FT_ULong   table_base;
-
-    static const FT_Frame_Field  sbit_line_metrics_fields[] =
-    {
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  TT_SBit_LineMetricsRec
-
-      /* no FT_FRAME_START */
-        FT_FRAME_CHAR( ascender ),
-        FT_FRAME_CHAR( descender ),
-        FT_FRAME_BYTE( max_width ),
-
-        FT_FRAME_CHAR( caret_slope_numerator ),
-        FT_FRAME_CHAR( caret_slope_denominator ),
-        FT_FRAME_CHAR( caret_offset ),
-
-        FT_FRAME_CHAR( min_origin_SB ),
-        FT_FRAME_CHAR( min_advance_SB ),
-        FT_FRAME_CHAR( max_before_BL ),
-        FT_FRAME_CHAR( min_after_BL ),
-        FT_FRAME_CHAR( pads[0] ),
-        FT_FRAME_CHAR( pads[1] ),
-      FT_FRAME_END
-    };
-
-    static const FT_Frame_Field  strike_start_fields[] =
-    {
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  TT_SBit_StrikeRec
-
-      /* no FT_FRAME_START */
-        FT_FRAME_ULONG( ranges_offset ),
-        FT_FRAME_SKIP_LONG,
-        FT_FRAME_ULONG( num_ranges ),
-        FT_FRAME_ULONG( color_ref ),
-      FT_FRAME_END
-    };
-
-    static const FT_Frame_Field  strike_end_fields[] =
-    {
-      /* no FT_FRAME_START */
-        FT_FRAME_USHORT( start_glyph ),
-        FT_FRAME_USHORT( end_glyph ),
-        FT_FRAME_BYTE  ( x_ppem ),
-        FT_FRAME_BYTE  ( y_ppem ),
-        FT_FRAME_BYTE  ( bit_depth ),
-        FT_FRAME_CHAR  ( flags ),
-      FT_FRAME_END
-    };
-
-
-    face->num_sbit_strikes = 0;
-
-    /* this table is optional */
-    error = face->goto_table( face, TTAG_EBLC, stream, 0 );
-    if ( error )
-      error = face->goto_table( face, TTAG_bloc, stream, 0 );
-    if ( error )
-      goto Exit;
-
-    table_base = FT_STREAM_POS();
-    if ( FT_FRAME_ENTER( 8L ) )
-      goto Exit;
-
-    version     = FT_GET_LONG();
-    num_strikes = FT_GET_ULONG();
-
-    FT_FRAME_EXIT();
-
-    /* check version number and strike count */
-    if ( version     != 0x00020000L ||
-         num_strikes >= 0x10000L    )
-    {
-      FT_ERROR(( "tt_face_load_sbit_strikes: invalid table version!\n" ));
-      error = SFNT_Err_Invalid_File_Format;
-
-      goto Exit;
-    }
-
-    /* allocate the strikes table */
-    if ( FT_NEW_ARRAY( face->sbit_strikes, num_strikes ) )
-      goto Exit;
-
-    face->num_sbit_strikes = num_strikes;
-
-    /* now read each strike table separately */
-    {
-      TT_SBit_Strike  strike = face->sbit_strikes;
-      FT_ULong        count  = num_strikes;
-
-
-      if ( FT_FRAME_ENTER( 48L * num_strikes ) )
-        goto Exit;
-
-      while ( count > 0 )
-      {
-        if ( FT_STREAM_READ_FIELDS( strike_start_fields, strike )             ||
-             FT_STREAM_READ_FIELDS( sbit_line_metrics_fields, &strike->hori ) ||
-             FT_STREAM_READ_FIELDS( sbit_line_metrics_fields, &strike->vert ) ||
-             FT_STREAM_READ_FIELDS( strike_end_fields, strike )               )
-          break;
-
-        count--;
-        strike++;
-      }
-
-      FT_FRAME_EXIT();
-    }
-
-    /* allocate the index ranges for each strike table */
-    {
-      TT_SBit_Strike  strike = face->sbit_strikes;
-      FT_ULong        count  = num_strikes;
-
-
-      while ( count > 0 )
-      {
-        TT_SBit_Range  range;
-        FT_ULong       count2 = strike->num_ranges;
-
-
-        /* read each range */
-        if ( FT_STREAM_SEEK( table_base + strike->ranges_offset ) ||
-             FT_FRAME_ENTER( strike->num_ranges * 8L )            )
-          goto Exit;
-
-        if ( FT_NEW_ARRAY( strike->sbit_ranges, strike->num_ranges ) )
-          goto Exit;
-
-        range = strike->sbit_ranges;
-        while ( count2 > 0 )
-        {
-          range->first_glyph  = FT_GET_USHORT();
-          range->last_glyph   = FT_GET_USHORT();
-          range->table_offset = table_base + strike->ranges_offset +
-                                  FT_GET_ULONG();
-          count2--;
-          range++;
-        }
-
-        FT_FRAME_EXIT();
-
-        /* Now, read each index table */
-        count2 = strike->num_ranges;
-        range  = strike->sbit_ranges;
-        while ( count2 > 0 )
-        {
-          /* Read the header */
-          if ( FT_STREAM_SEEK( range->table_offset ) ||
-               FT_FRAME_ENTER( 8L )                  )
-            goto Exit;
-
-          range->index_format = FT_GET_USHORT();
-          range->image_format = FT_GET_USHORT();
-          range->image_offset = FT_GET_ULONG();
-
-          FT_FRAME_EXIT();
-
-          error = Load_SBit_Range( range, stream );
-          if ( error )
-            goto Exit;
-
-          count2--;
-          range++;
-        }
-
-        count--;
-        strike++;
-      }
-    }
-
-  Exit:
-    return error;
-  }
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    tt_face_free_sbit_strikes                                          */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Releases the embedded bitmap tables.                               */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    face :: The target face object.                                    */
-  /*                                                                       */
   FT_LOCAL_DEF( void )
-  tt_face_free_eblc( TT_Face  face )
+  tt_face_free_sbit( TT_Face  face )
   {
-    FT_Memory       memory       = face->root.memory;
-    TT_SBit_Strike  strike       = face->sbit_strikes;
-    TT_SBit_Strike  strike_limit = strike + face->num_sbit_strikes;
+    FT_Stream  stream = face->root.stream;
 
 
-    if ( strike )
-    {
-      for ( ; strike < strike_limit; strike++ )
-      {
-        TT_SBit_Range  range       = strike->sbit_ranges;
-        TT_SBit_Range  range_limit = range + strike->num_ranges;
-
-
-        if ( range )
-        {
-          for ( ; range < range_limit; range++ )
-          {
-            /* release the glyph offsets and codes tables */
-            /* where appropriate                          */
-            FT_FREE( range->glyph_offsets );
-            FT_FREE( range->glyph_codes );
-          }
-        }
-        FT_FREE( strike->sbit_ranges );
-        strike->num_ranges = 0;
-      }
-      FT_FREE( face->sbit_strikes );
-    }
-    face->num_sbit_strikes = 0;
+    FT_FRAME_RELEASE( face->sbit_table );
+    face->sbit_table_size  = 0;
+    face->sbit_table_type  = TT_SBIT_TABLE_TYPE_NONE;
+    face->sbit_num_strikes = 0;
   }
 
 
@@ -6830,786 +8321,1143 @@
                                FT_ULong          strike_index,
                                FT_Size_Metrics*  metrics )
   {
-    TT_SBit_Strike  strike;
+    if ( strike_index >= (FT_ULong)face->sbit_num_strikes )
+      return FT_THROW( Invalid_Argument );
+
+    switch ( (FT_UInt)face->sbit_table_type )
+    {
+    case TT_SBIT_TABLE_TYPE_EBLC:
+    case TT_SBIT_TABLE_TYPE_CBLC:
+      {
+        FT_Byte*  strike;
 
 
-    if ( strike_index >= face->num_sbit_strikes )
-      return SFNT_Err_Invalid_Argument;
+        strike = face->sbit_table + 8 + strike_index * 48;
 
-    strike = face->sbit_strikes + strike_index;
+        metrics->x_ppem = (FT_UShort)strike[44];
+        metrics->y_ppem = (FT_UShort)strike[45];
 
-    metrics->x_ppem = strike->x_ppem;
-    metrics->y_ppem = strike->y_ppem;
+        metrics->ascender  = (FT_Char)strike[16] << 6;  /* hori.ascender  */
+        metrics->descender = (FT_Char)strike[17] << 6;  /* hori.descender */
+        metrics->height    = metrics->ascender - metrics->descender;
 
-    metrics->ascender  = strike->hori.ascender << 6;
-    metrics->descender = strike->hori.descender << 6;
+        /* Is this correct? */
+        metrics->max_advance = ( (FT_Char)strike[22] + /* min_origin_SB  */
+                                          strike[18] + /* max_width      */
+                                 (FT_Char)strike[23]   /* min_advance_SB */
+                                                     ) << 6;
+        return FT_Err_Ok;
+      }
 
-    /* XXX: Is this correct? */
-    metrics->max_advance = ( strike->hori.min_origin_SB  +
-                             strike->hori.max_width      +
-                             strike->hori.min_advance_SB ) << 6;
+    case TT_SBIT_TABLE_TYPE_SBIX:
+      {
+        FT_Stream       stream = face->root.stream;
+        FT_UInt         offset, ppem, resolution, upem;
+        TT_HoriHeader  *hori;
+        FT_ULong        table_size;
 
-    metrics->height = metrics->ascender - metrics->descender;
+        FT_Error  error;
+        FT_Byte*  p;
 
-    return SFNT_Err_Ok;
+
+        p      = face->sbit_table + 8 + 4 * strike_index;
+        offset = FT_NEXT_ULONG( p );
+
+        error = face->goto_table( face, TTAG_sbix, stream, &table_size );
+        if ( error )
+          return error;
+
+        if ( offset + 4  > table_size )
+          return FT_THROW( Invalid_File_Format );
+
+        if ( FT_STREAM_SEEK( FT_STREAM_POS() + offset ) ||
+             FT_FRAME_ENTER( 4 )                        )
+          return error;
+
+        ppem       = FT_GET_USHORT();
+        resolution = FT_GET_USHORT();
+
+        FT_UNUSED( resolution ); /* What to do with this? */
+
+        FT_FRAME_EXIT();
+
+        upem = face->header.Units_Per_EM;
+        hori = &face->horizontal;
+
+        metrics->x_ppem = ppem;
+        metrics->y_ppem = ppem;
+
+        metrics->ascender    = ppem * hori->Ascender * 64 / upem;
+        metrics->descender   = ppem * hori->Descender * 64 / upem;
+        metrics->height      = ppem * ( hori->Ascender -
+                                        hori->Descender +
+                                        hori->Line_Gap ) * 64 / upem;
+        metrics->max_advance = ppem * hori->advance_Width_Max * 64 / upem;
+
+        return error;
+      }
+
+    default:
+      return FT_THROW( Unknown_File_Format );
+    }
   }
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    find_sbit_range                                                    */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Scans a given strike's ranges and return, for a given glyph        */
-  /*    index, the corresponding sbit range, and `EBDT' offset.            */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    glyph_index   :: The glyph index.                                  */
-  /*                                                                       */
-  /*    strike        :: The source/current sbit strike.                   */
-  /*                                                                       */
-  /* <Output>                                                              */
-  /*    arange        :: The sbit range containing the glyph index.        */
-  /*                                                                       */
-  /*    aglyph_offset :: The offset of the glyph data in `EBDT' table.     */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means the glyph index was found.           */
-  /*                                                                       */
-  static FT_Error
-  find_sbit_range( FT_UInt          glyph_index,
-                   TT_SBit_Strike   strike,
-                   TT_SBit_Range   *arange,
-                   FT_ULong        *aglyph_offset )
+  typedef struct  TT_SBitDecoderRec_
   {
-    TT_SBit_RangeRec  *range, *range_limit;
+    TT_Face          face;
+    FT_Stream        stream;
+    FT_Bitmap*       bitmap;
+    TT_SBit_Metrics  metrics;
+    FT_Bool          metrics_loaded;
+    FT_Bool          bitmap_allocated;
+    FT_Byte          bit_depth;
+
+    FT_ULong         ebdt_start;
+    FT_ULong         ebdt_size;
+
+    FT_ULong         strike_index_array;
+    FT_ULong         strike_index_count;
+    FT_Byte*         eblc_base;
+    FT_Byte*         eblc_limit;
+
+  } TT_SBitDecoderRec, *TT_SBitDecoder;
 
 
-    /* check whether the glyph index is within this strike's */
-    /* glyph range                                           */
-    if ( glyph_index < (FT_UInt)strike->start_glyph ||
-         glyph_index > (FT_UInt)strike->end_glyph   )
-      goto Fail;
+  static FT_Error
+  tt_sbit_decoder_init( TT_SBitDecoder       decoder,
+                        TT_Face              face,
+                        FT_ULong             strike_index,
+                        TT_SBit_MetricsRec*  metrics )
+  {
+    FT_Error   error;
+    FT_Stream  stream = face->root.stream;
+    FT_ULong   ebdt_size;
 
-    /* scan all ranges in strike */
-    range       = strike->sbit_ranges;
-    range_limit = range + strike->num_ranges;
-    if ( !range )
-      goto Fail;
 
-    for ( ; range < range_limit; range++ )
+    error = face->goto_table( face, TTAG_CBDT, stream, &ebdt_size );
+    if ( error )
+      error = face->goto_table( face, TTAG_EBDT, stream, &ebdt_size );
+    if ( error )
+      error = face->goto_table( face, TTAG_bdat, stream, &ebdt_size );
+    if ( error )
+      goto Exit;
+
+    decoder->face    = face;
+    decoder->stream  = stream;
+    decoder->bitmap  = &face->root.glyph->bitmap;
+    decoder->metrics = metrics;
+
+    decoder->metrics_loaded   = 0;
+    decoder->bitmap_allocated = 0;
+
+    decoder->ebdt_start = FT_STREAM_POS();
+    decoder->ebdt_size  = ebdt_size;
+
+    decoder->eblc_base  = face->sbit_table;
+    decoder->eblc_limit = face->sbit_table + face->sbit_table_size;
+
+    /* now find the strike corresponding to the index */
     {
-      if ( glyph_index >= (FT_UInt)range->first_glyph &&
-           glyph_index <= (FT_UInt)range->last_glyph  )
+      FT_Byte*  p;
+
+
+      if ( 8 + 48 * strike_index + 3 * 4 + 34 + 1 > face->sbit_table_size )
       {
-        FT_UShort  delta = (FT_UShort)( glyph_index - range->first_glyph );
+        error = FT_THROW( Invalid_File_Format );
+        goto Exit;
+      }
+
+      p = decoder->eblc_base + 8 + 48 * strike_index;
+
+      decoder->strike_index_array = FT_NEXT_ULONG( p );
+      p                          += 4;
+      decoder->strike_index_count = FT_NEXT_ULONG( p );
+      p                          += 34;
+      decoder->bit_depth          = *p;
+
+      if ( decoder->strike_index_array > face->sbit_table_size             ||
+           decoder->strike_index_array + 8 * decoder->strike_index_count >
+             face->sbit_table_size                                         )
+        error = FT_THROW( Invalid_File_Format );
+    }
+
+  Exit:
+    return error;
+  }
 
 
-        switch ( range->index_format )
+  static void
+  tt_sbit_decoder_done( TT_SBitDecoder  decoder )
+  {
+    FT_UNUSED( decoder );
+  }
+
+
+  static FT_Error
+  tt_sbit_decoder_alloc_bitmap( TT_SBitDecoder  decoder )
+  {
+    FT_Error    error = FT_Err_Ok;
+    FT_UInt     width, height;
+    FT_Bitmap*  map = decoder->bitmap;
+    FT_Long     size;
+
+
+    if ( !decoder->metrics_loaded )
+    {
+      error = FT_THROW( Invalid_Argument );
+      goto Exit;
+    }
+
+    width  = decoder->metrics->width;
+    height = decoder->metrics->height;
+
+    map->width = (int)width;
+    map->rows  = (int)height;
+
+    switch ( decoder->bit_depth )
+    {
+    case 1:
+      map->pixel_mode = FT_PIXEL_MODE_MONO;
+      map->pitch      = ( map->width + 7 ) >> 3;
+      map->num_grays  = 2;
+      break;
+
+    case 2:
+      map->pixel_mode = FT_PIXEL_MODE_GRAY2;
+      map->pitch      = ( map->width + 3 ) >> 2;
+      map->num_grays  = 4;
+      break;
+
+    case 4:
+      map->pixel_mode = FT_PIXEL_MODE_GRAY4;
+      map->pitch      = ( map->width + 1 ) >> 1;
+      map->num_grays  = 16;
+      break;
+
+    case 8:
+      map->pixel_mode = FT_PIXEL_MODE_GRAY;
+      map->pitch      = map->width;
+      map->num_grays  = 256;
+      break;
+
+    case 32:
+      map->pixel_mode = FT_PIXEL_MODE_BGRA;
+      map->pitch      = map->width * 4;
+      map->num_grays  = 256;
+      break;
+
+    default:
+      error = FT_THROW( Invalid_File_Format );
+      goto Exit;
+    }
+
+    size = map->rows * map->pitch;
+
+    /* check that there is no empty image */
+    if ( size == 0 )
+      goto Exit;     /* exit successfully! */
+
+    error = ft_glyphslot_alloc_bitmap( decoder->face->root.glyph, size );
+    if ( error )
+      goto Exit;
+
+    decoder->bitmap_allocated = 1;
+
+  Exit:
+    return error;
+  }
+
+
+  static FT_Error
+  tt_sbit_decoder_load_metrics( TT_SBitDecoder  decoder,
+                                FT_Byte*       *pp,
+                                FT_Byte*        limit,
+                                FT_Bool         big )
+  {
+    FT_Byte*         p       = *pp;
+    TT_SBit_Metrics  metrics = decoder->metrics;
+
+
+    if ( p + 5 > limit )
+      goto Fail;
+
+    metrics->height       = p[0];
+    metrics->width        = p[1];
+    metrics->horiBearingX = (FT_Char)p[2];
+    metrics->horiBearingY = (FT_Char)p[3];
+    metrics->horiAdvance  = p[4];
+
+    p += 5;
+    if ( big )
+    {
+      if ( p + 3 > limit )
+        goto Fail;
+
+      metrics->vertBearingX = (FT_Char)p[0];
+      metrics->vertBearingY = (FT_Char)p[1];
+      metrics->vertAdvance  = p[2];
+
+      p += 3;
+    }
+
+    decoder->metrics_loaded = 1;
+    *pp = p;
+    return FT_Err_Ok;
+
+  Fail:
+    FT_TRACE1(( "tt_sbit_decoder_load_metrics: broken table" ));
+    return FT_THROW( Invalid_Argument );
+  }
+
+
+  /* forward declaration */
+  static FT_Error
+  tt_sbit_decoder_load_image( TT_SBitDecoder  decoder,
+                              FT_UInt         glyph_index,
+                              FT_Int          x_pos,
+                              FT_Int          y_pos );
+
+  typedef FT_Error  (*TT_SBitDecoder_LoadFunc)( TT_SBitDecoder  decoder,
+                                                FT_Byte*        p,
+                                                FT_Byte*        plimit,
+                                                FT_Int          x_pos,
+                                                FT_Int          y_pos );
+
+
+  static FT_Error
+  tt_sbit_decoder_load_byte_aligned( TT_SBitDecoder  decoder,
+                                     FT_Byte*        p,
+                                     FT_Byte*        limit,
+                                     FT_Int          x_pos,
+                                     FT_Int          y_pos )
+  {
+    FT_Error    error = FT_Err_Ok;
+    FT_Byte*    line;
+    FT_Int      bit_height, bit_width, pitch, width, height, line_bits, h;
+    FT_Bitmap*  bitmap;
+
+
+    /* check that we can write the glyph into the bitmap */
+    bitmap     = decoder->bitmap;
+    bit_width  = bitmap->width;
+    bit_height = bitmap->rows;
+    pitch      = bitmap->pitch;
+    line       = bitmap->buffer;
+
+    width  = decoder->metrics->width;
+    height = decoder->metrics->height;
+
+    line_bits = width * decoder->bit_depth;
+
+    if ( x_pos < 0 || x_pos + width > bit_width   ||
+         y_pos < 0 || y_pos + height > bit_height )
+    {
+      FT_TRACE1(( "tt_sbit_decoder_load_byte_aligned:"
+                  " invalid bitmap dimensions\n" ));
+      error = FT_THROW( Invalid_File_Format );
+      goto Exit;
+    }
+
+    if ( p + ( ( line_bits + 7 ) >> 3 ) * height > limit )
+    {
+      FT_TRACE1(( "tt_sbit_decoder_load_byte_aligned: broken bitmap\n" ));
+      error = FT_THROW( Invalid_File_Format );
+      goto Exit;
+    }
+
+    /* now do the blit */
+    line  += y_pos * pitch + ( x_pos >> 3 );
+    x_pos &= 7;
+
+    if ( x_pos == 0 )  /* the easy one */
+    {
+      for ( h = height; h > 0; h--, line += pitch )
+      {
+        FT_Byte*  pwrite = line;
+        FT_Int    w;
+
+
+        for ( w = line_bits; w >= 8; w -= 8 )
         {
-        case 1:
-        case 3:
-          *aglyph_offset = range->glyph_offsets[delta];
-          break;
-
-        case 2:
-          *aglyph_offset = range->image_offset +
-                           range->image_size * delta;
-          break;
-
-        case 4:
-        case 5:
-          {
-            FT_ULong  n;
-
-
-            for ( n = 0; n < range->num_glyphs; n++ )
-            {
-              if ( (FT_UInt)range->glyph_codes[n] == glyph_index )
-              {
-                if ( range->index_format == 4 )
-                  *aglyph_offset = range->glyph_offsets[n];
-                else
-                  *aglyph_offset = range->image_offset +
-                                   n * range->image_size;
-                goto Found;
-              }
-            }
-          }
-
-        /* fall-through */
-        default:
-          goto Fail;
+          pwrite[0] = (FT_Byte)( pwrite[0] | *p++ );
+          pwrite   += 1;
         }
 
-      Found:
-        /* return successfully! */
-        *arange  = range;
-        return 0;
+        if ( w > 0 )
+          pwrite[0] = (FT_Byte)( pwrite[0] | ( *p++ & ( 0xFF00U >> w ) ) );
+      }
+    }
+    else  /* x_pos > 0 */
+    {
+      for ( h = height; h > 0; h--, line += pitch )
+      {
+        FT_Byte*  pwrite = line;
+        FT_Int    w;
+        FT_UInt   wval = 0;
+
+
+        for ( w = line_bits; w >= 8; w -= 8 )
+        {
+          wval       = (FT_UInt)( wval | *p++ );
+          pwrite[0]  = (FT_Byte)( pwrite[0] | ( wval >> x_pos ) );
+          pwrite    += 1;
+          wval     <<= 8;
+        }
+
+        if ( w > 0 )
+          wval = (FT_UInt)( wval | ( *p++ & ( 0xFF00U >> w ) ) );
+
+        /* all bits read and there are `x_pos + w' bits to be written */
+
+        pwrite[0] = (FT_Byte)( pwrite[0] | ( wval >> x_pos ) );
+
+        if ( x_pos + w > 8 )
+        {
+          pwrite++;
+          wval     <<= 8;
+          pwrite[0]  = (FT_Byte)( pwrite[0] | ( wval >> x_pos ) );
+        }
       }
     }
 
-  Fail:
-    *arange        = 0;
-    *aglyph_offset = 0;
-
-    return SFNT_Err_Invalid_Argument;
+  Exit:
+    if ( !error )
+      FT_TRACE3(( "tt_sbit_decoder_load_byte_aligned: loaded\n" ));
+    return error;
   }
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    tt_find_sbit_image                                                 */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Checks whether an embedded bitmap (an `sbit') exists for a given   */
-  /*    glyph, at a given strike.                                          */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    face          :: The target face object.                           */
-  /*                                                                       */
-  /*    glyph_index   :: The glyph index.                                  */
-  /*                                                                       */
-  /*    strike_index  :: The current strike index.                         */
-  /*                                                                       */
-  /* <Output>                                                              */
-  /*    arange        :: The SBit range containing the glyph index.        */
-  /*                                                                       */
-  /*    astrike       :: The SBit strike containing the glyph index.       */
-  /*                                                                       */
-  /*    aglyph_offset :: The offset of the glyph data in `EBDT' table.     */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.  Returns                    */
-  /*    SFNT_Err_Invalid_Argument if no sbit exists for the requested      */
-  /*    glyph.                                                             */
-  /*                                                                       */
-  FT_LOCAL( FT_Error )
-  tt_find_sbit_image( TT_Face          face,
-                      FT_UInt          glyph_index,
-                      FT_ULong         strike_index,
-                      TT_SBit_Range   *arange,
-                      TT_SBit_Strike  *astrike,
-                      FT_ULong        *aglyph_offset )
+  /*
+   * Load a bit-aligned bitmap (with pointer `p') into a line-aligned bitmap
+   * (with pointer `pwrite').  In the example below, the width is 3 pixel,
+   * and `x_pos' is 1 pixel.
+   *
+   *       p                               p+1
+   *     |                               |                               |
+   *     | 7   6   5   4   3   2   1   0 | 7   6   5   4   3   2   1   0 |...
+   *     |                               |                               |
+   *       +-------+   +-------+   +-------+ ...
+   *           .           .           .
+   *           .           .           .
+   *           v           .           .
+   *       +-------+       .           .
+   * |                               | .
+   * | 7   6   5   4   3   2   1   0 | .
+   * |                               | .
+   *   pwrite              .           .
+   *                       .           .
+   *                       v           .
+   *                   +-------+       .
+   *             |                               |
+   *             | 7   6   5   4   3   2   1   0 |
+   *             |                               |
+   *               pwrite+1            .
+   *                                   .
+   *                                   v
+   *                               +-------+
+   *                         |                               |
+   *                         | 7   6   5   4   3   2   1   0 |
+   *                         |                               |
+   *                           pwrite+2
+   *
+   */
+
+  static FT_Error
+  tt_sbit_decoder_load_bit_aligned( TT_SBitDecoder  decoder,
+                                    FT_Byte*        p,
+                                    FT_Byte*        limit,
+                                    FT_Int          x_pos,
+                                    FT_Int          y_pos )
   {
-    FT_Error        error;
-    TT_SBit_Strike  strike;
+    FT_Error    error = FT_Err_Ok;
+    FT_Byte*    line;
+    FT_Int      bit_height, bit_width, pitch, width, height, line_bits, h, nbits;
+    FT_Bitmap*  bitmap;
+    FT_UShort   rval;
 
 
-    if ( !face->sbit_strikes                        ||
-         ( face->num_sbit_strikes <= strike_index ) )
-      goto Fail;
+    /* check that we can write the glyph into the bitmap */
+    bitmap     = decoder->bitmap;
+    bit_width  = bitmap->width;
+    bit_height = bitmap->rows;
+    pitch      = bitmap->pitch;
+    line       = bitmap->buffer;
 
-    strike = &face->sbit_strikes[strike_index];
+    width  = decoder->metrics->width;
+    height = decoder->metrics->height;
 
-    error = find_sbit_range( glyph_index, strike,
-                             arange, aglyph_offset );
-    if ( error )
-      goto Fail;
+    line_bits = width * decoder->bit_depth;
 
-    *astrike = strike;
+    if ( x_pos < 0 || x_pos + width  > bit_width  ||
+         y_pos < 0 || y_pos + height > bit_height )
+    {
+      FT_TRACE1(( "tt_sbit_decoder_load_bit_aligned:"
+                  " invalid bitmap dimensions\n" ));
+      error = FT_THROW( Invalid_File_Format );
+      goto Exit;
+    }
 
-    return SFNT_Err_Ok;
+    if ( p + ( ( line_bits * height + 7 ) >> 3 ) > limit )
+    {
+      FT_TRACE1(( "tt_sbit_decoder_load_bit_aligned: broken bitmap\n" ));
+      error = FT_THROW( Invalid_File_Format );
+      goto Exit;
+    }
 
-  Fail:
-    /* no embedded bitmap for this glyph in face */
-    *arange        = 0;
-    *astrike       = 0;
-    *aglyph_offset = 0;
+    /* now do the blit */
 
-    return SFNT_Err_Invalid_Argument;
+    /* adjust `line' to point to the first byte of the bitmap */
+    line  += y_pos * pitch + ( x_pos >> 3 );
+    x_pos &= 7;
+
+    /* the higher byte of `rval' is used as a buffer */
+    rval  = 0;
+    nbits = 0;
+
+    for ( h = height; h > 0; h--, line += pitch )
+    {
+      FT_Byte*  pwrite = line;
+      FT_Int    w      = line_bits;
+
+
+      /* handle initial byte (in target bitmap) specially if necessary */
+      if ( x_pos )
+      {
+        w = ( line_bits < 8 - x_pos ) ? line_bits : 8 - x_pos;
+
+        if ( h == height )
+        {
+          rval  = *p++;
+          nbits = x_pos;
+        }
+        else if ( nbits < w )
+        {
+          if ( p < limit )
+            rval |= *p++;
+          nbits += 8 - w;
+        }
+        else
+        {
+          rval  >>= 8;
+          nbits  -= w;
+        }
+
+        *pwrite++ |= ( ( rval >> nbits ) & 0xFF ) &
+                     ( ~( 0xFF << w ) << ( 8 - w - x_pos ) );
+        rval     <<= 8;
+
+        w = line_bits - w;
+      }
+
+      /* handle medial bytes */
+      for ( ; w >= 8; w -= 8 )
+      {
+        rval      |= *p++;
+        *pwrite++ |= ( rval >> nbits ) & 0xFF;
+
+        rval <<= 8;
+      }
+
+      /* handle final byte if necessary */
+      if ( w > 0 )
+      {
+        if ( nbits < w )
+        {
+          if ( p < limit )
+            rval |= *p++;
+          *pwrite |= ( ( rval >> nbits ) & 0xFF ) & ( 0xFF00U >> w );
+          nbits   += 8 - w;
+
+          rval <<= 8;
+        }
+        else
+        {
+          *pwrite |= ( ( rval >> nbits ) & 0xFF ) & ( 0xFF00U >> w );
+          nbits   -= w;
+        }
+      }
+    }
+
+  Exit:
+    if ( !error )
+      FT_TRACE3(( "tt_sbit_decoder_load_bit_aligned: loaded\n" ));
+    return error;
   }
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    tt_load_sbit_metrics                                               */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Gets the big metrics for a given SBit.                             */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    stream      :: The input stream.                                   */
-  /*                                                                       */
-  /*    range       :: The SBit range containing the glyph.                */
-  /*                                                                       */
-  /* <Output>                                                              */
-  /*    big_metrics :: A big SBit metrics structure for the glyph.         */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.                             */
-  /*                                                                       */
-  /* <Note>                                                                */
-  /*    The stream cursor must be positioned at the glyph's offset within  */
-  /*    the `EBDT' table before the call.                                  */
-  /*                                                                       */
-  /*    If the image format uses variable metrics, the stream cursor is    */
-  /*    positioned just after the metrics header in the `EBDT' table on    */
-  /*    function exit.                                                     */
-  /*                                                                       */
-  FT_LOCAL( FT_Error )
-  tt_load_sbit_metrics( FT_Stream        stream,
-                        TT_SBit_Range    range,
-                        TT_SBit_Metrics  metrics )
+  static FT_Error
+  tt_sbit_decoder_load_compound( TT_SBitDecoder  decoder,
+                                 FT_Byte*        p,
+                                 FT_Byte*        limit,
+                                 FT_Int          x_pos,
+                                 FT_Int          y_pos )
   {
-    FT_Error  error = SFNT_Err_Ok;
+    FT_Error  error = FT_Err_Ok;
+    FT_UInt   num_components, nn;
+
+    FT_Char  horiBearingX = (FT_Char)decoder->metrics->horiBearingX;
+    FT_Char  horiBearingY = (FT_Char)decoder->metrics->horiBearingY;
+    FT_Byte  horiAdvance  = (FT_Byte)decoder->metrics->horiAdvance;
+    FT_Char  vertBearingX = (FT_Char)decoder->metrics->vertBearingX;
+    FT_Char  vertBearingY = (FT_Char)decoder->metrics->vertBearingY;
+    FT_Byte  vertAdvance  = (FT_Byte)decoder->metrics->vertAdvance;
 
 
-    switch ( range->image_format )
+    if ( p + 2 > limit )
+      goto Fail;
+
+    num_components = FT_NEXT_USHORT( p );
+    if ( p + 4 * num_components > limit )
+    {
+      FT_TRACE1(( "tt_sbit_decoder_load_compound: broken table\n" ));
+      goto Fail;
+    }
+
+    FT_TRACE3(( "tt_sbit_decoder_load_compound: loading %d components\n",
+                num_components ));
+
+    for ( nn = 0; nn < num_components; nn++ )
+    {
+      FT_UInt  gindex = FT_NEXT_USHORT( p );
+      FT_Byte  dx     = FT_NEXT_BYTE( p );
+      FT_Byte  dy     = FT_NEXT_BYTE( p );
+
+
+      /* NB: a recursive call */
+      error = tt_sbit_decoder_load_image( decoder, gindex,
+                                          x_pos + dx, y_pos + dy );
+      if ( error )
+        break;
+    }
+
+    FT_TRACE3(( "tt_sbit_decoder_load_compound: done\n" ));
+
+    decoder->metrics->horiBearingX = horiBearingX;
+    decoder->metrics->horiBearingY = horiBearingY;
+    decoder->metrics->horiAdvance  = horiAdvance;
+    decoder->metrics->vertBearingX = vertBearingX;
+    decoder->metrics->vertBearingY = vertBearingY;
+    decoder->metrics->vertAdvance  = vertAdvance;
+    decoder->metrics->width        = (FT_Byte)decoder->bitmap->width;
+    decoder->metrics->height       = (FT_Byte)decoder->bitmap->rows;
+
+  Exit:
+    return error;
+
+  Fail:
+    error = FT_THROW( Invalid_File_Format );
+    goto Exit;
+  }
+
+
+#ifdef FT_CONFIG_OPTION_USE_PNG
+
+  static FT_Error
+  tt_sbit_decoder_load_png( TT_SBitDecoder  decoder,
+                            FT_Byte*        p,
+                            FT_Byte*        limit,
+                            FT_Int          x_pos,
+                            FT_Int          y_pos )
+  {
+    FT_Error  error = FT_Err_Ok;
+    FT_ULong  png_len;
+
+
+    if ( limit - p < 4 )
+    {
+      FT_TRACE1(( "tt_sbit_decoder_load_png: broken bitmap\n" ));
+      error = FT_THROW( Invalid_File_Format );
+      goto Exit;
+    }
+
+    png_len = FT_NEXT_ULONG( p );
+    if ( (FT_ULong)( limit - p ) < png_len )
+    {
+      FT_TRACE1(( "tt_sbit_decoder_load_png: broken bitmap\n" ));
+      error = FT_THROW( Invalid_File_Format );
+      goto Exit;
+    }
+
+    error = Load_SBit_Png( decoder->face->root.glyph,
+                           x_pos,
+                           y_pos,
+                           decoder->bit_depth,
+                           decoder->metrics,
+                           decoder->stream->memory,
+                           p,
+                           png_len,
+                           FALSE );
+
+  Exit:
+    if ( !error )
+      FT_TRACE3(( "tt_sbit_decoder_load_png: loaded\n" ));
+    return error;
+  }
+
+#endif /* FT_CONFIG_OPTION_USE_PNG */
+
+
+  static FT_Error
+  tt_sbit_decoder_load_bitmap( TT_SBitDecoder  decoder,
+                               FT_UInt         glyph_format,
+                               FT_ULong        glyph_start,
+                               FT_ULong        glyph_size,
+                               FT_Int          x_pos,
+                               FT_Int          y_pos )
+  {
+    FT_Error   error;
+    FT_Stream  stream = decoder->stream;
+    FT_Byte*   p;
+    FT_Byte*   p_limit;
+    FT_Byte*   data;
+
+
+    /* seek into the EBDT table now */
+    if ( glyph_start + glyph_size > decoder->ebdt_size )
+    {
+      error = FT_THROW( Invalid_Argument );
+      goto Exit;
+    }
+
+    if ( FT_STREAM_SEEK( decoder->ebdt_start + glyph_start ) ||
+         FT_FRAME_EXTRACT( glyph_size, data )                )
+      goto Exit;
+
+    p       = data;
+    p_limit = p + glyph_size;
+
+    /* read the data, depending on the glyph format */
+    switch ( glyph_format )
     {
     case 1:
     case 2:
     case 8:
-      /* variable small metrics */
-      {
-        TT_SBit_SmallMetricsRec  smetrics;
-
-        static const FT_Frame_Field  sbit_small_metrics_fields[] =
-        {
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  TT_SBit_SmallMetricsRec
-
-          FT_FRAME_START( 5 ),
-            FT_FRAME_BYTE( height ),
-            FT_FRAME_BYTE( width ),
-            FT_FRAME_CHAR( bearingX ),
-            FT_FRAME_CHAR( bearingY ),
-            FT_FRAME_BYTE( advance ),
-          FT_FRAME_END
-        };
-
-
-        /* read small metrics */
-        if ( FT_STREAM_READ_FIELDS( sbit_small_metrics_fields, &smetrics ) )
-          goto Exit;
-
-        /* convert it to a big metrics */
-        metrics->height       = smetrics.height;
-        metrics->width        = smetrics.width;
-        metrics->horiBearingX = smetrics.bearingX;
-        metrics->horiBearingY = smetrics.bearingY;
-        metrics->horiAdvance  = smetrics.advance;
-
-        /* these metrics are made up at a higher level when */
-        /* needed.                                          */
-        metrics->vertBearingX = 0;
-        metrics->vertBearingY = 0;
-        metrics->vertAdvance  = 0;
-      }
+    case 17:
+      error = tt_sbit_decoder_load_metrics( decoder, &p, p_limit, 0 );
       break;
 
     case 6:
     case 7:
     case 9:
-      /* variable big metrics */
-      if ( FT_STREAM_READ_FIELDS( sbit_metrics_fields, metrics ) )
-        goto Exit;
+    case 18:
+      error = tt_sbit_decoder_load_metrics( decoder, &p, p_limit, 1 );
       break;
 
-    case 5:
-    default:  /* constant metrics */
-      if ( range->index_format == 2 || range->index_format == 5 )
-        *metrics = range->metrics;
-      else
-        return SFNT_Err_Invalid_File_Format;
-   }
-
-  Exit:
-    return error;
-  }
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    crop_bitmap                                                        */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Crops a bitmap to its tightest bounding box, and adjusts its       */
-  /*    metrics.                                                           */
-  /*                                                                       */
-  /* <InOut>                                                               */
-  /*    map     :: The bitmap.                                             */
-  /*                                                                       */
-  /*    metrics :: The corresponding metrics structure.                    */
-  /*                                                                       */
-  static void
-  crop_bitmap( FT_Bitmap*       map,
-               TT_SBit_Metrics  metrics )
-  {
-    /***********************************************************************/
-    /*                                                                     */
-    /* In this situation, some bounding boxes of embedded bitmaps are too  */
-    /* large.  We need to crop it to a reasonable size.                    */
-    /*                                                                     */
-    /*      ---------                                                      */
-    /*      |       |                -----                                 */
-    /*      |  ***  |                |***|                                 */
-    /*      |   *   |                | * |                                 */
-    /*      |   *   |    ------>     | * |                                 */
-    /*      |   *   |                | * |                                 */
-    /*      |   *   |                | * |                                 */
-    /*      |  ***  |                |***|                                 */
-    /*      ---------                -----                                 */
-    /*                                                                     */
-    /***********************************************************************/
-
-    FT_Int    rows, count;
-    FT_Long   line_len;
-    FT_Byte*  line;
-
-
-    /***********************************************************************/
-    /*                                                                     */
-    /* first of all, check the top-most lines of the bitmap, and remove    */
-    /* them if they're empty.                                              */
-    /*                                                                     */
-    {
-      line     = (FT_Byte*)map->buffer;
-      rows     = map->rows;
-      line_len = map->pitch;
-
-
-      for ( count = 0; count < rows; count++ )
-      {
-        FT_Byte*  cur   = line;
-        FT_Byte*  limit = line + line_len;
-
-
-        for ( ; cur < limit; cur++ )
-          if ( cur[0] )
-            goto Found_Top;
-
-        /* the current line was empty - skip to next one */
-        line  = limit;
-      }
-
-    Found_Top:
-      /* check that we have at least one filled line */
-      if ( count >= rows )
-        goto Empty_Bitmap;
-
-      /* now, crop the empty upper lines */
-      if ( count > 0 )
-      {
-        line = (FT_Byte*)map->buffer;
-
-        FT_MEM_MOVE( line, line + count * line_len,
-                     ( rows - count ) * line_len );
-
-        metrics->height       = (FT_Byte)( metrics->height - count );
-        metrics->horiBearingY = (FT_Char)( metrics->horiBearingY - count );
-        metrics->vertBearingY = (FT_Char)( metrics->vertBearingY - count );
-
-        map->rows -= count;
-        rows      -= count;
-      }
+    default:
+      error = FT_Err_Ok;
     }
 
-    /***********************************************************************/
-    /*                                                                     */
-    /* second, crop the lower lines                                        */
-    /*                                                                     */
-    {
-      line = (FT_Byte*)map->buffer + ( rows - 1 ) * line_len;
-
-      for ( count = 0; count < rows; count++ )
-      {
-        FT_Byte*  cur   = line;
-        FT_Byte*  limit = line + line_len;
-
-
-        for ( ; cur < limit; cur++ )
-          if ( cur[0] )
-            goto Found_Bottom;
-
-        /* the current line was empty - skip to previous one */
-        line -= line_len;
-      }
-
-    Found_Bottom:
-      if ( count > 0 )
-      {
-        metrics->height  = (FT_Byte)( metrics->height - count );
-        rows            -= count;
-        map->rows       -= count;
-      }
-    }
-
-    /***********************************************************************/
-    /*                                                                     */
-    /* third, get rid of the space on the left side of the glyph           */
-    /*                                                                     */
-    do
-    {
-      FT_Byte*  limit;
-
-
-      line  = (FT_Byte*)map->buffer;
-      limit = line + rows * line_len;
-
-      for ( ; line < limit; line += line_len )
-        if ( line[0] & 0x80 )
-          goto Found_Left;
-
-      /* shift the whole glyph one pixel to the left */
-      line  = (FT_Byte*)map->buffer;
-      limit = line + rows * line_len;
-
-      for ( ; line < limit; line += line_len )
-      {
-        FT_Int    n, width = map->width;
-        FT_Byte   old;
-        FT_Byte*  cur = line;
-
-
-        old = (FT_Byte)(cur[0] << 1);
-        for ( n = 8; n < width; n += 8 )
-        {
-          FT_Byte  val;
-
-
-          val    = cur[1];
-          cur[0] = (FT_Byte)( old | ( val >> 7 ) );
-          old    = (FT_Byte)( val << 1 );
-          cur++;
-        }
-        cur[0] = old;
-      }
-
-      map->width--;
-      metrics->horiBearingX++;
-      metrics->vertBearingX++;
-      metrics->width--;
-
-    } while ( map->width > 0 );
-
-  Found_Left:
-
-    /***********************************************************************/
-    /*                                                                     */
-    /* finally, crop the bitmap width to get rid of the space on the right */
-    /* side of the glyph.                                                  */
-    /*                                                                     */
-    do
-    {
-      FT_Int    right = map->width - 1;
-      FT_Byte*  limit;
-      FT_Byte   mask;
-
-
-      line  = (FT_Byte*)map->buffer + ( right >> 3 );
-      limit = line + rows * line_len;
-      mask  = (FT_Byte)( 0x80 >> ( right & 7 ) );
-
-      for ( ; line < limit; line += line_len )
-        if ( line[0] & mask )
-          goto Found_Right;
-
-      /* crop the whole glyph to the right */
-      map->width--;
-      metrics->width--;
-
-    } while ( map->width > 0 );
-
-  Found_Right:
-    /* all right, the bitmap was cropped */
-    return;
-
-  Empty_Bitmap:
-    map->width      = 0;
-    map->rows       = 0;
-    map->pitch      = 0;
-    map->pixel_mode = FT_PIXEL_MODE_MONO;
-  }
-
-
-  static FT_Error
-  Load_SBit_Single( FT_Bitmap*       map,
-                    FT_Int           x_offset,
-                    FT_Int           y_offset,
-                    FT_Int           pix_bits,
-                    FT_UShort        image_format,
-                    TT_SBit_Metrics  metrics,
-                    FT_Stream        stream )
-  {
-    FT_Error  error;
-
-
-    /* check that the source bitmap fits into the target pixmap */
-    if ( x_offset < 0 || x_offset + metrics->width  > map->width ||
-         y_offset < 0 || y_offset + metrics->height > map->rows  )
-    {
-      error = SFNT_Err_Invalid_Argument;
-
-      goto Exit;
-    }
-
-    {
-      FT_Int   glyph_width  = metrics->width;
-      FT_Int   glyph_height = metrics->height;
-      FT_Int   glyph_size;
-      FT_Int   line_bits    = pix_bits * glyph_width;
-      FT_Bool  pad_bytes    = 0;
-
-
-      /* compute size of glyph image */
-      switch ( image_format )
-      {
-      case 1:  /* byte-padded formats */
-      case 6:
-        {
-          FT_Int  line_length;
-
-
-          switch ( pix_bits )
-          {
-          case 1:
-            line_length = ( glyph_width + 7 ) >> 3;
-            break;
-          case 2:
-            line_length = ( glyph_width + 3 ) >> 2;
-            break;
-          case 4:
-            line_length = ( glyph_width + 1 ) >> 1;
-            break;
-          default:
-            line_length =   glyph_width;
-          }
-
-          glyph_size = glyph_height * line_length;
-          pad_bytes  = 1;
-        }
-        break;
-
-      case 2:
-      case 5:
-      case 7:
-        line_bits  =   glyph_width  * pix_bits;
-        glyph_size = ( glyph_height * line_bits + 7 ) >> 3;
-        break;
-
-      default:  /* invalid format */
-        return SFNT_Err_Invalid_File_Format;
-      }
-
-      /* Now read data and draw glyph into target pixmap       */
-      if ( FT_FRAME_ENTER( glyph_size ) )
-        goto Exit;
-
-      /* don't forget to multiply `x_offset' by `map->pix_bits' as */
-      /* the sbit blitter doesn't make a difference between pixmap */
-      /* depths.                                                   */
-      blit_sbit( map, (FT_Byte*)stream->cursor, line_bits, pad_bytes,
-                 x_offset * pix_bits, y_offset );
-
-      FT_FRAME_EXIT();
-    }
-
-  Exit:
-    return error;
-  }
-
-
-  static FT_Error
-  Load_SBit_Image( TT_SBit_Strike   strike,
-                   TT_SBit_Range    range,
-                   FT_ULong         ebdt_pos,
-                   FT_ULong         glyph_offset,
-                   FT_GlyphSlot     slot,
-                   FT_Int           x_offset,
-                   FT_Int           y_offset,
-                   FT_Stream        stream,
-                   TT_SBit_Metrics  metrics,
-                   FT_Int           depth )
-  {
-    FT_Memory   memory = stream->memory;
-    FT_Bitmap*  map    = &slot->bitmap;
-    FT_Error    error;
-
-
-    /* place stream at beginning of glyph data and read metrics */
-    if ( FT_STREAM_SEEK( ebdt_pos + glyph_offset ) )
-      goto Exit;
-
-    error = tt_load_sbit_metrics( stream, range, metrics );
     if ( error )
-      goto Exit;
+      goto Fail;
 
-    /* This function is recursive.  At the top-level call, we  */
-    /* compute the dimensions of the higher-level glyph to     */
-    /* allocate the final pixmap buffer.                       */
-    if ( depth == 0 )
     {
-      FT_Long  size;
+      TT_SBitDecoder_LoadFunc  loader;
 
 
-      map->width = metrics->width;
-      map->rows  = metrics->height;
-
-      switch ( strike->bit_depth )
+      switch ( glyph_format )
       {
       case 1:
-        map->pixel_mode = FT_PIXEL_MODE_MONO;
-        map->pitch      = ( map->width + 7 ) >> 3;
+      case 6:
+        loader = tt_sbit_decoder_load_byte_aligned;
         break;
 
       case 2:
-        map->pixel_mode = FT_PIXEL_MODE_GRAY2;
-        map->pitch      = ( map->width + 3 ) >> 2;
+      case 7:
+        {
+          /* Don't trust `glyph_format'.  For example, Apple's main Korean */
+          /* system font, `AppleMyungJo.ttf' (version 7.0d2e6), uses glyph */
+          /* format 7, but the data is format 6.  We check whether we have */
+          /* an excessive number of bytes in the image: If it is equal to  */
+          /* the value for a byte-aligned glyph, use the other loading     */
+          /* routine.                                                      */
+          /*                                                               */
+          /* Note that for some (width,height) combinations, where the     */
+          /* width is not a multiple of 8, the sizes for bit- and          */
+          /* byte-aligned data are equal, for example (7,7) or (15,6).  We */
+          /* then prefer what `glyph_format' specifies.                    */
+
+          FT_UInt  width  = decoder->metrics->width;
+          FT_UInt  height = decoder->metrics->height;
+
+          FT_UInt  bit_size  = ( width * height + 7 ) >> 3;
+          FT_UInt  byte_size = height * ( ( width + 7 ) >> 3 );
+
+
+          if ( bit_size < byte_size                  &&
+               byte_size == (FT_UInt)( p_limit - p ) )
+            loader = tt_sbit_decoder_load_byte_aligned;
+          else
+            loader = tt_sbit_decoder_load_bit_aligned;
+        }
         break;
 
-      case 4:
-        map->pixel_mode = FT_PIXEL_MODE_GRAY4;
-        map->pitch      = ( map->width + 1 ) >> 1;
+      case 5:
+        loader = tt_sbit_decoder_load_bit_aligned;
         break;
 
       case 8:
-        map->pixel_mode = FT_PIXEL_MODE_GRAY;
-        map->pitch      = map->width;
+        if ( p + 1 > p_limit )
+          goto Fail;
+
+        p += 1;  /* skip padding */
+        /* fall-through */
+
+      case 9:
+        loader = tt_sbit_decoder_load_compound;
         break;
 
+      case 17: /* small metrics, PNG image data   */
+      case 18: /* big metrics, PNG image data     */
+      case 19: /* metrics in EBLC, PNG image data */
+#ifdef FT_CONFIG_OPTION_USE_PNG
+        loader = tt_sbit_decoder_load_png;
+        break;
+#else
+        error = FT_THROW( Unimplemented_Feature );
+        goto Fail;
+#endif /* FT_CONFIG_OPTION_USE_PNG */
+
       default:
-        return SFNT_Err_Invalid_File_Format;
+        error = FT_THROW( Invalid_Table );
+        goto Fail;
       }
 
-      size = map->rows * map->pitch;
-
-      /* check that there is no empty image */
-      if ( size == 0 )
-        goto Exit;     /* exit successfully! */
-
-      error = ft_glyphslot_alloc_bitmap( slot, size );
-      if (error)
-        goto Exit;
-    }
-
-    switch ( range->image_format )
-    {
-    case 1:  /* single sbit image - load it */
-    case 2:
-    case 5:
-    case 6:
-    case 7:
-      return Load_SBit_Single( map, x_offset, y_offset, strike->bit_depth,
-                               range->image_format, metrics, stream );
-
-    case 8:  /* compound format */
-      FT_Stream_Skip( stream, 1L );
-      /* fallthrough */
-
-    case 9:
-      break;
-
-    default: /* invalid image format */
-      return SFNT_Err_Invalid_File_Format;
-    }
-
-    /* All right, we have a compound format.  First of all, read */
-    /* the array of elements.                                    */
-    {
-      TT_SBit_Component  components;
-      TT_SBit_Component  comp;
-      FT_UShort          num_components, count;
-
-
-      if ( FT_READ_USHORT( num_components )           ||
-           FT_NEW_ARRAY( components, num_components ) )
-        goto Exit;
-
-      count = num_components;
-
-      if ( FT_FRAME_ENTER( 4L * num_components ) )
-        goto Fail_Memory;
-
-      for ( comp = components; count > 0; count--, comp++ )
+      if ( !decoder->bitmap_allocated )
       {
-        comp->glyph_code = FT_GET_USHORT();
-        comp->x_offset   = FT_GET_CHAR();
-        comp->y_offset   = FT_GET_CHAR();
+        error = tt_sbit_decoder_alloc_bitmap( decoder );
+        if ( error )
+          goto Fail;
       }
 
-      FT_FRAME_EXIT();
-
-      /* Now recursively load each element glyph */
-      count = num_components;
-      comp  = components;
-      for ( ; count > 0; count--, comp++ )
-      {
-        TT_SBit_Range       elem_range;
-        TT_SBit_MetricsRec  elem_metrics;
-        FT_ULong            elem_offset;
-
-
-        /* find the range for this element */
-        error = find_sbit_range( comp->glyph_code,
-                                 strike,
-                                 &elem_range,
-                                 &elem_offset );
-        if ( error )
-          goto Fail_Memory;
-
-        /* now load the element, recursively */
-        error = Load_SBit_Image( strike,
-                                 elem_range,
-                                 ebdt_pos,
-                                 elem_offset,
-                                 slot,
-                                 x_offset + comp->x_offset,
-                                 y_offset + comp->y_offset,
-                                 stream,
-                                 &elem_metrics,
-                                 depth + 1 );
-        if ( error )
-          goto Fail_Memory;
-      }
-
-    Fail_Memory:
-      FT_FREE( components );
+      error = loader( decoder, p, p_limit, x_pos, y_pos );
     }
+
+  Fail:
+    FT_FRAME_RELEASE( data );
 
   Exit:
     return error;
   }
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    tt_face_load_sbit_image                                            */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Loads a given glyph sbit image from the font resource.  This also  */
-  /*    returns its metrics.                                               */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    face         :: The target face object.                            */
-  /*                                                                       */
-  /*    strike_index :: The current strike index.                          */
-  /*                                                                       */
-  /*    glyph_index  :: The current glyph index.                           */
-  /*                                                                       */
-  /*    load_flags   :: The glyph load flags (the code checks for the flag */
-  /*                    FT_LOAD_CROP_BITMAP).                              */
-  /*                                                                       */
-  /*    stream       :: The input stream.                                  */
-  /*                                                                       */
-  /* <Output>                                                              */
-  /*    map          :: The target pixmap.                                 */
-  /*                                                                       */
-  /*    metrics      :: A big sbit metrics structure for the glyph image.  */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.  Returns an error if no     */
-  /*    glyph sbit exists for the index.                                   */
-  /*                                                                       */
-  /*  <Note>                                                               */
-  /*    The `map.buffer' field is always freed before the glyph is loaded. */
-  /*                                                                       */
-  FT_LOCAL_DEF( FT_Error )
+  static FT_Error
+  tt_sbit_decoder_load_image( TT_SBitDecoder  decoder,
+                              FT_UInt         glyph_index,
+                              FT_Int          x_pos,
+                              FT_Int          y_pos )
+  {
+    /*
+     *  First, we find the correct strike range that applies to this
+     *  glyph index.
+     */
+
+    FT_Byte*  p          = decoder->eblc_base + decoder->strike_index_array;
+    FT_Byte*  p_limit    = decoder->eblc_limit;
+    FT_ULong  num_ranges = decoder->strike_index_count;
+    FT_UInt   start, end, index_format, image_format;
+    FT_ULong  image_start = 0, image_end = 0, image_offset;
+
+
+    for ( ; num_ranges > 0; num_ranges-- )
+    {
+      start = FT_NEXT_USHORT( p );
+      end   = FT_NEXT_USHORT( p );
+
+      if ( glyph_index >= start && glyph_index <= end )
+        goto FoundRange;
+
+      p += 4;  /* ignore index offset */
+    }
+    goto NoBitmap;
+
+  FoundRange:
+    image_offset = FT_NEXT_ULONG( p );
+
+    /* overflow check */
+    p = decoder->eblc_base + decoder->strike_index_array;
+    if ( image_offset > (FT_ULong)( p_limit - p ) )
+      goto Failure;
+
+    p += image_offset;
+    if ( p + 8 > p_limit )
+      goto NoBitmap;
+
+    /* now find the glyph's location and extend within the ebdt table */
+    index_format = FT_NEXT_USHORT( p );
+    image_format = FT_NEXT_USHORT( p );
+    image_offset = FT_NEXT_ULONG ( p );
+
+    switch ( index_format )
+    {
+    case 1: /* 4-byte offsets relative to `image_offset' */
+      p += 4 * ( glyph_index - start );
+      if ( p + 8 > p_limit )
+        goto NoBitmap;
+
+      image_start = FT_NEXT_ULONG( p );
+      image_end   = FT_NEXT_ULONG( p );
+
+      if ( image_start == image_end )  /* missing glyph */
+        goto NoBitmap;
+      break;
+
+    case 2: /* big metrics, constant image size */
+      {
+        FT_ULong  image_size;
+
+
+        if ( p + 12 > p_limit )
+          goto NoBitmap;
+
+        image_size = FT_NEXT_ULONG( p );
+
+        if ( tt_sbit_decoder_load_metrics( decoder, &p, p_limit, 1 ) )
+          goto NoBitmap;
+
+        image_start = image_size * ( glyph_index - start );
+        image_end   = image_start + image_size;
+      }
+      break;
+
+    case 3: /* 2-byte offsets relative to 'image_offset' */
+      p += 2 * ( glyph_index - start );
+      if ( p + 4 > p_limit )
+        goto NoBitmap;
+
+      image_start = FT_NEXT_USHORT( p );
+      image_end   = FT_NEXT_USHORT( p );
+
+      if ( image_start == image_end )  /* missing glyph */
+        goto NoBitmap;
+      break;
+
+    case 4: /* sparse glyph array with (glyph,offset) pairs */
+      {
+        FT_ULong  mm, num_glyphs;
+
+
+        if ( p + 4 > p_limit )
+          goto NoBitmap;
+
+        num_glyphs = FT_NEXT_ULONG( p );
+
+        /* overflow check for p + ( num_glyphs + 1 ) * 4 */
+        if ( num_glyphs > (FT_ULong)( ( ( p_limit - p ) >> 2 ) - 1 ) )
+          goto NoBitmap;
+
+        for ( mm = 0; mm < num_glyphs; mm++ )
+        {
+          FT_UInt  gindex = FT_NEXT_USHORT( p );
+
+
+          if ( gindex == glyph_index )
+          {
+            image_start = FT_NEXT_USHORT( p );
+            p          += 2;
+            image_end   = FT_PEEK_USHORT( p );
+            break;
+          }
+          p += 2;
+        }
+
+        if ( mm >= num_glyphs )
+          goto NoBitmap;
+      }
+      break;
+
+    case 5: /* constant metrics with sparse glyph codes */
+    case 19:
+      {
+        FT_ULong  image_size, mm, num_glyphs;
+
+
+        if ( p + 16 > p_limit )
+          goto NoBitmap;
+
+        image_size = FT_NEXT_ULONG( p );
+
+        if ( tt_sbit_decoder_load_metrics( decoder, &p, p_limit, 1 ) )
+          goto NoBitmap;
+
+        num_glyphs = FT_NEXT_ULONG( p );
+
+        /* overflow check for p + 2 * num_glyphs */
+        if ( num_glyphs > (FT_ULong)( ( p_limit - p ) >> 1 ) )
+          goto NoBitmap;
+
+        for ( mm = 0; mm < num_glyphs; mm++ )
+        {
+          FT_UInt  gindex = FT_NEXT_USHORT( p );
+
+
+          if ( gindex == glyph_index )
+            break;
+        }
+
+        if ( mm >= num_glyphs )
+          goto NoBitmap;
+
+        image_start = image_size * mm;
+        image_end   = image_start + image_size;
+      }
+      break;
+
+    default:
+      goto NoBitmap;
+    }
+
+    if ( image_start > image_end )
+      goto NoBitmap;
+
+    image_end  -= image_start;
+    image_start = image_offset + image_start;
+
+    FT_TRACE3(( "tt_sbit_decoder_load_image:"
+                " found sbit (format %d) for glyph index %d\n",
+                image_format, glyph_index ));
+
+    return tt_sbit_decoder_load_bitmap( decoder,
+                                        image_format,
+                                        image_start,
+                                        image_end,
+                                        x_pos,
+                                        y_pos );
+
+  Failure:
+    return FT_THROW( Invalid_Table );
+
+  NoBitmap:
+    FT_TRACE4(( "tt_sbit_decoder_load_image:"
+                " no sbit found for glyph index %d\n", glyph_index ));
+
+    return FT_THROW( Invalid_Argument );
+  }
+
+
+  static FT_Error
+  tt_face_load_sbix_image( TT_Face              face,
+                           FT_ULong             strike_index,
+                           FT_UInt              glyph_index,
+                           FT_Stream            stream,
+                           FT_Bitmap           *map,
+                           TT_SBit_MetricsRec  *metrics )
+  {
+    FT_UInt   sbix_pos, strike_offset, glyph_start, glyph_end;
+    FT_ULong  table_size;
+    FT_Int    originOffsetX, originOffsetY;
+    FT_Tag    graphicType;
+    FT_Int    recurse_depth = 0;
+
+    FT_Error  error;
+    FT_Byte*  p;
+
+    FT_UNUSED( map );
+
+
+    metrics->width  = 0;
+    metrics->height = 0;
+
+    p = face->sbit_table + 8 + 4 * strike_index;
+    strike_offset = FT_NEXT_ULONG( p );
+
+    error = face->goto_table( face, TTAG_sbix, stream, &table_size );
+    if ( error )
+      return error;
+    sbix_pos = FT_STREAM_POS();
+
+  retry:
+    if ( glyph_index > (FT_UInt)face->root.num_glyphs )
+      return FT_THROW( Invalid_Argument );
+
+    if ( strike_offset >= table_size                          ||
+         table_size - strike_offset < 4 + glyph_index * 4 + 8 )
+      return FT_THROW( Invalid_File_Format );
+
+    if ( FT_STREAM_SEEK( sbix_pos + strike_offset + 4 + glyph_index * 4 ) ||
+         FT_FRAME_ENTER( 8 )                                              )
+      return error;
+
+    glyph_start = FT_GET_ULONG();
+    glyph_end   = FT_GET_ULONG();
+
+    FT_FRAME_EXIT();
+
+    if ( glyph_start == glyph_end )
+      return FT_THROW( Invalid_Argument );
+    if ( glyph_start > glyph_end                ||
+         glyph_end - glyph_start < 8            ||
+         table_size - strike_offset < glyph_end )
+      return FT_THROW( Invalid_File_Format );
+
+    if ( FT_STREAM_SEEK( sbix_pos + strike_offset + glyph_start ) ||
+         FT_FRAME_ENTER( glyph_end - glyph_start )                )
+      return error;
+
+    originOffsetX = FT_GET_SHORT();
+    originOffsetY = FT_GET_SHORT();
+
+    graphicType = FT_GET_TAG4();
+
+    switch ( graphicType )
+    {
+    case FT_MAKE_TAG( 'd', 'u', 'p', 'e' ):
+      if ( recurse_depth < 4 )
+      {
+        glyph_index = FT_GET_USHORT();
+        FT_FRAME_EXIT();
+        recurse_depth++;
+        goto retry;
+      }
+      error = FT_THROW( Invalid_File_Format );
+      break;
+
+    case FT_MAKE_TAG( 'p', 'n', 'g', ' ' ):
+#ifdef FT_CONFIG_OPTION_USE_PNG
+      error = Load_SBit_Png( face->root.glyph,
+                             0,
+                             0,
+                             32,
+                             metrics,
+                             stream->memory,
+                             stream->cursor,
+                             glyph_end - glyph_start - 8,
+                             TRUE );
+#else
+      error = FT_THROW( Unimplemented_Feature );
+#endif
+      break;
+
+    case FT_MAKE_TAG( 'j', 'p', 'g', ' ' ):
+    case FT_MAKE_TAG( 't', 'i', 'f', 'f' ):
+      error = FT_THROW( Unknown_File_Format );
+      break;
+
+    default:
+      error = FT_THROW( Unimplemented_Feature );
+      break;
+    }
+
+    FT_FRAME_EXIT();
+
+    if ( !error )
+    {
+      FT_Short   abearing;
+      FT_UShort  aadvance;
+
+
+      tt_face_get_metrics( face, FALSE, glyph_index, &abearing, &aadvance );
+
+      metrics->horiBearingX = originOffsetX;
+      metrics->horiBearingY = -originOffsetY + metrics->height;
+      metrics->horiAdvance  = aadvance * face->root.size->metrics.x_ppem /
+                                face->header.Units_Per_EM;
+    }
+
+    return error;
+  }
+
+  FT_LOCAL( FT_Error )
   tt_face_load_sbit_image( TT_Face              face,
                            FT_ULong             strike_index,
                            FT_UInt              glyph_index,
@@ -7618,63 +9466,74 @@
                            FT_Bitmap           *map,
                            TT_SBit_MetricsRec  *metrics )
   {
-    FT_Error        error;
-    FT_ULong        ebdt_pos, glyph_offset;
-
-    TT_SBit_Strike  strike;
-    TT_SBit_Range   range;
+    FT_Error  error = FT_Err_Ok;
 
 
-    /* Check whether there is a glyph sbit for the current index */
-    error = tt_find_sbit_image( face, glyph_index, strike_index,
-                                &range, &strike, &glyph_offset );
-    if ( error )
-      goto Exit;
-
-    /* now, find the location of the `EBDT' table in */
-    /* the font file                                 */
-    error = face->goto_table( face, TTAG_EBDT, stream, 0 );
-    if ( error )
-      error = face->goto_table( face, TTAG_bdat, stream, 0 );
-    if ( error )
-      goto Exit;
-
-    ebdt_pos = FT_STREAM_POS();
-
-    error = Load_SBit_Image( strike, range, ebdt_pos, glyph_offset,
-                             face->root.glyph, 0, 0, stream, metrics, 0 );
-    if ( error )
-      goto Exit;
-
-    /* setup vertical metrics if needed */
-    if ( strike->flags & 1 )
+    switch ( (FT_UInt)face->sbit_table_type )
     {
-      /* in case of a horizontal strike only */
-      FT_Int  advance;
+    case TT_SBIT_TABLE_TYPE_EBLC:
+    case TT_SBIT_TABLE_TYPE_CBLC:
+      {
+        TT_SBitDecoderRec  decoder[1];
 
 
-      advance = strike->hori.ascender - strike->hori.descender;
+        error = tt_sbit_decoder_init( decoder, face, strike_index, metrics );
+        if ( !error )
+        {
+          error = tt_sbit_decoder_load_image( decoder,
+                                              glyph_index,
+                                              0,
+                                              0 );
+          tt_sbit_decoder_done( decoder );
+        }
+      }
+      break;
 
-      /* some heuristic values */
+    case TT_SBIT_TABLE_TYPE_SBIX:
+      error = tt_face_load_sbix_image( face,
+                                       strike_index,
+                                       glyph_index,
+                                       stream,
+                                       map,
+                                       metrics );
+      break;
 
-      metrics->vertBearingX = (FT_Char)(-metrics->width / 2 );
-      metrics->vertBearingY = (FT_Char)( ( advance - metrics->height ) / 2 );
-      metrics->vertAdvance  = (FT_Char)( advance * 12 / 10 );
+    default:
+      error = FT_THROW( Unknown_File_Format );
+      break;
     }
 
-    /* Crop the bitmap now, unless specified otherwise */
-    if ( load_flags & FT_LOAD_CROP_BITMAP )
-      crop_bitmap( map, metrics );
+    /* Flatten color bitmaps if color was not requested. */
+    if ( !error                                &&
+         !( load_flags & FT_LOAD_COLOR )       &&
+         map->pixel_mode == FT_PIXEL_MODE_BGRA )
+    {
+      FT_Bitmap   new_map;
+      FT_Library  library = face->root.glyph->library;
 
-  Exit:
+
+      FT_Bitmap_New( &new_map );
+
+      /* Convert to 8bit grayscale. */
+      error = FT_Bitmap_Convert( library, map, &new_map, 1 );
+      if ( error )
+        FT_Bitmap_Done( library, &new_map );
+      else
+      {
+        map->pixel_mode = new_map.pixel_mode;
+        map->pitch      = new_map.pitch;
+        map->num_grays  = new_map.num_grays;
+
+        ft_glyphslot_set_bitmap( face->root.glyph, new_map.buffer );
+        face->root.glyph->internal->flags |= FT_GLYPH_OWN_BITMAP;
+      }
+    }
+
     return error;
   }
 
-#endif /* !OPTIMIZE_MEMORY || OLD_INTERNALS */
 
-
-/* END */
-
+/* EOF */
 #endif
 
 #ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
@@ -7685,7 +9544,7 @@
 /*    Postcript name table processing for TrueType and OpenType fonts      */
 /*    (body).                                                              */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2006 by                               */
+/*  Copyright 1996-2003, 2006-2010, 2013 by                                */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -7706,10 +9565,10 @@
 
 
 #include "ft2build.h"
+#include FT_INTERNAL_DEBUG_H
 #include FT_INTERNAL_STREAM_H
 #include FT_TRUETYPE_TAGS_H
 #include "ttpost.h"
-#include "ttload.h"
 
 #include "sferrors.h"
 
@@ -7742,11 +9601,11 @@
    /* table of Mac names.  Thus, it is possible to build a version of */
    /* FreeType without the Type 1 driver & PSNames module.            */
 
-#define MAC_NAME( x )  (FT_String*)tt_post_default_names[x] /* JE: Cast inserted */
+#define MAC_NAME( x )  ( (FT_String*)tt_post_default_names[x] )
 
   /* the 258 default Mac PS glyph names */
 
-  static const FT_String*  tt_post_default_names[258] =
+  static const FT_String* const  tt_post_default_names[258] =
   {
     /*   0 */
     ".notdef", ".null", "CR", "space", "exclam",
@@ -7834,7 +9693,8 @@
 
   static FT_Error
   load_format_20( TT_Face    face,
-                  FT_Stream  stream )
+                  FT_Stream  stream,
+                  FT_Long    post_limit )
   {
     FT_Memory   memory = stream->memory;
     FT_Error    error;
@@ -7857,7 +9717,7 @@
 
     if ( num_glyphs > face->max_profile.numGlyphs )
     {
-      error = SFNT_Err_Invalid_File_Format;
+      error = FT_THROW( Invalid_File_Format );
       goto Exit;
     }
 
@@ -7911,16 +9771,49 @@
         FT_UInt  len;
 
 
-        if ( FT_READ_BYTE  ( len )                    ||
-             FT_NEW_ARRAY( name_strings[n], len + 1 ) ||
-             FT_STREAM_READ  ( name_strings[n], len ) )
+        if ( FT_STREAM_POS() >= post_limit )
+          break;
+        else
+        {
+          FT_TRACE6(( "load_format_20: %d byte left in post table\n",
+                      post_limit - FT_STREAM_POS() ));
+
+          if ( FT_READ_BYTE( len ) )
+            goto Fail1;
+        }
+
+        if ( (FT_Int)len > post_limit                   ||
+             FT_STREAM_POS() > post_limit - (FT_Int)len )
+        {
+          FT_ERROR(( "load_format_20:"
+                     " exceeding string length (%d),"
+                     " truncating at end of post table (%d byte left)\n",
+                     len, post_limit - FT_STREAM_POS() ));
+          len = FT_MAX( 0, post_limit - FT_STREAM_POS() );
+        }
+
+        if ( FT_NEW_ARRAY( name_strings[n], len + 1 ) ||
+             FT_STREAM_READ( name_strings[n], len   ) )
           goto Fail1;
 
         name_strings[n][len] = '\0';
       }
+
+      if ( n < num_names )
+      {
+        FT_ERROR(( "load_format_20:"
+                   " all entries in post table are already parsed,"
+                   " using NULL names for gid %d - %d\n",
+                    n, num_names - 1 ));
+        for ( ; n < num_names; n++ )
+          if ( FT_NEW_ARRAY( name_strings[n], 1 ) )
+            goto Fail1;
+          else
+            name_strings[n][0] = '\0';
+      }
     }
 
-    /* all right, set table fields and exit successfuly */
+    /* all right, set table fields and exit successfully */
     {
       TT_Post_20  table = &face->postscript_names.names.format_20;
 
@@ -7930,7 +9823,7 @@
       table->glyph_indices = glyph_indices;
       table->glyph_names   = name_strings;
     }
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
 
   Fail1:
     {
@@ -7952,13 +9845,16 @@
 
   static FT_Error
   load_format_25( TT_Face    face,
-                  FT_Stream  stream )
+                  FT_Stream  stream,
+                  FT_Long    post_limit )
   {
     FT_Memory  memory = stream->memory;
     FT_Error   error;
 
     FT_Int     num_glyphs;
     FT_Char*   offset_table = 0;
+
+    FT_UNUSED( post_limit );
 
 
     /* UNDOCUMENTED!  This value appears only in the Apple TT specs. */
@@ -7968,7 +9864,7 @@
     /* check the number of glyphs */
     if ( num_glyphs > face->max_profile.numGlyphs || num_glyphs > 258 )
     {
-      error = SFNT_Err_Invalid_File_Format;
+      error = FT_THROW( Invalid_File_Format );
       goto Exit;
     }
 
@@ -7988,13 +9884,13 @@
 
         if ( idx < 0 || idx > num_glyphs )
         {
-          error = SFNT_Err_Invalid_File_Format;
+          error = FT_THROW( Invalid_File_Format );
           goto Fail;
         }
       }
     }
 
-    /* OK, set table fields and exit successfuly */
+    /* OK, set table fields and exit successfully */
     {
       TT_Post_25  table = &face->postscript_names.names.format_25;
 
@@ -8003,7 +9899,7 @@
       table->offsets    = offset_table;
     }
 
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
 
   Fail:
     FT_FREE( offset_table );
@@ -8019,15 +9915,19 @@
     FT_Stream  stream;
     FT_Error   error;
     FT_Fixed   format;
+    FT_ULong   post_len;
+    FT_Long    post_limit;
 
 
     /* get a stream for the face's resource */
     stream = face->root.stream;
 
     /* seek to the beginning of the PS names table */
-    error = face->goto_table( face, TTAG_post, stream, 0 );
+    error = face->goto_table( face, TTAG_post, stream, &post_len );
     if ( error )
       goto Exit;
+
+    post_limit = FT_STREAM_POS() + post_len;
 
     format = face->postscript.FormatType;
 
@@ -8037,11 +9937,11 @@
 
     /* now read postscript table */
     if ( format == 0x00020000L )
-      error = load_format_20( face, stream );
+      error = load_format_20( face, stream, post_limit );
     else if ( format == 0x00028000L )
-      error = load_format_25( face, stream );
+      error = load_format_25( face, stream, post_limit );
     else
-      error = SFNT_Err_Invalid_File_Format;
+      error = FT_THROW( Invalid_File_Format );
 
     face->postscript_names.loaded = 1;
 
@@ -8096,13 +9996,14 @@
   /*    tt_face_get_ps_name                                                */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Gets the PostScript glyph name of a glyph.                         */
+  /*    Get the PostScript glyph name of a glyph.                          */
   /*                                                                       */
   /* <Input>                                                               */
   /*    face   :: A handle to the parent face.                             */
   /*                                                                       */
   /*    idx    :: The glyph index.                                         */
   /*                                                                       */
+  /* <InOut>                                                               */
   /*    PSname :: The address of a string pointer.  Will be NULL in case   */
   /*              of error, otherwise it is a pointer to the glyph name.   */
   /*                                                                       */
@@ -8116,9 +10017,9 @@
                        FT_UInt      idx,
                        FT_String**  PSname )
   {
-    FT_Error         error;
-    TT_Post_Names    names;
-    FT_Fixed         format;
+    FT_Error       error;
+    TT_Post_Names  names;
+    FT_Fixed       format;
 
 #ifdef FT_CONFIG_OPTION_POSTSCRIPT_NAMES
     FT_Service_PsCMaps  psnames;
@@ -8126,15 +10027,15 @@
 
 
     if ( !face )
-      return SFNT_Err_Invalid_Face_Handle;
+      return FT_THROW( Invalid_Face_Handle );
 
     if ( idx >= (FT_UInt)face->max_profile.numGlyphs )
-      return SFNT_Err_Invalid_Glyph_Index;
+      return FT_THROW( Invalid_Glyph_Index );
 
 #ifdef FT_CONFIG_OPTION_POSTSCRIPT_NAMES
     psnames = (FT_Service_PsCMaps)face->psnames;
     if ( !psnames )
-      return SFNT_Err_Unimplemented_Feature;
+      return FT_THROW( Unimplemented_Feature );
 #endif
 
     names = &face->postscript_names;
@@ -8194,12 +10095,11 @@
     /* nothing to do for format == 0x00030000L */
 
   End:
-    return SFNT_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
 /* END */
-
 #endif
 
 #ifdef TT_CONFIG_OPTION_BDF
@@ -8209,7 +10109,7 @@
 /*                                                                         */
 /*    TrueType and OpenType embedded BDF properties (body).                */
 /*                                                                         */
-/*  Copyright 2005, 2006 by                                                */
+/*  Copyright 2005, 2006, 2010, 2013 by                                    */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -8279,7 +10179,7 @@
          length < 8                             ||
          FT_FRAME_EXTRACT( length, bdf->table ) )
     {
-      error = FT_Err_Invalid_Table;
+      error = FT_THROW( Invalid_Table );
       goto Exit;
     }
 
@@ -8289,7 +10189,7 @@
       FT_Byte*   p           = bdf->table;
       FT_UInt    version     = FT_NEXT_USHORT( p );
       FT_UInt    num_strikes = FT_NEXT_USHORT( p );
-      FT_UInt32  strings     = FT_NEXT_ULONG ( p );
+      FT_ULong   strings     = FT_NEXT_ULONG ( p );
       FT_UInt    count;
       FT_Byte*   strike;
 
@@ -8336,7 +10236,7 @@
   BadTable:
     FT_FRAME_RELEASE( bdf->table );
     FT_ZERO( bdf );
-    error = FT_Err_Invalid_Table;
+    error = FT_THROW( Invalid_Table );
     goto Exit;
   }
 
@@ -8346,13 +10246,13 @@
                          const char*       property_name,
                          BDF_PropertyRec  *aprop )
   {
-    TT_BDF    bdf   = &face->bdf;
-    FT_Size   size  = FT_FACE(face)->size;
-    FT_Error  error = 0;
-    FT_Byte*  p;
-    FT_UInt   count;
-    FT_Byte*  strike;
-    FT_UInt   property_len;
+    TT_BDF     bdf   = &face->bdf;
+    FT_Size    size  = FT_FACE(face)->size;
+    FT_Error   error = FT_Err_Ok;
+    FT_Byte*   p;
+    FT_UInt    count;
+    FT_Byte*   strike;
+    FT_Offset  property_len;
 
 
     aprop->type = BDF_PROPERTY_TYPE_NONE;
@@ -8368,7 +10268,7 @@
     p      = bdf->table + 8;
     strike = p + 4 * count;
 
-    error = FT_Err_Invalid_Argument;
+    error = FT_ERR( Invalid_Argument );
 
     if ( size == NULL || property_name == NULL )
       goto Exit;
@@ -8420,7 +10320,7 @@
             {
               aprop->type   = BDF_PROPERTY_TYPE_ATOM;
               aprop->u.atom = (const char*)bdf->strings + value;
-              error         = 0;
+              error         = FT_Err_Ok;
               goto Exit;
             }
             break;
@@ -8428,13 +10328,13 @@
           case 0x02:
             aprop->type      = BDF_PROPERTY_TYPE_INTEGER;
             aprop->u.integer = (FT_Int32)value;
-            error            = 0;
+            error            = FT_Err_Ok;
             goto Exit;
 
           case 0x03:
             aprop->type       = BDF_PROPERTY_TYPE_CARDINAL;
             aprop->u.cardinal = value;
-            error             = 0;
+            error             = FT_Err_Ok;
             goto Exit;
 
           default:
@@ -8453,7 +10353,6 @@
 
 
 /* END */
-
 #endif
 
 /* END */

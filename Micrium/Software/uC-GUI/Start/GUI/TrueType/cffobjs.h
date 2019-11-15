@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    OpenType objects manager (specification).                            */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2006 by                         */
+/*  Copyright 1996-2004, 2006-2008, 2013 by                                */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -25,6 +25,7 @@
 #include "cfftypes.h"
 #include FT_INTERNAL_TRUETYPE_TYPES_H
 #include FT_SERVICE_POSTSCRIPT_CMAPS_H
+#include FT_INTERNAL_POSTSCRIPT_HINTS_H
 
 
 FT_BEGIN_HEADER
@@ -53,8 +54,8 @@ FT_BEGIN_HEADER
   /*                                                                       */
   typedef struct  CFF_SizeRec_
   {
-    FT_SizeRec       root;
-    FT_ULong         strike_index;    /* 0xFFFFFFFF to indicate invalid */
+    FT_SizeRec  root;
+    FT_ULong    strike_index;    /* 0xFFFFFFFF to indicate invalid */
 
   } CFF_SizeRec, *CFF_Size;
 
@@ -80,6 +81,21 @@ FT_BEGIN_HEADER
   } CFF_GlyphSlotRec, *CFF_GlyphSlot;
 
 
+  /*************************************************************************/
+  /*                                                                       */
+  /* <Type>                                                                */
+  /*    CFF_Internal                                                       */
+  /*                                                                       */
+  /* <Description>                                                         */
+  /*    The interface to the `internal' field of `FT_Size'.                */
+  /*                                                                       */
+  typedef struct  CFF_InternalRec_
+  {
+    PSH_Globals  topfont;
+    PSH_Globals  subfonts[CFF_MAX_CID_FONTS];
+
+  } CFF_InternalRec, *CFF_Internal;
+
 
   /*************************************************************************/
   /*                                                                       */
@@ -96,12 +112,16 @@ FT_BEGIN_HEADER
 
   /***********************************************************************/
   /*                                                                     */
-  /* TrueType driver class.                                              */
+  /* CFF driver class.                                                   */
   /*                                                                     */
   typedef struct  CFF_DriverRec_
   {
     FT_DriverRec  root;
-    void*         extension_component;
+
+    FT_UInt  hinting_engine;
+    FT_Bool  no_stem_darkening;
+
+    FT_Int  darken_params[8];
 
   } CFF_DriverRec;
 
@@ -120,7 +140,7 @@ FT_BEGIN_HEADER
 
   FT_LOCAL( FT_Error )
   cff_size_select( FT_Size   size,
-                   FT_ULong  index );
+                   FT_ULong  strike_index );
 
 #endif
 
@@ -151,10 +171,10 @@ FT_BEGIN_HEADER
   /* Driver functions                                                      */
   /*                                                                       */
   FT_LOCAL( FT_Error )
-  cff_driver_init( FT_Module  module );
+  cff_driver_init( FT_Module  module );         /* CFF_Driver */
 
   FT_LOCAL( void )
-  cff_driver_done( FT_Module  module );
+  cff_driver_done( FT_Module  module );         /* CFF_Driver */
 
 
 FT_END_HEADER

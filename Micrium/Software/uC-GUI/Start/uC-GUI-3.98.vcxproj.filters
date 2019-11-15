@@ -2274,117 +2274,6 @@
     <ClCompile Include="GUI\Widget\BUTTON.c">
       <Filter>GUI\Widget</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\TrueType\winfnt.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\type42.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\type1cid.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\type1.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\truetype.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\smooth.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\sfnt.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\raster.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\psnames.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\pshinter.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\psaux.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\pfr.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\pcf.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\GUI_TTF.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftxf86.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftwinfnt.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\fttype1.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftsystem.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftsynth.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftstroke.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftpfr.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftotval.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftmm.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftlzw.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftinit.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftgzip.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftgxval.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftglyph.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftdebug.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftcache.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftbitmap.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftbdf.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftbbox.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\ftbase.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\cff.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\bdf.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\autofit.c">
-      <Filter>GUI\TrueType</Filter>
-    </ClCompile>
     <ClCompile Include="GUI\PNG\adler32.c">
       <Filter>GUI\PNG</Filter>
     </ClCompile>
@@ -2573,6 +2462,141 @@
     </ClCompile>
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawJPEG.c">
       <Filter>Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\autofit.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\bdf.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\cff.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftbase.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftbbox.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftbdf.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftbitmap.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftbzip2.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftcache.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftcid.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftdebug.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftfstype.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftgasp.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftglyph.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftgxval.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftgzip.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftinit.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftlcdfil.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftlzw.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftmm.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftotval.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftpatent.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftpfr.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftstroke.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftsynth.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftsystem.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\fttype1.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftwinfnt.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\ftxf86.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\GUI_TTF.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\gxvalid.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\otvalid.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\pcf.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\pfr.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\psaux.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\pshinter.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\psnames.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\raster.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\sfnt.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\smooth.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\truetype.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\type1.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\type1cid.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\type42.c">
+      <Filter>GUI\TrueType</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\TrueType\winfnt.c">
+      <Filter>GUI\TrueType</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2807,582 +2831,6 @@
     <ClInclude Include="GUI\Widget\BUTTON.h">
       <Filter>GUI\Widget</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\TrueType\winfnt.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttzutil.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttzlib.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttzconf.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttunpat.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\tttypes.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\tttags.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\tttables.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttsbit0.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttsbit.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttpost.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttpload.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttobjs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttnameid.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttmtx.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttload.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttkern.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttinterp.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttinftrees.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttinffixed.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttgxvar.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttgload.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\tterrors.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttdriver.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttcmap.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ttbdf.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t42types.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t42parse.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t42objs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t42error.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t42drivr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1types.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1tokens.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1tables.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1parse.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1objs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1load.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1gload.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1errors.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1driver.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1decode.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1cmap.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\t1afm.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svxf86nm.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svwinfnt.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svtteng.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svttcmap.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svsfnt.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svpsinfo.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svpscmap.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svpostnm.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svpfr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svotval.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svmm.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svkern.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svgxval.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svgldict.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\svbdf.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\sfobjs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\sfnt.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\sferrors.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\sfdriver.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\rasterrs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pstables.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\psobjs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\psnamerr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\psmodule.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pshrec.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pshnterr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pshmod.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pshints.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pshglob.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pshalgo.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\psconv.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\psauxmod.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\psauxerr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\psaux.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pfrtypes.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pfrsbit.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pfrobjs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pfrload.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pfrgload.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pfrerror.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pfrdrivr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pfrcmap.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pcfutil.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pcftypes.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pcfread.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pcferror.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pcfdrivr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\pcf.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\internal.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\infutil.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\infcodes.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\infblock.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftzopen.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftxf86.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftwinfnt.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftvalid.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\fttypes.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\fttrigon.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\fttrace.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftsystem.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftsynth.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftstroke.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftstream.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftstdlib.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftsnames.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftsmooth.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftsmerrs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftsizes.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftserv.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftrfork.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftrender.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftrend1.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftraster.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftpfr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftoutln.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftotval.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftoption.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftobjs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftmodule.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftmoderr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftmodapi.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftmm.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftmisc.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftmemory.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftmac.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftlzw.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftlist.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftincrem.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftimage.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftheader.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftgzip.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftgxval.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftgrays.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftglyph.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftgloadr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\fterrors.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\fterrdef.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftdriver.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftdebug.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftcsbits.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftconfig.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftcmru.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftcmanag.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftcimage.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftchapters.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftcglyph.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftcerror.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftccback.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftccache.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftcalc.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftcache.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftbitmap.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftbdf.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ftbbox.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ft2build.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\freetype.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\fnterrs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cidtoken.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cidriver.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cidparse.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cidobjs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cidload.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cidgload.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\ciderrs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cfftypes.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cfftoken.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cffparse.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cffobjs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cffload.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cffgload.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cfferrs.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cffdrivr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\cffcmap.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\bdferror.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\bdfdrivr.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\bdf.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\autohint.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\afwarp.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\aftypes.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\afmparse.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\afmodule.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\afloader.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\aflatin.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\afhints.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\afglobal.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\aferrors.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\afdummy.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\afcjk.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\afangles.h">
-      <Filter>GUI\TrueType</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\PNG\crc32.h">
       <Filter>GUI\PNG</Filter>
     </ClInclude>
@@ -3433,6 +2881,753 @@
     </ClInclude>
     <ClInclude Include="System\Simulation\SIM_GUI\FS_Win32.h">
       <Filter>System\Simulation\SIM_GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afangles.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afblue.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afcjk.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afcover.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afdummy.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\aferrors.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afglobal.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afhints.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afindic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\aflatin.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\aflatin2.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afloader.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afmodule.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afmparse.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afpic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afranges.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afscript.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afstyles.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\aftypes.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afwarp.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\afwrtsys.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\autohint.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\basepic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\bdf.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\bdfdrivr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\bdferror.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2arrst.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2blues.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2error.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2fixed.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2font.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2ft.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2glue.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2hints.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2intrp.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2read.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2stack.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cf2types.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cffcmap.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cffdrivr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cfferrs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cffgload.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cffload.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cffobjs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cffparse.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cffpic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cfftoken.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cfftypes.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ciderrs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cidgload.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cidload.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cidobjs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cidparse.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cidriver.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\cidtoken.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\fnterrs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\freetype.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ft2build.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftadvanc.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftautoh.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftbase.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftbbox.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftbdf.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftbitmap.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftbzip2.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftcache.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftcalc.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftccache.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftccback.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftcerror.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftcffdrv.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftcglyph.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftchapters.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftcid.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftcimage.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftcmanag.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftcmru.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftconfig.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftcsbits.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftdebug.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftdriver.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\fterrdef.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\fterrors.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftgasp.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftgloadr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftglyph.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftgrays.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftgxval.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftgzip.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftheader.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftimage.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftincrem.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftlcdfil.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftlist.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftlzw.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftmac.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftmemory.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftmisc.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftmm.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftmodapi.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftmoderr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftmodule.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftobjs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftoption.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftotval.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftoutln.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftpfr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftpic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftraster.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftrend1.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftrender.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftrfork.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftserv.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftsizes.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftsmerrs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftsmooth.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftsnames.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftspic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftstdlib.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftstream.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftstroke.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftsynth.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftsystem.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\fttrace.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\fttrigon.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftttdrv.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\fttypes.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftvalid.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftwinfnt.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftxf86.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ftzopen.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\gxvalid.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\gxvcommn.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\gxverror.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\gxvfeat.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\gxvmod.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\gxvmort.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\gxvmorx.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\hbshim.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\infblock.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\infcodes.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\infutil.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\internal.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\md5.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\otvalid.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\otvcommn.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\otverror.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\otvgpos.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\otvmod.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pcf.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pcfdrivr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pcferror.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pcfread.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pcfutil.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pfrcmap.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pfrdrivr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pfrerror.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pfrgload.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pfrload.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pfrobjs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pfrsbit.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pfrtypes.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pngshim.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\psaux.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\psauxerr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\psauxmod.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\psconv.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pshalgo.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pshglob.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pshints.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pshmod.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pshnterr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pshpic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pshrec.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\psmodule.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\psnamerr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\psobjs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pspic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\pstables.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\rasterrs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\rastpic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\sfdriver.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\sferrors.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\sfnt.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\sfntpic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\sfobjs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svbdf.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svcid.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svgldict.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svgxval.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svkern.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svmm.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svotval.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svpfr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svpostnm.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svprop.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svpscmap.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svpsinfo.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svsfnt.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svttcmap.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svtteng.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svttglyf.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svwinfnt.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\svxf86nm.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1afm.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1cmap.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1decode.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1driver.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1errors.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1gload.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1load.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1objs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1parse.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1tables.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1tokens.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t1types.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t42drivr.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t42error.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t42objs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t42parse.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\t42types.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttbdf.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttcmap.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttcmapc.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttdriver.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\tterrors.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttgload.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttgxvar.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttinffixed.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttinftrees.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttinterp.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttkern.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttload.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttmtx.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttnameid.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttobjs.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttpic.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttpload.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttpost.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttsbit.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttsubpix.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\tttables.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\tttags.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\tttypes.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttunpat.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttzconf.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttzlib.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\ttzutil.h">
+      <Filter>GUI\TrueType</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\winfnt.h">
+      <Filter>GUI\TrueType</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

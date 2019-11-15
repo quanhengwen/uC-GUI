@@ -25,7 +25,7 @@
 /*                                                                         */
 /*    CID-keyed Type1 parser (body).                                       */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2007, 2009, 2013, 2014 by                               */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -39,7 +39,6 @@
 
 #include "ft2build.h"
 #include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_CALC_H
 #include FT_INTERNAL_OBJECTS_H
 #include FT_INTERNAL_STREAM_H
 
@@ -95,8 +94,8 @@
     if ( ft_strncmp( (char *)stream->cursor,
                      "%!PS-Adobe-3.0 Resource-CIDFont", 31 ) )
     {
-      FT_TRACE2(( "[not a valid CID-keyed font]\n" ));
-      error = CID_Err_Unknown_File_Format;
+      FT_TRACE2(( "  not a CID-keyed font\n" ));
+      error = FT_THROW( Unknown_File_Format );
     }
 
     FT_FRAME_EXIT();
@@ -104,21 +103,26 @@
       goto Exit;
 
   Again:
-    /* now, read the rest of the file until we find a `StartData' */
+    /* now, read the rest of the file until we find */
+    /* `StartData' or `/sfnts'                      */
     {
       FT_Byte   buffer[256 + 10];
-      FT_Int    read_len = 256 + 10;
+      FT_Long   read_len = 256 + 10; /* same as signed FT_Stream->size */
       FT_Byte*  p        = buffer;
 
 
-      for ( offset = (FT_ULong)FT_STREAM_POS(); ; offset += 256 )
+      for ( offset = FT_STREAM_POS(); ; offset += 256 )
       {
-        FT_Int    stream_len;
+        FT_Long  stream_len; /* same as signed FT_Stream->size */
 
 
         stream_len = stream->size - FT_STREAM_POS();
         if ( stream_len == 0 )
+        {
+          FT_TRACE2(( "cid_parser_new: no `StartData' keyword found\n" ));
+          error = FT_THROW( Invalid_File_Format );
           goto Exit;
+        }
 
         read_len = FT_MIN( read_len, stream_len );
         if ( FT_STREAM_READ( p, read_len ) )
@@ -134,7 +138,12 @@
           if ( p[0] == 'S' && ft_strncmp( (char*)p, "StartData", 9 ) == 0 )
           {
             /* save offset of binary data after `StartData' */
-            offset += p - buffer + 10;
+            offset += (FT_ULong)( p - buffer + 10 );
+            goto Found;
+          }
+          else if ( p[1] == 's' && ft_strncmp( (char*)p, "/sfnts", 6 ) == 0 )
+          {
+            offset += (FT_ULong)( p - buffer + 7 );
             goto Found;
           }
         }
@@ -146,8 +155,9 @@
     }
 
   Found:
-    /* We have found the start of the binary data.  Now rewind and */
-    /* extract the frame corresponding to the PostScript section.  */
+    /* We have found the start of the binary data or the `/sfnts' token. */
+    /* Now rewind and extract the frame corresponding to this PostScript */
+    /* section.                                                          */
 
     ps_len = offset - base_offset;
     if ( FT_STREAM_SEEK( base_offset )                  ||
@@ -161,9 +171,10 @@
     parser->root.limit     = parser->root.cursor + ps_len;
     parser->num_dict       = -1;
 
-    /* Finally, we check whether `StartData' was real -- it could be  */
-    /* in a comment or string.  We also get its arguments to find out */
-    /* whether the data is represented in binary or hex format.       */
+    /* Finally, we check whether `StartData' or `/sfnts' was real --  */
+    /* it could be in a comment or string.  We also get the arguments */
+    /* of `StartData' to find out whether the data is represented in  */
+    /* binary or hex format.                                          */
 
     arg1 = parser->root.cursor;
     cid_parser_skip_PS_token( parser );
@@ -178,15 +189,22 @@
     while ( cur < limit )
     {
       if ( parser->root.error )
-        break;
+      {
+        error = parser->root.error;
+        goto Exit;
+      }
 
-      if ( *cur == 'S' && ft_strncmp( (char*)cur, "StartData", 9 ) == 0 )
+      if ( cur[0] == 'S' && ft_strncmp( (char*)cur, "StartData", 9 ) == 0 )
       {
         if ( ft_strncmp( (char*)arg1, "(Hex)", 5 ) == 0 )
           parser->binary_length = ft_atol( (const char *)arg2 );
 
-        limit = parser->root.limit;
-        cur   = parser->root.cursor;
+        goto Exit;
+      }
+      else if ( cur[1] == 's' && ft_strncmp( (char*)cur, "/sfnts", 6 ) == 0 )
+      {
+        FT_TRACE2(( "cid_parser_new: cannot handle Type 11 fonts\n" ));
+        error = FT_THROW( Unknown_File_Format );
         goto Exit;
       }
 
@@ -224,14 +242,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  cidload.c                                                              */
 /*                                                                         */
 /*    CID-keyed Type1 font loader (body).                                  */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005 by                         */
+/*  Copyright 1996-2006, 2009, 2011-2014 by                                */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -269,7 +286,7 @@
   cid_get_offset( FT_Byte*  *start,
                   FT_Byte    offsize )
   {
-    FT_Long   result;
+    FT_ULong  result;
     FT_Byte*  p = *start;
 
 
@@ -280,7 +297,7 @@
     }
 
     *start = p;
-    return result;
+    return (FT_Long)result;
   }
 
 
@@ -324,6 +341,10 @@
       object = (FT_Byte*)&cid->font_info;
       break;
 
+    case T1_FIELD_LOCATION_FONT_EXTRA:
+      object = (FT_Byte*)&face->font_extra;
+      break;
+
     case T1_FIELD_LOCATION_BBOX:
       object = (FT_Byte*)&cid->font_bbox;
       break;
@@ -333,11 +354,11 @@
         CID_FaceDict  dict;
 
 
-        if ( parser->num_dict < 0 )
+        if ( parser->num_dict < 0 || parser->num_dict >= cid->num_dicts )
         {
-          FT_ERROR(( "cid_load_keyword: invalid use of `%s'!\n",
+          FT_ERROR(( "cid_load_keyword: invalid use of `%s'\n",
                      keyword->ident ));
-          error = CID_Err_Syntax_Error;
+          error = FT_THROW( Syntax_Error );
           goto Exit;
         }
 
@@ -370,32 +391,44 @@
 
 
   FT_CALLBACK_DEF( FT_Error )
-  parse_font_matrix( CID_Face     face,
-                     CID_Parser*  parser )
+  cid_parse_font_matrix( CID_Face     face,
+                         CID_Parser*  parser )
   {
-    FT_Matrix*    matrix;
-    FT_Vector*    offset;
     CID_FaceDict  dict;
     FT_Face       root = (FT_Face)&face->root;
     FT_Fixed      temp[6];
     FT_Fixed      temp_scale;
 
 
-    if ( parser->num_dict >= 0 )
+    if ( parser->num_dict >= 0 && parser->num_dict < face->cid.num_dicts )
     {
+      FT_Matrix*  matrix;
+      FT_Vector*  offset;
+      FT_Int      result;
+
+
       dict   = face->cid.font_dicts + parser->num_dict;
       matrix = &dict->font_matrix;
       offset = &dict->font_offset;
 
-      (void)cid_parser_to_fixed_array( parser, 6, temp, 3 );
+      result = cid_parser_to_fixed_array( parser, 6, temp, 3 );
+
+      if ( result < 6 )
+        return FT_THROW( Invalid_File_Format );
 
       temp_scale = FT_ABS( temp[3] );
 
-      /* Set units per EM based on FontMatrix values.  We set the value to */
-      /* `1000/temp_scale', because temp_scale was already multiplied by   */
-      /* 1000 (in `t1_tofixed', from psobjs.c).                            */
-      root->units_per_EM = (FT_UShort)( FT_DivFix( 0x10000L,
-                                        FT_DivFix( temp_scale, 1000 ) ) );
+      if ( temp_scale == 0 )
+      {
+        FT_ERROR(( "cid_parse_font_matrix: invalid font matrix\n" ));
+        return FT_THROW( Invalid_File_Format );
+      }
+
+      /* Set Units per EM based on FontMatrix values.  We set the value to */
+      /* 1000 / temp_scale, because temp_scale was already multiplied by   */
+      /* 1000 (in t1_tofixed, from psobjs.c).                              */
+
+      root->units_per_EM = (FT_UShort)FT_DivFix( 1000, temp_scale );
 
       /* we need to scale the values by 1.0/temp[3] */
       if ( temp_scale != 0x10000L )
@@ -405,7 +438,7 @@
         temp[2] = FT_DivFix( temp[2], temp_scale );
         temp[4] = FT_DivFix( temp[4], temp_scale );
         temp[5] = FT_DivFix( temp[5], temp_scale );
-        temp[3] = 0x10000L;
+        temp[3] = temp[3] < 0 ? -0x10000L : 0x10000L;
       }
 
       matrix->xx = temp[0];
@@ -418,8 +451,7 @@
       offset->y  = temp[5] >> 16;
     }
 
-    return CID_Err_Ok;      /* this is a callback function; */
-                            /* we must return an error code */
+    return FT_Err_Ok;
   }
 
 
@@ -429,7 +461,7 @@
   {
     CID_FaceInfo  cid    = &face->cid;
     FT_Memory     memory = face->root.memory;
-    FT_Error      error  = CID_Err_Ok;
+    FT_Error      error  = FT_Err_Ok;
     FT_Long       num_dicts;
 
 
@@ -461,16 +493,40 @@
   }
 
 
+  /* by mistake, `expansion_factor' appears both in PS_PrivateRec */
+  /* and CID_FaceDictRec (both are public header files and can't  */
+  /* changed); we simply copy the value                           */
+
+  FT_CALLBACK_DEF( FT_Error )
+  parse_expansion_factor( CID_Face     face,
+                          CID_Parser*  parser )
+  {
+    CID_FaceDict  dict;
+
+
+    if ( parser->num_dict >= 0 && parser->num_dict < face->cid.num_dicts )
+    {
+      dict = face->cid.font_dicts + parser->num_dict;
+
+      dict->expansion_factor              = cid_parser_to_fixed( parser, 0 );
+      dict->private_dict.expansion_factor = dict->expansion_factor;
+    }
+
+    return FT_Err_Ok;
+  }
+
+
   static
   const T1_FieldRec  cid_field_records[] =
   {
 
 #include "cidtoken.h"
 
-    T1_FIELD_CALLBACK( "FDArray",    parse_fd_array )
-    T1_FIELD_CALLBACK( "FontMatrix", parse_font_matrix )
+    T1_FIELD_CALLBACK( "FDArray",         parse_fd_array, 0 )
+    T1_FIELD_CALLBACK( "FontMatrix",      cid_parse_font_matrix, 0 )
+    T1_FIELD_CALLBACK( "ExpansionFactor", parse_expansion_factor, 0 )
 
-    { 0, T1_FIELD_LOCATION_CID_INFO, T1_FIELD_TYPE_NONE, 0, 0, 0, 0, 0 }
+    { 0, T1_FIELD_LOCATION_CID_INFO, T1_FIELD_TYPE_NONE, 0, 0, 0, 0, 0, 0 }
   };
 
 
@@ -485,7 +541,7 @@
 
     parser->root.cursor = base;
     parser->root.limit  = base + size;
-    parser->root.error  = CID_Err_Ok;
+    parser->root.error  = FT_Err_Ok;
 
     {
       FT_Byte*  cur   = base;
@@ -612,11 +668,24 @@
       FT_Byte*      p;
 
 
+      /* Check for possible overflow. */
+      if ( num_subrs == FT_UINT_MAX )
+      {
+        error = FT_THROW( Syntax_Error );
+        goto Fail;
+      }
+
       /* reallocate offsets array if needed */
       if ( num_subrs + 1 > max_offsets )
       {
         FT_UInt  new_max = FT_PAD_CEIL( num_subrs + 1, 4 );
 
+
+        if ( new_max <= max_offsets )
+        {
+          error = FT_THROW( Syntax_Error );
+          goto Fail;
+        }
 
         if ( FT_RENEW_ARRAY( offsets, max_offsets, new_max ) )
           goto Fail;
@@ -634,6 +703,11 @@
         offsets[count] = cid_get_offset( &p, (FT_Byte)dict->sd_bytes );
 
       FT_FRAME_EXIT();
+
+      /* offsets must be ordered */
+      for ( count = 1; count <= num_subrs; count++ )
+        if ( offsets[count - 1] > offsets[count] )
+          goto Fail;
 
       /* now, compute the size of subrs charstrings, */
       /* allocate, and read them                     */
@@ -694,8 +768,8 @@
 
 
   static void
-  t1_init_loader( CID_Loader*  loader,
-                  CID_Face     face )
+  cid_init_loader( CID_Loader*  loader,
+                   CID_Face     face )
   {
     FT_UNUSED( face );
 
@@ -703,8 +777,8 @@
   }
 
 
-  static void
-  t1_done_loader( CID_Loader*  loader )
+  static  void
+  cid_done_loader( CID_Loader*  loader )
   {
     CID_Parser*  parser = &loader->parser;
 
@@ -752,7 +826,7 @@
 
         if ( size == 0 )
         {
-          error = CID_Err_Syntax_Error;
+          error = FT_THROW( Syntax_Error );
           goto Exit;
         }
 
@@ -785,7 +859,7 @@
       }
       else
       {
-        error = CID_Err_Syntax_Error;
+        error = FT_THROW( Syntax_Error );
         goto Exit;
       }
 
@@ -805,7 +879,7 @@
       p++;
     }
 
-    error = CID_Err_Ok;
+    error = FT_Err_Ok;
 
   Exit:
     return error;
@@ -822,7 +896,7 @@
     FT_Error     error;
 
 
-    t1_init_loader( &loader, face );
+    cid_init_loader( &loader, face );
 
     parser = &loader.parser;
     error = cid_parser_new( parser, face->root.stream, face->root.memory,
@@ -863,20 +937,19 @@
     error = cid_read_subrs( face );
 
   Exit:
-    t1_done_loader( &loader );
+    cid_done_loader( &loader );
     return error;
   }
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  cidobjs.c                                                              */
 /*                                                                         */
 /*    CID objects manager (body).                                          */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2006, 2008, 2010-2011, 2013 by                          */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1003,7 +1076,7 @@
   cid_size_init( FT_Size  cidsize )     /* CID_Size */
   {
     CID_Size           size  = (CID_Size)cidsize;
-    FT_Error           error = 0;
+    FT_Error           error = FT_Err_Ok;
     PSH_Globals_Funcs  funcs = cid_size_get_globals_funcs( size );
 
 
@@ -1041,7 +1114,7 @@
                         size->metrics.y_scale,
                         0, 0 );
 
-    return CID_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -1065,61 +1138,61 @@
   FT_LOCAL_DEF( void )
   cid_face_done( FT_Face  cidface )         /* CID_Face */
   {
-    CID_Face   face = (CID_Face)cidface;
-    FT_Memory  memory;
+    CID_Face      face = (CID_Face)cidface;
+    FT_Memory     memory;
+    CID_FaceInfo  cid;
+    PS_FontInfo   info;
 
 
-    if ( face )
+    if ( !face )
+      return;
+
+    cid    = &face->cid;
+    info   = &cid->font_info;
+    memory = cidface->memory;
+
+    /* release subrs */
+    if ( face->subrs )
     {
-      CID_FaceInfo  cid  = &face->cid;
-      PS_FontInfo   info = &cid->font_info;
+      FT_Int  n;
 
 
-      memory = cidface->memory;
-
-      /* release subrs */
-      if ( face->subrs )
+      for ( n = 0; n < cid->num_dicts; n++ )
       {
-        FT_Int  n;
+        CID_Subrs  subr = face->subrs + n;
 
 
-        for ( n = 0; n < cid->num_dicts; n++ )
+        if ( subr->code )
         {
-          CID_Subrs  subr = face->subrs + n;
-
-
-          if ( subr->code )
-          {
-            FT_FREE( subr->code[0] );
-            FT_FREE( subr->code );
-          }
+          FT_FREE( subr->code[0] );
+          FT_FREE( subr->code );
         }
-
-        FT_FREE( face->subrs );
       }
 
-      /* release FontInfo strings */
-      FT_FREE( info->version );
-      FT_FREE( info->notice );
-      FT_FREE( info->full_name );
-      FT_FREE( info->family_name );
-      FT_FREE( info->weight );
-
-      /* release font dictionaries */
-      FT_FREE( cid->font_dicts );
-      cid->num_dicts = 0;
-
-      /* release other strings */
-      FT_FREE( cid->cid_font_name );
-      FT_FREE( cid->registry );
-      FT_FREE( cid->ordering );
-
-      cidface->family_name = 0;
-      cidface->style_name  = 0;
-
-      FT_FREE( face->binary_data );
-      FT_FREE( face->cid_stream );
+      FT_FREE( face->subrs );
     }
+
+    /* release FontInfo strings */
+    FT_FREE( info->version );
+    FT_FREE( info->notice );
+    FT_FREE( info->full_name );
+    FT_FREE( info->family_name );
+    FT_FREE( info->weight );
+
+    /* release font dictionaries */
+    FT_FREE( cid->font_dicts );
+    cid->num_dicts = 0;
+
+    /* release other strings */
+    FT_FREE( cid->cid_font_name );
+    FT_FREE( cid->registry );
+    FT_FREE( cid->ordering );
+
+    cidface->family_name = 0;
+    cidface->style_name  = 0;
+
+    FT_FREE( face->binary_data );
+    FT_FREE( face->cid_stream );
   }
 
 
@@ -1171,6 +1244,13 @@
       psaux = (PSAux_Service)FT_Get_Module_Interface(
                 FT_FACE_LIBRARY( face ), "psaux" );
 
+      if ( !psaux )
+      {
+        FT_ERROR(( "cid_face_init: cannot access `psaux' module\n" ));
+        error = FT_THROW( Missing_Module );
+        goto Exit;
+      }
+
       face->psaux = psaux;
     }
 
@@ -1182,6 +1262,8 @@
 
       face->pshinter = pshinter;
     }
+
+    FT_TRACE2(( "CID driver\n" ));
 
     /* open the tokenizer; this will also check the font format */
     if ( FT_STREAM_SEEK( 0 ) )
@@ -1196,10 +1278,11 @@
       goto Exit;
 
     /* check the face index */
+    /* XXX: handle CID fonts with more than a single face */
     if ( face_index != 0 )
     {
       FT_ERROR(( "cid_face_init: invalid face index\n" ));
-      error = CID_Err_Invalid_Argument;
+      error = FT_THROW( Invalid_Argument );
       goto Exit;
     }
 
@@ -1217,9 +1300,10 @@
       cidface->num_charmaps = 0;
 
       cidface->face_index = face_index;
-      cidface->face_flags = FT_FACE_FLAG_SCALABLE   | /* scalable outlines */
-                            FT_FACE_FLAG_HORIZONTAL | /* horizontal data   */
-                            FT_FACE_FLAG_HINTER;      /* has native hinter */
+
+      cidface->face_flags |= FT_FACE_FLAG_SCALABLE   | /* scalable outlines */
+                             FT_FACE_FLAG_HORIZONTAL | /* horizontal data   */
+                             FT_FACE_FLAG_HINTER;      /* has native hinter */
 
       if ( info->is_fixed_pitch )
         cidface->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
@@ -1284,10 +1368,11 @@
       cidface->num_fixed_sizes = 0;
       cidface->available_sizes = 0;
 
-      cidface->bbox.xMin =   cid->font_bbox.xMin             >> 16;
-      cidface->bbox.yMin =   cid->font_bbox.yMin             >> 16;
-      cidface->bbox.xMax = ( cid->font_bbox.xMax + 0xFFFFU ) >> 16;
-      cidface->bbox.yMax = ( cid->font_bbox.yMax + 0xFFFFU ) >> 16;
+      cidface->bbox.xMin =   cid->font_bbox.xMin            >> 16;
+      cidface->bbox.yMin =   cid->font_bbox.yMin            >> 16;
+      /* no `U' suffix here to 0xFFFF! */
+      cidface->bbox.xMax = ( cid->font_bbox.xMax + 0xFFFF ) >> 16;
+      cidface->bbox.yMax = ( cid->font_bbox.yMax + 0xFFFF ) >> 16;
 
       if ( !cidface->units_per_EM )
         cidface->units_per_EM = 1000;
@@ -1327,7 +1412,7 @@
   {
     FT_UNUSED( driver );
 
-    return CID_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -1350,14 +1435,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  cidriver.c                                                             */
 /*                                                                         */
 /*    CID driver interface (body).                                         */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2006 by                         */
+/*  Copyright 1996-2004, 2006, 2008, 2009, 2011, 2013 by                   */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1373,13 +1457,14 @@
 #include "cidriver.h"
 #include "cidgload.h"
 #include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
 
 #include "ciderrs.h"
 
 #include FT_SERVICE_POSTSCRIPT_NAME_H
 #include FT_SERVICE_XFREE86_NAME_H
 #include FT_SERVICE_POSTSCRIPT_INFO_H
+#include FT_SERVICE_CID_H
+
 
   /*************************************************************************/
   /*                                                                       */
@@ -1391,10 +1476,10 @@
 #define FT_COMPONENT  trace_ciddriver
 
 
- /*
-  *  POSTSCRIPT NAME SERVICE
-  *
-  */
+  /*
+   *  POSTSCRIPT NAME SERVICE
+   *
+   */
 
   static const char*
   cid_get_postscript_name( CID_Face  face )
@@ -1415,38 +1500,115 @@
   };
 
 
- /*
-  *  POSTSCRIPT INFO SERVICE
-  *
-  */
+  /*
+   *  POSTSCRIPT INFO SERVICE
+   *
+   */
 
   static FT_Error
   cid_ps_get_font_info( FT_Face          face,
                         PS_FontInfoRec*  afont_info )
   {
     *afont_info = ((CID_Face)face)->cid.font_info;
-    return 0;
+
+    return FT_Err_Ok;
   }
 
+  static FT_Error
+  cid_ps_get_font_extra( FT_Face          face,
+                        PS_FontExtraRec*  afont_extra )
+  {
+    *afont_extra = ((CID_Face)face)->font_extra;
+
+    return FT_Err_Ok;
+  }
 
   static const FT_Service_PsInfoRec  cid_service_ps_info =
   {
     (PS_GetFontInfoFunc)   cid_ps_get_font_info,
+    (PS_GetFontExtraFunc)  cid_ps_get_font_extra,
     (PS_HasGlyphNamesFunc) NULL,        /* unsupported with CID fonts */
-    (PS_GetFontPrivateFunc)NULL         /* unsupported                */
+    (PS_GetFontPrivateFunc)NULL,        /* unsupported                */
+    (PS_GetFontValueFunc)  NULL         /* not implemented            */
   };
 
 
- /*
-  *  SERVICE LIST
-  *
-  */
+  /*
+   *  CID INFO SERVICE
+   *
+   */
+  static FT_Error
+  cid_get_ros( CID_Face      face,
+               const char*  *registry,
+               const char*  *ordering,
+               FT_Int       *supplement )
+  {
+    CID_FaceInfo  cid = &face->cid;
+
+
+    if ( registry )
+      *registry = cid->registry;
+
+    if ( ordering )
+      *ordering = cid->ordering;
+
+    if ( supplement )
+      *supplement = cid->supplement;
+
+    return FT_Err_Ok;
+  }
+
+
+  static FT_Error
+  cid_get_is_cid( CID_Face  face,
+                  FT_Bool  *is_cid )
+  {
+    FT_Error  error = FT_Err_Ok;
+    FT_UNUSED( face );
+
+
+    if ( is_cid )
+      *is_cid = 1; /* cid driver is only used for CID keyed fonts */
+
+    return error;
+  }
+
+
+  static FT_Error
+  cid_get_cid_from_glyph_index( CID_Face  face,
+                                FT_UInt   glyph_index,
+                                FT_UInt  *cid )
+  {
+    FT_Error  error = FT_Err_Ok;
+    FT_UNUSED( face );
+
+
+    if ( cid )
+      *cid = glyph_index; /* identity mapping */
+
+    return error;
+  }
+
+
+  static const FT_Service_CIDRec  cid_service_cid_info =
+  {
+     (FT_CID_GetRegistryOrderingSupplementFunc)cid_get_ros,
+     (FT_CID_GetIsInternallyCIDKeyedFunc)      cid_get_is_cid,
+     (FT_CID_GetCIDFromGlyphIndexFunc)         cid_get_cid_from_glyph_index
+  };
+
+
+  /*
+   *  SERVICE LIST
+   *
+   */
 
   static const FT_ServiceDescRec  cid_services[] =
   {
-    { FT_SERVICE_ID_POSTSCRIPT_FONT_NAME, &cid_service_ps_name },
     { FT_SERVICE_ID_XF86_NAME,            FT_XF86_FORMAT_CID },
+    { FT_SERVICE_ID_POSTSCRIPT_FONT_NAME, &cid_service_ps_name },
     { FT_SERVICE_ID_POSTSCRIPT_INFO,      &cid_service_ps_info },
+    { FT_SERVICE_ID_CID,                  &cid_service_cid_info },
     { NULL, NULL }
   };
 
@@ -1471,7 +1633,7 @@
       FT_MODULE_DRIVER_SCALABLE   |
       FT_MODULE_DRIVER_HAS_HINTER,
 
-      sizeof( FT_DriverRec ),
+      sizeof ( FT_DriverRec ),
       "t1cid",   /* module name           */
       0x10000L,  /* version 1.0 of driver */
       0x20000L,  /* requires FreeType 2.0 */
@@ -1484,9 +1646,9 @@
     },
 
     /* then the other font drivers fields */
-    sizeof( CID_FaceRec ),
-    sizeof( CID_SizeRec ),
-    sizeof( CID_GlyphSlotRec ),
+    sizeof ( CID_FaceRec ),
+    sizeof ( CID_SizeRec ),
+    sizeof ( CID_GlyphSlotRec ),
 
     cid_face_init,
     cid_face_done,
@@ -1495,11 +1657,6 @@
     cid_size_done,
     cid_slot_init,
     cid_slot_done,
-
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-    ft_stub_set_char_sizes,
-    ft_stub_set_pixel_sizes,
-#endif
 
     cid_slot_load_glyph,
 
@@ -1514,14 +1671,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  cidgload.c                                                             */
 /*                                                                         */
 /*    CID-keyed Type1 Glyph Loader (body).                                 */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2007, 2009, 2010, 2013 by                               */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1539,6 +1695,7 @@
 #include FT_INTERNAL_DEBUG_H
 #include FT_INTERNAL_STREAM_H
 #include FT_OUTLINE_H
+#include FT_INTERNAL_CALC_H
 
 #include "ciderrs.h"
 
@@ -1561,27 +1718,32 @@
     CID_FaceInfo   cid  = &face->cid;
     FT_Byte*       p;
     FT_UInt        fd_select;
-    FT_Stream      stream = face->cid_stream;
-    FT_Error       error  = 0;
-    FT_Byte*       charstring = 0;
-    FT_Memory      memory = face->root.memory;
+    FT_Stream      stream       = face->cid_stream;
+    FT_Error       error        = FT_Err_Ok;
+    FT_Byte*       charstring   = 0;
+    FT_Memory      memory       = face->root.memory;
     FT_ULong       glyph_length = 0;
-    PSAux_Service  psaux = (PSAux_Service)face->psaux;
+    PSAux_Service  psaux        = (PSAux_Service)face->psaux;
 
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
+    FT_Incremental_InterfaceRec *inc =
+                                  face->root.internal->incremental_interface;
+#endif
+
+
+    FT_TRACE1(( "cid_load_glyph: glyph index %d\n", glyph_index ));
 
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
 
     /* For incremental fonts get the character data using */
     /* the callback function.                             */
-    if ( face->root.internal->incremental_interface )
+    if ( inc )
     {
       FT_Data  glyph_data;
 
 
-      error = face->root.internal->incremental_interface->funcs->get_glyph_data(
-                face->root.internal->incremental_interface->object,
-                glyph_index,
-                &glyph_data );
+      error = inc->funcs->get_glyph_data( inc->object,
+                                          glyph_index, &glyph_data );
       if ( error )
         goto Exit;
 
@@ -1591,15 +1753,13 @@
       if ( glyph_data.length != 0 )
       {
         glyph_length = glyph_data.length - cid->fd_bytes;
-        FT_ALLOC( charstring, glyph_length );
+        (void)FT_ALLOC( charstring, glyph_length );
         if ( !error )
           ft_memcpy( charstring, glyph_data.pointer + cid->fd_bytes,
                      glyph_length );
       }
 
-      face->root.internal->incremental_interface->funcs->free_glyph_data(
-                face->root.internal->incremental_interface->object,
-                &glyph_data );
+      inc->funcs->free_glyph_data( inc->object, &glyph_data );
 
       if ( error )
         goto Exit;
@@ -1628,6 +1788,11 @@
       glyph_length = cid_get_offset( &p, (FT_Byte)cid->gd_bytes ) - off1;
       FT_FRAME_EXIT();
 
+      if ( fd_select >= (FT_UInt)cid->num_dicts )
+      {
+        error = FT_THROW( Invalid_Offset );
+        goto Exit;
+      }
       if ( glyph_length == 0 )
         goto Exit;
       if ( FT_ALLOC( charstring, glyph_length ) )
@@ -1667,7 +1832,7 @@
 
       error = decoder->funcs.parse_charstrings(
                 decoder, charstring + cs_offset,
-                (FT_Int)glyph_length - cs_offset  );
+                (FT_Int)glyph_length - cs_offset );
     }
 
     FT_FREE( charstring );
@@ -1675,23 +1840,22 @@
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
 
     /* Incremental fonts can optionally override the metrics. */
-    if ( !error                                                              &&
-         face->root.internal->incremental_interface                          &&
-         face->root.internal->incremental_interface->funcs->get_glyph_metrics )
+    if ( !error && inc && inc->funcs->get_glyph_metrics )
     {
       FT_Incremental_MetricsRec  metrics;
 
 
-      metrics.bearing_x = decoder->builder.left_bearing.x;
-      metrics.bearing_y = decoder->builder.left_bearing.y;
-      metrics.advance   = decoder->builder.advance.x;
-      error = face->root.internal->incremental_interface->funcs->get_glyph_metrics(
-                face->root.internal->incremental_interface->object,
-                glyph_index, FALSE, &metrics );
-      decoder->builder.left_bearing.x = metrics.bearing_x;
-      decoder->builder.left_bearing.y = metrics.bearing_y;
-      decoder->builder.advance.x      = metrics.advance;
-      decoder->builder.advance.y      = 0;
+      metrics.bearing_x = FIXED_TO_INT( decoder->builder.left_bearing.x );
+      metrics.bearing_y = 0;
+      metrics.advance   = FIXED_TO_INT( decoder->builder.advance.x );
+      metrics.advance_v = FIXED_TO_INT( decoder->builder.advance.y );
+
+      error = inc->funcs->get_glyph_metrics( inc->object,
+                                             glyph_index, FALSE, &metrics );
+
+      decoder->builder.left_bearing.x = INT_TO_FIXED( metrics.bearing_x );
+      decoder->builder.advance.x      = INT_TO_FIXED( metrics.advance );
+      decoder->builder.advance.y      = INT_TO_FIXED( metrics.advance_v );
     }
 
 #endif /* FT_CONFIG_OPTION_INCREMENTAL */
@@ -1747,6 +1911,9 @@
     if ( error )
       return error;
 
+    /* TODO: initialize decoder.len_buildchar and decoder.buildchar */
+    /*       if we ever support CID-keyed multiple master fonts     */
+
     decoder.builder.metrics_only = 1;
     decoder.builder.load_points  = 0;
 
@@ -1760,9 +1927,11 @@
       /* ignore the error if one occurred - skip to next glyph */
     }
 
-    *max_advance = decoder.builder.advance.x;
+    *max_advance = FIXED_TO_INT( decoder.builder.advance.x );
 
-    return CID_Err_Ok;
+    psaux->t1_decoder_funcs->done( &decoder );
+
+    return FT_Err_Ok;
   }
 
 
@@ -1776,7 +1945,6 @@
                        FT_Int32      load_flags )
   {
     CID_GlyphSlot  glyph = (CID_GlyphSlot)cidglyph;
-    CID_Size       size  = (CID_Size)cidsize;
     FT_Error       error;
     T1_DecoderRec  decoder;
     CID_Face       face = (CID_Face)cidglyph->face;
@@ -1786,6 +1954,12 @@
     FT_Matrix      font_matrix;
     FT_Vector      font_offset;
 
+
+    if ( glyph_index >= (FT_UInt)face->root.num_glyphs )
+    {
+      error = FT_THROW( Invalid_Argument );
+      goto Exit;
+    }
 
     if ( load_flags & FT_LOAD_NO_RECURSE )
       load_flags |= FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING;
@@ -1801,134 +1975,144 @@
 
     cidglyph->format = FT_GLYPH_FORMAT_OUTLINE;
 
-    {
-      error = psaux->t1_decoder_funcs->init( &decoder,
-                                             cidglyph->face,
-                                             cidsize,
-                                             cidglyph,
-                                             0, /* glyph names -- XXX */
-                                             0, /* blend == 0 */
-                                             hinting,
-                                             FT_LOAD_TARGET_MODE( load_flags ),
-                                             cid_load_glyph );
+    error = psaux->t1_decoder_funcs->init( &decoder,
+                                           cidglyph->face,
+                                           cidsize,
+                                           cidglyph,
+                                           0, /* glyph names -- XXX */
+                                           0, /* blend == 0 */
+                                           hinting,
+                                           FT_LOAD_TARGET_MODE( load_flags ),
+                                           cid_load_glyph );
+    if ( error )
+      goto Exit;
 
-      /* set up the decoder */
-      decoder.builder.no_recurse = FT_BOOL(
-        ( ( load_flags & FT_LOAD_NO_RECURSE ) != 0 ) );
+    /* TODO: initialize decoder.len_buildchar and decoder.buildchar */
+    /*       if we ever support CID-keyed multiple master fonts     */
 
-      error = cid_load_glyph( &decoder, glyph_index );
+    /* set up the decoder */
+    decoder.builder.no_recurse = FT_BOOL(
+      ( ( load_flags & FT_LOAD_NO_RECURSE ) != 0 ) );
 
-      font_matrix = decoder.font_matrix;
-      font_offset = decoder.font_offset;
+    error = cid_load_glyph( &decoder, glyph_index );
+    if ( error )
+      goto Exit;
 
-      /* save new glyph tables */
-      psaux->t1_decoder_funcs->done( &decoder );
-    }
+    font_matrix = decoder.font_matrix;
+    font_offset = decoder.font_offset;
 
-    /* now, set the metrics -- this is rather simple, as   */
+    /* save new glyph tables */
+    psaux->t1_decoder_funcs->done( &decoder );
+
+    /* now set the metrics -- this is rather simple, as    */
     /* the left side bearing is the xMin, and the top side */
     /* bearing the yMax                                    */
-    if ( !error )
+    cidglyph->outline.flags &= FT_OUTLINE_OWNER;
+    cidglyph->outline.flags |= FT_OUTLINE_REVERSE_FILL;
+
+    /* for composite glyphs, return only left side bearing and */
+    /* advance width                                           */
+    if ( load_flags & FT_LOAD_NO_RECURSE )
     {
-      cidglyph->outline.flags &= FT_OUTLINE_OWNER;
-      cidglyph->outline.flags |= FT_OUTLINE_REVERSE_FILL;
+      FT_Slot_Internal  internal = cidglyph->internal;
 
-      /* for composite glyphs, return only left side bearing and */
-      /* advance width                                           */
-      if ( load_flags & FT_LOAD_NO_RECURSE )
+
+      cidglyph->metrics.horiBearingX =
+        FIXED_TO_INT( decoder.builder.left_bearing.x );
+      cidglyph->metrics.horiAdvance =
+        FIXED_TO_INT( decoder.builder.advance.x );
+
+      internal->glyph_matrix      = font_matrix;
+      internal->glyph_delta       = font_offset;
+      internal->glyph_transformed = 1;
+    }
+    else
+    {
+      FT_BBox            cbox;
+      FT_Glyph_Metrics*  metrics = &cidglyph->metrics;
+      FT_Vector          advance;
+
+
+      /* copy the _unscaled_ advance width */
+      metrics->horiAdvance =
+        FIXED_TO_INT( decoder.builder.advance.x );
+      cidglyph->linearHoriAdvance =
+        FIXED_TO_INT( decoder.builder.advance.x );
+      cidglyph->internal->glyph_transformed = 0;
+
+      /* make up vertical ones */
+      metrics->vertAdvance        = ( face->cid.font_bbox.yMax -
+                                      face->cid.font_bbox.yMin ) >> 16;
+      cidglyph->linearVertAdvance = metrics->vertAdvance;
+
+      cidglyph->format            = FT_GLYPH_FORMAT_OUTLINE;
+
+      if ( cidsize->metrics.y_ppem < 24 )
+        cidglyph->outline.flags |= FT_OUTLINE_HIGH_PRECISION;
+
+      /* apply the font matrix */
+      FT_Outline_Transform( &cidglyph->outline, &font_matrix );
+
+      FT_Outline_Translate( &cidglyph->outline,
+                            font_offset.x,
+                            font_offset.y );
+
+      advance.x = metrics->horiAdvance;
+      advance.y = 0;
+      FT_Vector_Transform( &advance, &font_matrix );
+      metrics->horiAdvance = advance.x + font_offset.x;
+
+      advance.x = 0;
+      advance.y = metrics->vertAdvance;
+      FT_Vector_Transform( &advance, &font_matrix );
+      metrics->vertAdvance = advance.y + font_offset.y;
+
+      if ( ( load_flags & FT_LOAD_NO_SCALE ) == 0 )
       {
-        FT_Slot_Internal  internal = cidglyph->internal;
+        /* scale the outline and the metrics */
+        FT_Int       n;
+        FT_Outline*  cur = decoder.builder.base;
+        FT_Vector*   vec = cur->points;
+        FT_Fixed     x_scale = glyph->x_scale;
+        FT_Fixed     y_scale = glyph->y_scale;
 
 
-        cidglyph->metrics.horiBearingX = decoder.builder.left_bearing.x;
-        cidglyph->metrics.horiAdvance  = decoder.builder.advance.x;
+        /* First of all, scale the points */
+        if ( !hinting || !decoder.builder.hints_funcs )
+          for ( n = cur->n_points; n > 0; n--, vec++ )
+          {
+            vec->x = FT_MulFix( vec->x, x_scale );
+            vec->y = FT_MulFix( vec->y, y_scale );
+          }
 
-        internal->glyph_matrix         = font_matrix;
-        internal->glyph_delta          = font_offset;
-        internal->glyph_transformed    = 1;
+        /* Then scale the metrics */
+        metrics->horiAdvance = FT_MulFix( metrics->horiAdvance, x_scale );
+        metrics->vertAdvance = FT_MulFix( metrics->vertAdvance, y_scale );
       }
-      else
+
+      /* compute the other metrics */
+      FT_Outline_Get_CBox( &cidglyph->outline, &cbox );
+
+      metrics->width  = cbox.xMax - cbox.xMin;
+      metrics->height = cbox.yMax - cbox.yMin;
+
+      metrics->horiBearingX = cbox.xMin;
+      metrics->horiBearingY = cbox.yMax;
+
+      if ( load_flags & FT_LOAD_VERTICAL_LAYOUT )
       {
-        FT_BBox            cbox;
-        FT_Glyph_Metrics*  metrics = &cidglyph->metrics;
-        FT_Vector          advance;
-
-
-        /* copy the _unscaled_ advance width */
-        metrics->horiAdvance                  = decoder.builder.advance.x;
-        cidglyph->linearHoriAdvance           = decoder.builder.advance.x;
-        cidglyph->internal->glyph_transformed = 0;
-
-        /* make up vertical ones */
-        metrics->vertAdvance        = ( face->cid.font_bbox.yMax -
-                                        face->cid.font_bbox.yMin ) >> 16;
-        cidglyph->linearVertAdvance = metrics->vertAdvance;
-
-        cidglyph->format            = FT_GLYPH_FORMAT_OUTLINE;
-
-        if ( size && cidsize->metrics.y_ppem < 24 )
-          cidglyph->outline.flags |= FT_OUTLINE_HIGH_PRECISION;
-
-        /* apply the font matrix */
-        FT_Outline_Transform( &cidglyph->outline, &font_matrix );
-
-        FT_Outline_Translate( &cidglyph->outline,
-                              font_offset.x,
-                              font_offset.y );
-
-        advance.x = metrics->horiAdvance;
-        advance.y = 0;
-        FT_Vector_Transform( &advance, &font_matrix );
-        metrics->horiAdvance = advance.x + font_offset.x;
-        advance.x = 0;
-        advance.y = metrics->vertAdvance;
-        FT_Vector_Transform( &advance, &font_matrix );
-        metrics->vertAdvance = advance.y + font_offset.y;
-
-        if ( ( load_flags & FT_LOAD_NO_SCALE ) == 0 )
-        {
-          /* scale the outline and the metrics */
-          FT_Int       n;
-          FT_Outline*  cur = decoder.builder.base;
-          FT_Vector*   vec = cur->points;
-          FT_Fixed     x_scale = glyph->x_scale;
-          FT_Fixed     y_scale = glyph->y_scale;
-
-
-          /* First of all, scale the points */
-          if ( !hinting || !decoder.builder.hints_funcs )
-            for ( n = cur->n_points; n > 0; n--, vec++ )
-            {
-              vec->x = FT_MulFix( vec->x, x_scale );
-              vec->y = FT_MulFix( vec->y, y_scale );
-            }
-
-          /* Then scale the metrics */
-          metrics->horiAdvance  = FT_MulFix( metrics->horiAdvance,  x_scale );
-          metrics->vertAdvance  = FT_MulFix( metrics->vertAdvance,  y_scale );
-        }
-
-        /* compute the other metrics */
-        FT_Outline_Get_CBox( &cidglyph->outline, &cbox );
-
-        metrics->width  = cbox.xMax - cbox.xMin;
-        metrics->height = cbox.yMax - cbox.yMin;
-
-        metrics->horiBearingX = cbox.xMin;
-        metrics->horiBearingY = cbox.yMax;
-
         /* make up vertical ones */
         ft_synthesize_vertical_metrics( metrics,
                                         metrics->vertAdvance );
       }
     }
 
+  Exit:
     return error;
   }
 
 
 /* END */
-
 
 
 /* END */

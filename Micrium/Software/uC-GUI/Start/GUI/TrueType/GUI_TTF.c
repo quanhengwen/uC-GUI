@@ -1,18 +1,18 @@
 /*********************************************************************
-*                SEGGER Microcontroller GmbH & Co. KG                *
+*                    SEGGER Microcontroller GmbH                     *
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
 *                                                                    *
-*        (c) 1996 - 2014  SEGGER Microcontroller GmbH & Co. KG       *
+*        (c) 1996 - 2019  SEGGER Microcontroller GmbH                *
 *                                                                    *
 *        Internet: www.segger.com    Support:  support@segger.com    *
 *                                                                    *
 **********************************************************************
 
-** emWin V5.26 - Graphical user interface for embedded applications **
+** emWin V5.50 - Graphical user interface for embedded applications **
 emWin is protected by international copyright laws.   Knowledge of the
 source code may not be used to write a similar product.  This file may
-only be used in accordance with a license and should not be re-
+only  be used  in accordance  with  a license  and should  not be  re-
 distributed in any way. We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
 File        : GUI_TTF.c
@@ -21,6 +21,8 @@ Purpose     : Implementation of external binary fonts
 */
 
 #include "ft2build.h"
+#include "ftadvanc.h"
+
 #include FT_FREETYPE_H
 
 #include FT_MODULE_H
@@ -29,6 +31,10 @@ Purpose     : Implementation of external binary fonts
 #include FT_CACHE_MANAGER_H
 
 #include "GUI_Private.h"
+
+#ifndef   GUI_TTF_SUPPORT_AA
+  #define GUI_TTF_SUPPORT_AA (1)
+#endif
 
 /*********************************************************************
 *
@@ -240,8 +246,10 @@ static int _RequestGlyph(U16P c, unsigned DoRender) {
   FTC_SBitRec      * pSBit;
   FTC_ScalerRec      scaler;
   FT_Size            size;
+  FT_Fixed           advance;
   int                r;
-  
+  int                BufferExist;
+
   r = -1;
   //
   // Get object pointer
@@ -275,7 +283,8 @@ static int _RequestGlyph(U16P c, unsigned DoRender) {
   if (FTC_SBitCache_Lookup(_FTContext.sbits_cache, pImageType, glyph_index, &pSBit, NULL)) {
     return r;
   }
-  if (pSBit->buffer) {
+  BufferExist = pSBit ? pSBit->buffer ? 1 : 0 : 0;
+  if (BufferExist) {
     if (DoRender) {
       //
       // Rendering cache data using the bitmap routine
@@ -294,12 +303,10 @@ static int _RequestGlyph(U16P c, unsigned DoRender) {
     //
     // No bitmap data
     //
-    pImageType->flags = FT_LOAD_DEFAULT;
-    if (FTC_SBitCache_Lookup(_FTContext.sbits_cache, pImageType, glyph_index, &pSBit, NULL)) {
-      return r;
-    }
+    pImageType->flags = FT_LOAD_NO_SCALE;
+    FT_Get_Advance(face, glyph_index, FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING | FT_LOAD_IGNORE_TRANSFORM, &advance);
     pImageType->flags = FT_LOAD_MONOCHROME;
-    r = face->glyph->metrics.horiAdvance >> 6;
+    r = FT_MulFix(advance, face->size->metrics.x_scale) >> 6;
   }
   return r;
 }
@@ -323,6 +330,7 @@ static void _DispChar(U16P c) {
 *  Function description
 *    Draws a glyph (if DoRender == 1) and returns its width
 */
+#if GUI_TTF_SUPPORT_AA
 static int _RequestGlyphAA(U16P c, unsigned DoRender) {
   GUI_TTF_CS       * pCS;
   FTC_ImageTypeRec * pImageType;
@@ -332,8 +340,10 @@ static int _RequestGlyphAA(U16P c, unsigned DoRender) {
   FTC_SBitRec      * pSBit;
   FTC_ScalerRec      scaler;
   FT_Size            size;
+  FT_Fixed           advance;
   int                r;
-  
+  int                BufferExist;
+
   r = -1;
   //
   // Get object pointer
@@ -367,7 +377,8 @@ static int _RequestGlyphAA(U16P c, unsigned DoRender) {
   if (FTC_SBitCache_Lookup(_FTContext.sbits_cache, pImageType, glyph_index, &pSBit, NULL)) {
     return r;
   }
-  if (pSBit->buffer) {
+  BufferExist = pSBit ? pSBit->buffer ? 1 : 0 : 0;
+  if (BufferExist) {
     if (DoRender) {
       //
       // Rendering cache data using the bitmap routine
@@ -396,12 +407,10 @@ static int _RequestGlyphAA(U16P c, unsigned DoRender) {
     //
     // No bitmap data
     //
+    pImageType->flags = FT_LOAD_NO_SCALE;
+    FT_Get_Advance(face, glyph_index, FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING | FT_LOAD_IGNORE_TRANSFORM, &advance);
     pImageType->flags = FT_LOAD_DEFAULT;
-    if (FTC_SBitCache_Lookup(_FTContext.sbits_cache, pImageType, glyph_index, &pSBit, NULL)) {
-      return r;
-    }
-    pImageType->flags = 0;
-    r = face->glyph->metrics.horiAdvance >> 6;
+    r = FT_MulFix(advance, face->size->metrics.x_scale) >> 6;
   }
   return r;
 }
@@ -416,42 +425,6 @@ static void _DispCharAA(U16P c) {
   if (xDist >= 0) {
     GUI_pContext->DispPosX += xDist;
   }
-}
-
-/*********************************************************************
-*
-*       _ClearLine
-*
-*  Function description
-*    If text should be rendered not in transparent mode first the whole line
-*    needs to be cleared, because internally the characters always are drawn in
-*    transparent mode to be sure, that also compound characters are drawn well.
-*/
-static void _ClearLine(const char * s, int Len) {
-  int       xDist;
-  int       yDist;
-  int       xSize;
-  int       x0;
-  int       y0;
-  U16       c;
-
-  LCD_COLOR OldColor;
-  OldColor = GUI_GetColor();
-  GUI_SetColor((GUI_pContext->TextMode & GUI_TM_REV) ? GUI_GetColor() : GUI_GetBkColor());
-  xDist    = 0;
-  yDist    = GUI_pContext->pAFont->YDist * GUI_pContext->pAFont->YMag;
-  x0       = GUI_pContext->DispPosX;
-  y0       = GUI_pContext->DispPosY;
-  c        = 0;
-  while (--Len >= 0) {
-    c     = GUI_UC__GetCharCodeInc(&s);
-    xSize = _RequestGlyph(c, 0);
-    if (xSize >= 0) {
-      xDist += xSize;
-    }
-  }
-  LCD_FillRect(x0, y0, x0 + xDist - 1, y0 + yDist - 1);
-  GUI_SetColor(OldColor);
 }
 
 /*********************************************************************
@@ -492,48 +465,6 @@ static void _ClearLineAA(const char * s, int Len) {
 
 /*********************************************************************
 *
-*       _DispLine
-*
-*  Function description
-*    Displays a string. If current text mode is not transparent, the
-*    line is cleared before.
-*/
-static void _DispLine(const char * s, int Len) {
-  U16 Char;
-  int OldMode;
-
-  if (Len > 0) {
-    //
-    // Clear if not transparency mode has been selected
-    //
-    if (!(GUI_pContext->TextMode & (LCD_DRAWMODE_TRANS | LCD_DRAWMODE_XOR))) {
-      _ClearLine(s, Len);
-    }
-    //
-    // Draw characters always transparent
-    //
-    OldMode = GUI_pContext->TextMode; // ??? should be ->DrawMode instead of ->TextMode ???
-    GUI_pContext->DrawMode |= GUI_DM_TRANS;
-    while (--Len >= 0) {
-      Char = GUI_UC__GetCharCodeInc(&s);
-      GUI_pContext->pAFont->pfDispChar(Char);
-    }
-    GUI_pContext->DrawMode = OldMode;
-  }
-}
-
-/*********************************************************************
-*
-*       _APIList
-*/
-static const tGUI_ENC_APIList _APIList = {
-  NULL,
-  NULL,
-  _DispLine
-};
-
-/*********************************************************************
-*
 *       _DispLineAA
 *
 *  Function description
@@ -566,12 +497,112 @@ static void _DispLineAA(const char * s, int Len) {
 
 /*********************************************************************
 *
+*       _GetCharDistX_AA
+*/
+#if (GUI_VERSION < 50801)
+static int _GetCharDistX_AA(U16P c) {
+  int xDist;
+  xDist = _RequestGlyphAA(c, 0);
+  return (xDist >= 0) ? xDist : 0;
+}
+#else
+static int _GetCharDistX_AA(U16P c, int * pSizeX) {
+  int xDist;
+  xDist = _RequestGlyphAA(c, 0);
+  if (pSizeX) {
+    *pSizeX = xDist; // Same as xDist here...
+  }
+  return (xDist >= 0) ? xDist : 0;
+}
+#endif
+
+/*********************************************************************
+*
 *       _APIListAA
 */
 static const tGUI_ENC_APIList _APIListAA = {
   NULL,
   NULL,
   _DispLineAA
+};
+#endif  // GUI_TTF_SUPPORT_AA
+
+/*********************************************************************
+*
+*       _ClearLine
+*
+*  Function description
+*    If text should be rendered not in transparent mode first the whole line
+*    needs to be cleared, because internally the characters always are drawn in
+*    transparent mode to be sure, that also compound characters are drawn well.
+*/
+static void _ClearLine(const char * s, int Len) {
+  int       xDist;
+  int       yDist;
+  int       xSize;
+  int       x0;
+  int       y0;
+  U16       c;
+
+  LCD_COLOR OldColor;
+  OldColor = GUI_GetColor();
+  GUI_SetColor((GUI_pContext->TextMode & GUI_TM_REV) ? GUI_GetColor() : GUI_GetBkColor());
+  xDist    = 0;
+  yDist    = GUI_pContext->pAFont->YDist * GUI_pContext->pAFont->YMag;
+  x0       = GUI_pContext->DispPosX;
+  y0       = GUI_pContext->DispPosY;
+  c        = 0;
+  while (--Len >= 0) {
+    c     = GUI_UC__GetCharCodeInc(&s);
+    xSize = _RequestGlyph(c, 0);
+    if (xSize >= 0) {
+      xDist += xSize;
+    }
+  }
+  LCD_FillRect(x0, y0, x0 + xDist - 1, y0 + yDist - 1);
+  GUI_SetColor(OldColor);
+}
+
+/*********************************************************************
+*
+*       _DispLine
+*
+*  Function description
+*    Displays a string. If current text mode is not transparent, the
+*    line is cleared before.
+*/
+static void _DispLine(const char * s, int Len) {
+  U16 Char;
+  int OldMode;
+
+  if (Len > 0) {
+    //
+    // Clear if not transparency mode has been selected
+    //
+    if (!(GUI_pContext->TextMode & (LCD_DRAWMODE_TRANS | LCD_DRAWMODE_XOR))) {
+      _ClearLine(s, Len);
+    }
+    //
+    // Draw characters always transparent
+    //
+    OldMode = GUI_pContext->DrawMode;
+    GUI_pContext->DrawMode |= GUI_DM_TRANS;
+    while (--Len >= 0) {
+      Char = GUI_UC__GetCharCodeInc(&s);
+      GUI_pContext->pAFont->pfDispChar(Char);
+    }
+    GUI_pContext->DrawMode = OldMode;
+  }
+}
+
+/*********************************************************************
+*
+*       _APIList
+*/
+static const tGUI_ENC_APIList _APIList = {
+  NULL,
+  NULL,
+  _DispLine
 };
 
 /*********************************************************************
@@ -588,27 +619,6 @@ static int _GetCharDistX(U16P c) {
 static int _GetCharDistX(U16P c, int * pSizeX) {
   int xDist;
   xDist = _RequestGlyph(c, 0);
-  if (pSizeX) {
-    *pSizeX = xDist; // Same as xDist here...
-  }
-  return (xDist >= 0) ? xDist : 0;
-}
-#endif
-
-/*********************************************************************
-*
-*       _GetCharDistX_AA
-*/
-#if (GUI_VERSION < 50801)
-static int _GetCharDistX_AA(U16P c) {
-  int xDist;
-  xDist = _RequestGlyphAA(c, 0);
-  return (xDist >= 0) ? xDist : 0;
-}
-#else
-static int _GetCharDistX_AA(U16P c, int * pSizeX) {
-  int xDist;
-  xDist = _RequestGlyphAA(c, 0);
   if (pSizeX) {
     *pSizeX = xDist; // Same as xDist here...
   }
@@ -635,11 +645,11 @@ static char _IsInFont(const GUI_FONT * pFont, U16 c) {
   FTC_FaceID face_id;
   FT_Face    face;
   FT_UInt    glyph_index;
-  
+
   //
   // Get object pointer
   //
-  face_id    = (FTC_FaceID)pFont->p.pFontData;
+  face_id = (FTC_FaceID)((GUI_TTF_CS *)pFont->p.pFontData)->pTTF;
   //
   // Request face object from cache
   //
@@ -659,7 +669,7 @@ static int _GetName(GUI_FONT * pFont, char * pBuffer, int NumBytes, int Index) {
   FT_Face      face;
   int          Len;
   const char * pName = NULL;
-  
+
   //
   // Get object pointer
   //
@@ -678,7 +688,7 @@ static int _GetName(GUI_FONT * pFont, char * pBuffer, int NumBytes, int Index) {
     pName = face->style_name;
     break;
   }
-  Len = strlen(pName);
+  Len = (int)strlen(pName);
   if (Len >= NumBytes) {
     Len = NumBytes - 1;
   }
@@ -700,7 +710,7 @@ static int _CreateFont(GUI_FONT * pFont, GUI_TTF_CS * pCS, FT_Int Flags, void (*
   FT_GlyphSlot       slot;
   FT_Glyph           glyph;
   FT_UInt            glyph_index;
-  
+
   //
   // Check initialization
   //
@@ -779,6 +789,25 @@ static int _CreateFont(GUI_FONT * pFont, GUI_TTF_CS * pCS, FT_Int Flags, void (*
 
 /*********************************************************************
 *
+*       Undefined externals, added
+*
+**********************************************************************
+*/
+/*********************************************************************
+*
+*       z_verbose, z_error
+*
+*  Description
+*    Undefined externals referenced by zlib. Added here
+*/
+int z_verbose = 0;
+void z_error(char * pMessage);
+void z_error(char * pMessage) {
+  GUI_USE_PARA(pMessage);
+}
+
+/*********************************************************************
+*
 *       Public code
 *
 **********************************************************************
@@ -793,7 +822,7 @@ static int _CreateFont(GUI_FONT * pFont, GUI_TTF_CS * pCS, FT_Int Flags, void (*
 *
 *  Parameters:
 *    pFont      - Pointer to a GUI_FONT structure to be initialized by this function.
-*    pCS        - Pointer to a GUI_TTF_CS structure which contains information about 
+*    pCS        - Pointer to a GUI_TTF_CS structure which contains information about
 *                 file location, file size, pixel size and face index.
 */
 int GUI_TTF_CreateFont(GUI_FONT * pFont, GUI_TTF_CS * pCS) {
@@ -810,12 +839,14 @@ int GUI_TTF_CreateFont(GUI_FONT * pFont, GUI_TTF_CS * pCS) {
 *
 *  Parameters:
 *    pFont      - Pointer to a GUI_FONT structure to be initialized by this function.
-*    pCS        - Pointer to a GUI_TTF_CS structure which contains information about 
+*    pCS        - Pointer to a GUI_TTF_CS structure which contains information about
 *                 file location, file size, pixel size and face index.
 */
+#if GUI_TTF_SUPPORT_AA
 int GUI_TTF_CreateFontAA(GUI_FONT * pFont, GUI_TTF_CS * pCS) {
   return _CreateFont(pFont, pCS, 0, _DispCharAA, &_APIListAA, _GetCharDistX_AA);
 }
+#endif
 
 /*********************************************************************
 *

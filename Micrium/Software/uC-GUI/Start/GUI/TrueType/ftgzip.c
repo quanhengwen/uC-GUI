@@ -8,7 +8,7 @@
 /*  parse compressed PCF fonts, as found with many X11 server              */
 /*  distributions.                                                         */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2004, 2005, 2006 by                              */
+/*  Copyright 2002-2006, 2009-2013 by                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -25,13 +25,14 @@
 #include FT_INTERNAL_STREAM_H
 #include FT_INTERNAL_DEBUG_H
 #include FT_GZIP_H
-#include <string.h>
+#include FT_CONFIG_STANDARD_LIBRARY_H
 
 
 #include FT_MODULE_ERRORS_H
 
 #undef __FTERRORS_H__
 
+#undef  FT_ERR_PREFIX
 #define FT_ERR_PREFIX  Gzip_Err_
 #define FT_ERR_BASE    FT_Mod_Err_Gzip
 
@@ -39,6 +40,10 @@
 
 
 #ifdef FT_CONFIG_OPTION_USE_ZLIB
+
+#ifdef FT_CONFIG_OPTION_PIC
+#error "gzip code does not support PIC yet"
+#endif
 
 #ifdef FT_CONFIG_OPTION_SYSTEM_ZLIB
 
@@ -54,12 +59,23 @@
  /* original ZLib.                                                   */
 
 #define NO_DUMMY_DECL
-#define MY_ZCALLOC
+#ifndef USE_ZLIB_ZCALLOC
+#define MY_ZCALLOC /* prevent all zcalloc() & zfree() in zutils.c */
+#endif
 
 #include "ttzlib.h"
 
 #undef  SLOW
 #define SLOW  1  /* we can't use asm-optimized sources here! */
+
+#if defined( _MSC_VER )      /* Visual C++ (and Intel C++)   */
+  /* We disable the warning `conversion from XXX to YYY,     */
+  /* possible loss of data' in order to compile cleanly with */
+  /* the maximum level of warnings: zlib is non-FreeType     */
+  /* code.                                                   */
+#pragma warning( push )
+#pragma warning( disable : 4244 )
+#endif /* _MSC_VER */
 
   /* Urgh.  `inflate_mask' must not be declared twice -- C++ doesn't like
      this.  We temporarily disable it and load all necessary header files. */
@@ -74,10 +90,10 @@
   /* infutil.c must be included before infcodes.c */
 /* zutil.c -- target dependent utility functions for the compression library
  * Copyright (C) 1995-2002 Jean-loup Gailly.
- * For conditions of distribution and use, see copyright notice in ttzlib.h
+ * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-/* @(#) $Id: zutil.c,v 1.3 2006/04/29 07:31:16 wl Exp $ */
+/* @(#) $Id$ */
 
 #include "ttzutil.h"
 
@@ -123,7 +139,7 @@ void zmemzero(dest, len)
 }
 #endif
 
-#ifdef __TURBOC__
+#if defined( MSDOS ) && defined( __TURBOC__ ) && !defined( MY_ZCALLOC )
 #if (defined( __BORLANDC__) || !defined(SMALL_MEDIUM)) && !defined(__32BIT__)
 /* Small and medium model in Turbo C are for now limited to near allocation
  * with reduced MAX_WBITS and MAX_MEM_LEVEL
@@ -200,10 +216,10 @@ void  zcfree (voidpf opaque, voidpf ptr)
     Assert(0, "zcfree: ptr not found");
 }
 #endif
-#endif /* __TURBOC__ */
+#endif /* MSDOS && __TURBOC__ */
 
 
-#if defined(M_I86) && !defined(__32BIT__)
+#if defined(M_I86) && !defined(__32BIT__) && !defined( MY_ZCALLOC )
 /* Microsoft C in 16-bit mode */
 
 #  define MY_ZCALLOC
@@ -253,17 +269,16 @@ void  zcfree (opaque, ptr)
 }
 
 #endif /* MY_ZCALLOC */
-
 /* inftrees.c -- generate Huffman trees for efficient decoding
  * Copyright (C) 1995-2002 Mark Adler
- * For conditions of distribution and use, see copyright notice in ttzlib.h
+ * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
 #include "ttzutil.h"
 #include "ttinftrees.h"
 
 #if !defined(BUILDFIXED) && !defined(STDC)
-#  define BUILDFIXED   /* non ANSI compilers may not accept ttinffixed.h */
+#  define BUILDFIXED   /* non ANSI compilers may not accept inffixed.h */
 #endif
 
 
@@ -386,6 +401,9 @@ uIntf *v                /* working area: values in order of bit length */
   int y;                        /* number of dummy codes added */
   uInt z;                       /* number of entries in current table */
 
+
+  /* Make compiler happy */
+  r.base = 0;
 
   /* Generate counts for each bit length */
   p = c;
@@ -619,6 +637,9 @@ z_streamp z             /* for messages */
     if (r == Z_DATA_ERROR)
       z->msg = (char*)"oversubscribed distance tree";
     else if (r == Z_BUF_ERROR) {
+#if 0
+    {
+#endif
 #ifdef PKZIP_BUG_WORKAROUND
       r = Z_OK;
     }
@@ -716,10 +737,9 @@ z_streamp z                     /* for memory allocation */
   *td = fixed_td;
   return Z_OK;
 }
-
 /* inflate_util.c -- data and routines common to blocks and codes
  * Copyright (C) 1995-2002 Mark Adler
- * For conditions of distribution and use, see copyright notice in ttzlib.h
+ * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
 #include "ttzutil.h"
@@ -803,10 +823,9 @@ int r )
   /* done */
   return r;
 }
-
 /* infcodes.c -- process literals and length/distance pairs
  * Copyright (C) 1995-2002 Mark Adler
- * For conditions of distribution and use, see copyright notice in ttzlib.h
+ * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
 #include "ttzutil.h"
@@ -1054,10 +1073,9 @@ z_streamp z )
   ZFREE(z, c);
   Tracev((stderr, "inflate:       codes free\n"));
 }
-
 /* infblock.c -- interpret and process block types to last block
  * Copyright (C) 1995-2002 Mark Adler
- * For conditions of distribution and use, see copyright notice in ttzlib.h
+ * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
 #include "ttzutil.h"
@@ -1442,10 +1460,9 @@ z_streamp z )
 }
 
 
-
 /* inflate.c -- zlib interface to inflate modules
  * Copyright (C) 1995-2002 Mark Adler
- * For conditions of distribution and use, see copyright notice in ttzlib.h
+ * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
 #include "ttzutil.h"
@@ -1716,13 +1733,12 @@ int f )
 #endif
 }
 
-
 /* adler32.c -- compute the Adler-32 checksum of a data stream
  * Copyright (C) 1995-2002 Mark Adler
- * For conditions of distribution and use, see copyright notice in ttzlib.h
+ * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-/* @(#) $Id: adler32.c,v 1.4 2003/01/30 23:24:18 davidT Exp $ */
+/* @(#) $Id$ */
 
 #include "ttzlib.h"
 
@@ -1753,12 +1769,12 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
         len -= k;
         while (k >= 16) {
             DO16(buf);
-	    buf += 16;
+            buf += 16;
             k -= 16;
         }
         if (k != 0) do {
             s1 += *buf++;
-	    s2 += s1;
+            s2 += s1;
         } while (--k);
         s1 %= BASE;
         s2 %= BASE;
@@ -1766,6 +1782,9 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
     return (s2 << 16) | s1;
 }
 
+#if defined( _MSC_VER )
+#pragma warning( pop )
+#endif
 
 #endif /* !FT_CONFIG_OPTION_SYSTEM_ZLIB */
 
@@ -1788,7 +1807,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
   {
     FT_ULong    sz = (FT_ULong)size * items;
     FT_Error    error;
-    FT_Pointer  p;
+    FT_Pointer  p  = NULL;
 
 
     (void)FT_ALLOC( p, sz );
@@ -1804,7 +1823,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
   }
 
 
-#ifndef FT_CONFIG_OPTION_SYSTEM_ZLIB
+#if !defined( FT_CONFIG_OPTION_SYSTEM_ZLIB ) && !defined( USE_ZLIB_ZCALLOC )
 
   local voidpf
   zcalloc ( voidpf    opaque,
@@ -1821,7 +1840,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
     ft_gzip_free( (FT_Memory)opaque, ptr );
   }
 
-#endif /* !SYSTEM_ZLIB */
+#endif /* !SYSTEM_ZLIB && !USE_ZLIB_ZCALLOC */
 
 
 /***************************************************************************/
@@ -1880,7 +1899,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
          head[2] != Z_DEFLATED        ||
         (head[3] & FT_GZIP_RESERVED)  )
     {
-      error = Gzip_Err_Invalid_File_Format;
+      error = FT_THROW( Invalid_File_Format );
       goto Exit;
     }
 
@@ -1942,7 +1961,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
                      FT_Stream    source )
   {
     z_stream*  zstream = &zip->zstream;
-    FT_Error   error   = Gzip_Err_Ok;
+    FT_Error   error   = FT_Err_Ok;
 
 
     zip->stream = stream;
@@ -1974,7 +1993,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
 
     if ( inflateInit2( zstream, -MAX_WBITS ) != Z_OK ||
          zstream->next_in == NULL                     )
-      error = Gzip_Err_Invalid_File_Format;
+      error = FT_THROW( Invalid_File_Format );
 
   Exit:
     return error;
@@ -2045,7 +2064,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
       size = stream->read( stream, stream->pos, zip->input,
                            FT_GZIP_BUFFER_SIZE );
       if ( size == 0 )
-        return Gzip_Err_Invalid_Stream_Operation;
+        return FT_THROW( Invalid_Stream_Operation );
     }
     else
     {
@@ -2054,7 +2073,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
         size = FT_GZIP_BUFFER_SIZE;
 
       if ( size == 0 )
-        return Gzip_Err_Invalid_Stream_Operation;
+        return FT_THROW( Invalid_Stream_Operation );
 
       FT_MEM_COPY( zip->input, stream->base + stream->pos, size );
     }
@@ -2063,7 +2082,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
     zstream->next_in  = zip->input;
     zstream->avail_in = size;
 
-    return Gzip_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -2071,7 +2090,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
   ft_gzip_file_fill_output( FT_GZipFile  zip )
   {
     z_stream*  zstream = &zip->zstream;
-    FT_Error   error   = 0;
+    FT_Error   error   = FT_Err_Ok;
 
 
     zip->cursor        = zip->buffer;
@@ -2096,12 +2115,12 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
       {
         zip->limit = zstream->next_out;
         if ( zip->limit == zip->cursor )
-          error = Gzip_Err_Invalid_Stream_Operation;
+          error = FT_THROW( Invalid_Stream_Operation );
         break;
       }
       else if ( err != Z_OK )
       {
-        error = Gzip_Err_Invalid_Stream_Operation;
+        error = FT_THROW( Invalid_Stream_Operation );
         break;
       }
     }
@@ -2115,7 +2134,7 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
   ft_gzip_file_skip_output( FT_GZipFile  zip,
                             FT_ULong     count )
   {
-    FT_Error  error = Gzip_Err_Ok;
+    FT_Error  error = FT_Err_Ok;
     FT_ULong  delta;
 
 
@@ -2241,13 +2260,37 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
   }
 
 
+  static FT_ULong
+  ft_gzip_get_uncompressed_size( FT_Stream  stream )
+  {
+    FT_Error  error;
+    FT_ULong  old_pos;
+    FT_ULong  result = 0;
+
+
+    old_pos = stream->pos;
+    if ( !FT_Stream_Seek( stream, stream->size - 4 ) )
+    {
+      result = FT_Stream_ReadULong( stream, &error );
+      if ( error )
+        result = 0;
+
+      (void)FT_Stream_Seek( stream, old_pos );
+    }
+
+    return result;
+  }
+
+
+  /* documentation is in ftgzip.h */
+
   FT_EXPORT_DEF( FT_Error )
   FT_Stream_OpenGzip( FT_Stream  stream,
                       FT_Stream  source )
   {
     FT_Error     error;
     FT_Memory    memory = source->memory;
-    FT_GZipFile  zip;
+    FT_GZipFile  zip = NULL;
 
 
     /*
@@ -2273,6 +2316,52 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
       stream->descriptor.pointer = zip;
     }
 
+    /*
+     *  We use the following trick to try to dramatically improve the
+     *  performance while dealing with small files.  If the original stream
+     *  size is less than a certain threshold, we try to load the whole font
+     *  file into memory.  This saves us from using the 32KB buffer needed
+     *  to inflate the file, plus the two 4KB intermediate input/output
+     *  buffers used in the `FT_GZipFile' structure.
+     */
+    {
+      FT_ULong  zip_size = ft_gzip_get_uncompressed_size( source );
+
+
+      if ( zip_size != 0 && zip_size < 40 * 1024 )
+      {
+        FT_Byte*  zip_buff = NULL;
+
+
+        if ( !FT_ALLOC( zip_buff, zip_size ) )
+        {
+          FT_ULong  count;
+
+
+          count = ft_gzip_file_io( zip, 0, zip_buff, zip_size );
+          if ( count == zip_size )
+          {
+            ft_gzip_file_done( zip );
+            FT_FREE( zip );
+
+            stream->descriptor.pointer = NULL;
+
+            stream->size  = zip_size;
+            stream->pos   = 0;
+            stream->base  = zip_buff;
+            stream->read  = NULL;
+            stream->close = ft_gzip_stream_close;
+
+            goto Exit;
+          }
+
+          ft_gzip_file_io( zip, 0, NULL, 0 );
+          FT_FREE( zip_buff );
+        }
+        error = FT_Err_Ok;
+      }
+    }
+
     stream->size  = 0x7FFFFFFFL;  /* don't know the real size! */
     stream->pos   = 0;
     stream->base  = 0;
@@ -2283,7 +2372,64 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
     return error;
   }
 
-#else  /* !FT_CONFIG_OPTION_USE_ZLIB */
+
+  /* documentation is in ftgzip.h */
+
+  FT_EXPORT_DEF( FT_Error )
+  FT_Gzip_Uncompress( FT_Memory       memory,
+                      FT_Byte*        output,
+                      FT_ULong*       output_len,
+                      const FT_Byte*  input,
+                      FT_ULong        input_len )
+  {
+    z_stream  stream;
+    int       err;
+
+
+    /* this function is modeled after zlib's `uncompress' function */
+
+    stream.next_in  = (Bytef*)input;
+    stream.avail_in = (uInt)input_len;
+
+    stream.next_out  = output;
+    stream.avail_out = (uInt)*output_len;
+
+    stream.zalloc = (alloc_func)ft_gzip_alloc;
+    stream.zfree  = (free_func) ft_gzip_free;
+    stream.opaque = memory;
+
+    err = inflateInit2( &stream, MAX_WBITS );
+    if ( err != Z_OK )
+      return FT_THROW( Invalid_Argument );
+
+    err = inflate( &stream, Z_FINISH );
+    if ( err != Z_STREAM_END )
+    {
+      inflateEnd( &stream );
+      if ( err == Z_OK )
+        err = Z_BUF_ERROR;
+    }
+    else
+    {
+      *output_len = stream.total_out;
+
+      err = inflateEnd( &stream );
+    }
+
+    if ( err == Z_MEM_ERROR )
+      return FT_THROW( Out_Of_Memory );
+
+    if ( err == Z_BUF_ERROR )
+      return FT_THROW( Array_Too_Large );
+
+    if ( err == Z_DATA_ERROR )
+      return FT_THROW( Invalid_Table );
+
+    return FT_Err_Ok;
+  }
+
+
+#else /* !FT_CONFIG_OPTION_USE_ZLIB */
 
   FT_EXPORT_DEF( FT_Error )
   FT_Stream_OpenGzip( FT_Stream  stream,
@@ -2292,7 +2438,24 @@ ZEXPORT(uLong) adler32( /* adler, buf, len) */
     FT_UNUSED( stream );
     FT_UNUSED( source );
 
-    return Gzip_Err_Unimplemented_Feature;
+    return FT_THROW( Unimplemented_Feature );
+  }
+
+
+  FT_EXPORT_DEF( FT_Error )
+  FT_Gzip_Uncompress( FT_Memory       memory,
+                      FT_Byte*        output,
+                      FT_ULong*       output_len,
+                      const FT_Byte*  input,
+                      FT_ULong        input_len )
+  {
+    FT_UNUSED( memory );
+    FT_UNUSED( output );
+    FT_UNUSED( output_len );
+    FT_UNUSED( input );
+    FT_UNUSED( input_len );
+
+    return FT_THROW( Unimplemented_Feature );
   }
 
 #endif /* !FT_CONFIG_OPTION_USE_ZLIB */

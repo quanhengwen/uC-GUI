@@ -8,7 +8,7 @@
 /*  be used to parse compressed PCF fonts, as found with many X11 server   */
 /*  distributions.                                                         */
 /*                                                                         */
-/*  Copyright 2004, 2005, 2006 by                                          */
+/*  Copyright 2004-2006, 2009, 2010, 2012, 2013 by                         */
 /*  Albert Chin-A-Young.                                                   */
 /*                                                                         */
 /*  Based on code in src/gzip/ftgzip.c, Copyright 2004 by                  */
@@ -27,14 +27,14 @@
 #include FT_INTERNAL_STREAM_H
 #include FT_INTERNAL_DEBUG_H
 #include FT_LZW_H
-#include <string.h>
-#include <stdio.h>
+#include FT_CONFIG_STANDARD_LIBRARY_H
 
 
 #include FT_MODULE_ERRORS_H
 
 #undef __FTERRORS_H__
 
+#undef  FT_ERR_PREFIX
 #define FT_ERR_PREFIX  LZW_Err_
 #define FT_ERR_BASE    FT_Mod_Err_LZW
 
@@ -42,6 +42,10 @@
 
 
 #ifdef FT_CONFIG_OPTION_USE_LZW
+
+#ifdef FT_CONFIG_OPTION_PIC
+#error "lzw code does not support PIC yet"
+#endif
 
 #include "ftzopen.h"
 
@@ -94,7 +98,7 @@
     /* head[0] && head[1] are the magic numbers */
     if ( head[0] != 0x1f ||
          head[1] != 0x9d )
-      error = LZW_Err_Invalid_File_Format;
+      error = FT_THROW( Invalid_File_Format );
 
   Exit:
     return error;
@@ -107,7 +111,7 @@
                     FT_Stream   source )
   {
     FT_LzwState  lzw   = &zip->lzw;
-    FT_Error     error = LZW_Err_Ok;
+    FT_Error     error;
 
 
     zip->stream = stream;
@@ -119,13 +123,9 @@
     zip->pos    = 0;
 
     /* check and skip .Z header */
-    {
-      stream = source;
-
-      error = ft_lzw_check_header( source );
-      if ( error )
-        goto Exit;
-    }
+    error = ft_lzw_check_header( source );
+    if ( error )
+      goto Exit;
 
     /* initialize internal lzw variable */
     ft_lzwstate_init( lzw, source );
@@ -172,7 +172,7 @@
   {
     FT_LzwState  lzw = &zip->lzw;
     FT_ULong     count;
-    FT_Error     error   = 0;
+    FT_Error     error = FT_Err_Ok;
 
 
     zip->cursor = zip->buffer;
@@ -182,7 +182,7 @@
     zip->limit = zip->cursor + count;
 
     if ( count == 0 )
-      error = LZW_Err_Invalid_Stream_Operation;
+      error = FT_THROW( Invalid_Stream_Operation );
 
     return error;
   }
@@ -193,7 +193,7 @@
   ft_lzw_file_skip_output( FT_LZWFile  zip,
                            FT_ULong    count )
   {
-    FT_Error  error = LZW_Err_Ok;
+    FT_Error  error = FT_Err_Ok;
 
 
     /* first, we skip what we can from the output buffer */
@@ -224,7 +224,7 @@
       if ( numread < delta )
       {
         /* not enough bytes */
-        error = LZW_Err_Invalid_Stream_Operation;
+        error = FT_THROW( Invalid_Stream_Operation );
         break;
       }
 
@@ -350,7 +350,7 @@
   {
     FT_Error    error;
     FT_Memory   memory = source->memory;
-    FT_LZWFile  zip;
+    FT_LZWFile  zip = NULL;
 
 
     /*
@@ -400,7 +400,7 @@
 /*  be used to parse compressed PCF fonts, as found with many X11 server   */
 /*  distributions.                                                         */
 /*                                                                         */
-/*  Copyright 2005, 2006 by David Turner.                                  */
+/*  Copyright 2005-2007, 2009, 2011 by David Turner.                       */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
 /*  modified, and distributed under the terms of the FreeType project      */
@@ -415,55 +415,84 @@
 #include FT_INTERNAL_STREAM_H
 #include FT_INTERNAL_DEBUG_H
 
-  /* refill input buffer, return 0 on success, or -1 if eof */
+
   static int
   ft_lzwstate_refill( FT_LzwState  state )
   {
-    int  result = -1;
+    FT_ULong  count;
 
 
-    if ( !state->in_eof )
-    {
-      FT_ULong  count = FT_Stream_TryRead( state->source,
-                                           state->in_buff,
-                                           sizeof ( state->in_buff ) );
+    if ( state->in_eof )
+      return -1;
 
-      state->in_cursor = state->in_buff;
-      state->in_limit  = state->in_buff + count;
-      state->in_eof    = FT_BOOL( count < sizeof ( state->in_buff ) );
+    count = FT_Stream_TryRead( state->source,
+                               state->buf_tab,
+                               state->num_bits );  /* WHY? */
 
-      if ( count > 0 )
-        result = 0;
-    }
-    return result;
+    state->buf_size   = (FT_UInt)count;
+    state->buf_total += count;
+    state->in_eof     = FT_BOOL( count < state->num_bits );
+    state->buf_offset = 0;
+    state->buf_size   = ( state->buf_size << 3 ) - ( state->num_bits - 1 );
+
+    if ( count == 0 )  /* end of file */
+      return -1;
+
+    return 0;
   }
 
 
-  /* return new code of 'num_bits', or -1 if eof */
   static FT_Int32
-  ft_lzwstate_get_code( FT_LzwState  state,
-                        FT_UInt      num_bits )
+  ft_lzwstate_get_code( FT_LzwState  state )
   {
-    FT_Int32   result   = -1;
-    FT_UInt32  pad      = state->pad;
-    FT_UInt    pad_bits = state->pad_bits;
+    FT_UInt   num_bits = state->num_bits;
+    FT_Int    offset   = state->buf_offset;
+    FT_Byte*  p;
+    FT_Int    result;
 
 
-    while ( num_bits > pad_bits )
+    if ( state->buf_clear                    ||
+         offset >= state->buf_size           ||
+         state->free_ent >= state->free_bits )
     {
-      if ( state->in_cursor >= state->in_limit &&
-           ft_lzwstate_refill( state ) < 0     )
-        goto Exit;
+      if ( state->free_ent >= state->free_bits )
+      {
+        state->num_bits  = ++num_bits;
+        state->free_bits = state->num_bits < state->max_bits
+                           ? (FT_UInt)( ( 1UL << num_bits ) - 256 )
+                           : state->max_free + 1;
+      }
 
-      pad      |= (FT_UInt32)(*state->in_cursor++) << pad_bits;
-      pad_bits += 8;
+      if ( state->buf_clear )
+      {
+        state->num_bits  = num_bits = LZW_INIT_BITS;
+        state->free_bits = (FT_UInt)( ( 1UL << num_bits ) - 256 );
+        state->buf_clear = 0;
+      }
+
+      if ( ft_lzwstate_refill( state ) < 0 )
+        return -1;
+
+      offset = 0;
     }
 
-    result          = (FT_Int32)( pad & LZW_MASK( num_bits ) );
-    state->pad_bits = pad_bits - num_bits;
-    state->pad      = pad >> num_bits;
+    state->buf_offset = offset + num_bits;
 
-  Exit:
+    p         = &state->buf_tab[offset >> 3];
+    offset   &= 7;
+    result    = *p++ >> offset;
+    offset    = 8 - offset;
+    num_bits -= offset;
+
+    if ( num_bits >= 8 )
+    {
+      result   |= *p++ << offset;
+      offset   += 8;
+      num_bits -= 8;
+    }
+    if ( num_bits > 0 )
+      result |= ( *p & LZW_MASK( num_bits ) ) << offset;
+
     return result;
   }
 
@@ -476,8 +505,8 @@
     {
       FT_Memory  memory = state->memory;
       FT_Error   error;
-      FT_UInt    old_size = state->stack_size;
-      FT_UInt    new_size = old_size;
+      FT_Offset  old_size = state->stack_size;
+      FT_Offset  new_size = old_size;
 
       new_size = new_size + ( new_size >> 1 ) + 4;
 
@@ -485,6 +514,15 @@
       {
         state->stack = NULL;
         old_size     = 0;
+      }
+
+      /* requirement of the character stack larger than 1<<LZW_MAX_BITS */
+      /* implies bug in the decompression code                          */
+      if ( new_size > ( 1 << LZW_MAX_BITS ) )
+      {
+        new_size = 1 << LZW_MAX_BITS;
+        if ( new_size == old_size )
+          return -1;
       }
 
       if ( FT_RENEW_ARRAY( state->stack, old_size, new_size ) )
@@ -538,15 +576,14 @@
   FT_LOCAL_DEF( void )
   ft_lzwstate_reset( FT_LzwState  state )
   {
-    state->in_cursor = state->in_buff;
-    state->in_limit  = state->in_buff;
-    state->in_eof    = 0;
-    state->pad_bits  = 0;
-    state->pad       = 0;
-
-    state->stack_top = 0;
-    state->num_bits  = LZW_INIT_BITS;
-    state->phase     = FT_LZW_PHASE_START;
+    state->in_eof     = 0;
+    state->buf_offset = 0;
+    state->buf_size   = 0;
+    state->buf_clear  = 0;
+    state->buf_total  = 0;
+    state->stack_top  = 0;
+    state->num_bits   = LZW_INIT_BITS;
+    state->phase      = FT_LZW_PHASE_START;
   }
 
 
@@ -588,13 +625,13 @@
   }
 
 
-#define FTLZW_STACK_PUSH( c )                          \
-  FT_BEGIN_STMNT                                       \
-    if ( state->stack_top >= state->stack_size &&      \
-         ft_lzwstate_stack_grow( state ) < 0   )       \
-      goto Eof;                                        \
-                                                       \
-    state->stack[ state->stack_top++ ] = (FT_Byte)(c); \
+#define FTLZW_STACK_PUSH( c )                        \
+  FT_BEGIN_STMNT                                     \
+    if ( state->stack_top >= state->stack_size &&    \
+         ft_lzwstate_stack_grow( state ) < 0   )     \
+      goto Eof;                                      \
+                                                     \
+    state->stack[state->stack_top++] = (FT_Byte)(c); \
   FT_END_STMNT
 
 
@@ -605,8 +642,6 @@
   {
     FT_ULong  result = 0;
 
-    FT_UInt  num_bits = state->num_bits;
-    FT_UInt  free_ent = state->free_ent;
     FT_UInt  old_char = state->old_char;
     FT_UInt  old_code = state->old_code;
     FT_UInt  in_code  = state->in_code;
@@ -635,16 +670,17 @@
         if ( state->max_bits > LZW_MAX_BITS )
           goto Eof;
 
-        num_bits = LZW_INIT_BITS;
-        free_ent = ( state->block_mode ? LZW_FIRST : LZW_CLEAR ) - 256;
+        state->num_bits = LZW_INIT_BITS;
+        state->free_ent = ( state->block_mode ? LZW_FIRST
+                                              : LZW_CLEAR ) - 256;
         in_code  = 0;
 
-        state->free_bits = num_bits < state->max_bits
-                           ? (FT_UInt)( ( 1UL << num_bits ) - 256 )
+        state->free_bits = state->num_bits < state->max_bits
+                           ? (FT_UInt)( ( 1UL << state->num_bits ) - 256 )
                            : state->max_free + 1;
 
-        c = ft_lzwstate_get_code( state, num_bits );
-        if ( c < 0 )
+        c = ft_lzwstate_get_code( state );
+        if ( c < 0 || c > 255 )
           goto Eof;
 
         old_code = old_char = (FT_UInt)c;
@@ -666,7 +702,7 @@
 
 
       NextCode:
-        c = ft_lzwstate_get_code( state, num_bits );
+        c = ft_lzwstate_get_code( state );
         if ( c < 0 )
           goto Eof;
 
@@ -674,18 +710,15 @@
 
         if ( code == LZW_CLEAR && state->block_mode )
         {
-          free_ent = ( LZW_FIRST - 1 ) - 256; /* why not LZW_FIRST-256 ? */
-          num_bits = LZW_INIT_BITS;
+          /* why not LZW_FIRST-256 ? */
+          state->free_ent  = ( LZW_FIRST - 1 ) - 256;
+          state->buf_clear = 1;
 
-          state->free_bits = num_bits < state->max_bits
-                             ? (FT_UInt)( ( 1UL << num_bits ) - 256 )
-                             : state->max_free + 1;
+          /* not quite right, but at least more predictable */
+          old_code = 0;
+          old_char = 0;
 
-          c = ft_lzwstate_get_code( state, num_bits );
-          if ( c < 0 )
-            goto Eof;
-
-          code = (FT_UInt)c;
+          goto NextCode;
         }
 
         in_code = code; /* save code for later */
@@ -693,14 +726,21 @@
         if ( code >= 256U )
         {
           /* special case for KwKwKwK */
-          if ( code - 256U >= free_ent )
+          if ( code - 256U >= state->free_ent )
           {
+            /* corrupted LZW stream */
+            if ( code - 256U > state->free_ent )
+              goto Eof;
+
             FTLZW_STACK_PUSH( old_char );
             code = old_code;
           }
 
           while ( code >= 256U )
           {
+            if ( !state->prefix )
+              goto Eof;
+
             FTLZW_STACK_PUSH( state->suffix[code - 256] );
             code = state->prefix[code - 256];
           }
@@ -727,25 +767,18 @@
         }
 
         /* now create new entry */
-        if ( free_ent < state->max_free )
+        if ( state->free_ent < state->max_free )
         {
-          if ( free_ent >= state->prefix_size       &&
-               ft_lzwstate_prefix_grow( state ) < 0 )
+          if ( state->free_ent >= state->prefix_size &&
+               ft_lzwstate_prefix_grow( state ) < 0  )
             goto Eof;
 
-          FT_ASSERT( free_ent < state->prefix_size );
+          FT_ASSERT( state->free_ent < state->prefix_size );
 
-          state->prefix[free_ent] = (FT_UShort)old_code;
-          state->suffix[free_ent] = (FT_Byte)  old_char;
+          state->prefix[state->free_ent] = (FT_UShort)old_code;
+          state->suffix[state->free_ent] = (FT_Byte)  old_char;
 
-          if ( ++free_ent == state->free_bits )
-          {
-            num_bits++;
-
-            state->free_bits = num_bits < state->max_bits
-                               ? (FT_UInt)( ( 1UL << num_bits ) - 256 )
-                               : state->max_free + 1;
-          }
+          state->free_ent += 1;
         }
 
         old_code = in_code;
@@ -759,8 +792,6 @@
     }
 
   Exit:
-    state->num_bits = num_bits;
-    state->free_ent = free_ent;
     state->old_code = old_code;
     state->old_char = old_char;
     state->in_code  = in_code;
@@ -776,7 +807,6 @@
 /* END */
 
 
-
 #else  /* !FT_CONFIG_OPTION_USE_LZW */
 
 
@@ -787,7 +817,7 @@
     FT_UNUSED( stream );
     FT_UNUSED( source );
 
-    return LZW_Err_Unimplemented_Feature;
+    return FT_THROW( Unimplemented_Feature );
   }
 
 

@@ -11,6 +11,8 @@
 /* Huffman code lookup table entry--this entry is four bytes for machines
    that have 16-bit pointers (e.g. PC's in the small or medium model). */
 
+//JE: Renamed to ttinftrees.h
+
 #ifndef _INFTREES_H
 #define _INFTREES_H
 

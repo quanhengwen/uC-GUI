@@ -25,7 +25,7 @@
 /*                                                                         */
 /*    Auxiliary functions for PostScript fonts (body).                     */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 1996-2014 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -40,11 +40,22 @@
 #include "ft2build.h"
 #include FT_INTERNAL_POSTSCRIPT_AUX_H
 #include FT_INTERNAL_DEBUG_H
+#include FT_INTERNAL_CALC_H
 
 #include "psobjs.h"
 #include "psconv.h"
 
 #include "psauxerr.h"
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+  /* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+  /* messages during execution.                                            */
+  /*                                                                       */
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_psobjs
 
 
   /*************************************************************************/
@@ -123,8 +134,8 @@
 
 
   static FT_Error
-  reallocate_t1_table( PS_Table  table,
-                       FT_Long   new_size )
+  reallocate_t1_table( PS_Table   table,
+                       FT_Offset  new_size )
   {
     FT_Memory  memory   = table->memory;
     FT_Byte*   old_base = table->block;
@@ -139,7 +150,7 @@
     }
 
     /* copy elements and shift offsets */
-    if (old_base )
+    if ( old_base )
     {
       FT_MEM_COPY( table->block, old_base, table->capacity );
       shift_elements( table, old_base );
@@ -148,7 +159,7 @@
 
     table->capacity = new_size;
 
-    return PSaux_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -180,22 +191,28 @@
                 void*       object,
                 FT_PtrDist  length )
   {
-    if ( idx < 0 || idx > table->max_elems )
+    if ( idx < 0 || idx >= table->max_elems )
     {
       FT_ERROR(( "ps_table_add: invalid index\n" ));
-      return PSaux_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
+    }
+
+    if ( length < 0 )
+    {
+      FT_ERROR(( "ps_table_add: invalid length\n" ));
+      return FT_THROW( Invalid_Argument );
     }
 
     /* grow the base block if needed */
     if ( table->cursor + length > table->capacity )
     {
-      FT_Error   error;
-      FT_Offset  new_size  = table->capacity;
-      FT_Long    in_offset;
+      FT_Error    error;
+      FT_Offset   new_size = table->capacity;
+      FT_PtrDist  in_offset;
 
 
-      in_offset = (FT_Long)((FT_Byte*)object - table->block);
-      if ( (FT_ULong)in_offset >= table->capacity )
+      in_offset = (FT_Byte*)object - table->block;
+      if ( in_offset < 0 || (FT_Offset)in_offset >= table->capacity )
         in_offset = -1;
 
       while ( new_size < table->cursor + length )
@@ -220,7 +237,7 @@
     FT_MEM_COPY( table->block + table->cursor, object, length );
 
     table->cursor += length;
-    return PSaux_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -333,45 +350,94 @@
   }
 
 
-  /* first character must be `(' */
+#define IS_OCTAL_DIGIT( c ) ( '0' <= (c) && (c) <= '7' )
 
-  static void
+
+  /* first character must be `(';                               */
+  /* *acur is positioned at the character after the closing `)' */
+
+  static FT_Error
   skip_literal_string( FT_Byte*  *acur,
                        FT_Byte*   limit )
   {
-    FT_Byte*  cur   = *acur;
-    FT_Int    embed = 0;
+    FT_Byte*      cur   = *acur;
+    FT_Int        embed = 0;
+    FT_Error      error = FT_ERR( Invalid_File_Format );
+    unsigned int  i;
 
 
     while ( cur < limit )
     {
-      if ( *cur == '\\' )
-        cur++;
-      else if ( *cur == '(' )
+      FT_Byte  c = *cur;
+
+
+      ++cur;
+
+      if ( c == '\\' )
+      {
+        /* Red Book 3rd ed., section `Literal Text Strings', p. 29:     */
+        /* A backslash can introduce three different types              */
+        /* of escape sequences:                                         */
+        /*   - a special escaped char like \r, \n, etc.                 */
+        /*   - a one-, two-, or three-digit octal number                */
+        /*   - none of the above in which case the backslash is ignored */
+
+        if ( cur == limit )
+          /* error (or to be ignored?) */
+          break;
+
+        switch ( *cur )
+        {
+          /* skip `special' escape */
+        case 'n':
+        case 'r':
+        case 't':
+        case 'b':
+        case 'f':
+        case '\\':
+        case '(':
+        case ')':
+          ++cur;
+          break;
+
+        default:
+          /* skip octal escape or ignore backslash */
+          for ( i = 0; i < 3 && cur < limit; ++i )
+          {
+            if ( !IS_OCTAL_DIGIT( *cur ) )
+              break;
+
+            ++cur;
+          }
+        }
+      }
+      else if ( c == '(' )
         embed++;
-      else if ( *cur == ')' )
+      else if ( c == ')' )
       {
         embed--;
         if ( embed == 0 )
         {
-          cur++;
+          error = FT_Err_Ok;
           break;
         }
       }
-      cur++;
     }
 
     *acur = cur;
+
+    return error;
   }
 
 
   /* first character must be `<' */
 
-  static void
-  skip_string( PS_Parser  parser )
+  static FT_Error
+  skip_string( FT_Byte*  *acur,
+               FT_Byte*   limit )
   {
-    FT_Byte*  cur   = parser->cursor;
-    FT_Byte*  limit = parser->limit;
+    FT_Byte*  cur = *acur;
+    FT_Error  err =  FT_Err_Ok;
 
 
     while ( ++cur < limit )
@@ -388,12 +454,72 @@
     if ( cur < limit && *cur != '>' )
     {
       FT_ERROR(( "skip_string: missing closing delimiter `>'\n" ));
-      parser->error = PSaux_Err_Invalid_File_Format;
+      err = FT_THROW( Invalid_File_Format );
     }
     else
       cur++;
 
-    parser->cursor = cur;
+    *acur = cur;
+    return err;
+  }
+
+
+  /* first character must be the opening brace that */
+  /* starts the procedure                           */
+
+  /* NB: [ and ] need not match:                    */
+  /* `/foo {[} def' is a valid PostScript fragment, */
+  /* even within a Type1 font                       */
+
+  static FT_Error
+  skip_procedure( FT_Byte*  *acur,
+                  FT_Byte*   limit )
+  {
+    FT_Byte*  cur;
+    FT_Int    embed = 0;
+    FT_Error  error = FT_Err_Ok;
+
+
+    FT_ASSERT( **acur == '{' );
+
+    for ( cur = *acur; cur < limit && error == FT_Err_Ok; ++cur )
+    {
+      switch ( *cur )
+      {
+      case '{':
+        ++embed;
+        break;
+
+      case '}':
+        --embed;
+        if ( embed == 0 )
+        {
+          ++cur;
+          goto end;
+        }
+        break;
+
+      case '(':
+        error = skip_literal_string( &cur, limit );
+        break;
+
+      case '<':
+        error = skip_string( &cur, limit );
+        break;
+
+      case '%':
+        skip_comment( &cur, limit );
+        break;
+      }
+    }
+
+  end:
+    if ( embed != 0 )
+      error = FT_THROW( Invalid_File_Format );
+
+    *acur = cur;
+
+    return error;
   }
 
 
@@ -414,6 +540,7 @@
 
     FT_Byte*  cur   = parser->cursor;
     FT_Byte*  limit = parser->limit;
+    FT_Error  error = FT_Err_Ok;
 
 
     skip_spaces( &cur, limit );             /* this also skips comments */
@@ -421,16 +548,23 @@
       goto Exit;
 
     /* self-delimiting, single-character tokens */
-    if ( *cur == '[' || *cur == ']' ||
-         *cur == '{' || *cur == '}' )
+    if ( *cur == '[' || *cur == ']' )
     {
       cur++;
       goto Exit;
     }
 
+    /* skip balanced expressions (procedures and strings) */
+
+    if ( *cur == '{' )                              /* {...} */
+    {
+      error = skip_procedure( &cur, limit );
+      goto Exit;
+    }
+
     if ( *cur == '(' )                              /* (...) */
     {
-      skip_literal_string( &cur, limit );
+      error = skip_literal_string( &cur, limit );
       goto Exit;
     }
 
@@ -440,11 +574,11 @@
       {
         cur++;
         cur++;
-        goto Exit;
       }
-      parser->cursor = cur;
-      skip_string( parser );
-      return;
+      else
+        error = skip_string( &cur, limit );
+
+      goto Exit;
     }
 
     if ( *cur == '>' )
@@ -452,9 +586,9 @@
       cur++;
       if ( cur >= limit || *cur != '>' )             /* >> */
       {
-        FT_ERROR(( "ps_parser_skip_PS_token: "
-                   "unexpected closing delimiter `>'\n" ));
-        parser->error = PSaux_Err_Invalid_File_Format;
+        FT_ERROR(( "ps_parser_skip_PS_token:"
+                   " unexpected closing delimiter `>'\n" ));
+        error = FT_THROW( Invalid_File_Format );
         goto Exit;
       }
       cur++;
@@ -467,20 +601,27 @@
     /* anything else */
     while ( cur < limit )
     {
-      if ( *cur == ')' )
-      {
-        FT_ERROR(( "ps_parser_skip_PS_token: "
-                   "unexpected closing delimiter `)'\n" ));
-        parser->error = PSaux_Err_Invalid_File_Format;
-        goto Exit;
-      }
-      else if ( IS_PS_DELIM( *cur ) )
+      /* *cur might be invalid (e.g., ')' or '}'), but this   */
+      /* is handled by the test `cur == parser->cursor' below */
+      if ( IS_PS_DELIM( *cur ) )
         break;
 
       cur++;
     }
 
   Exit:
+    if ( cur < limit && cur == parser->cursor )
+    {
+      FT_ERROR(( "ps_parser_skip_PS_token:"
+                 " current token is `%c' which is self-delimiting\n"
+                 "                        "
+                 " but invalid at this point\n",
+                 *cur ));
+
+      error = FT_THROW( Invalid_File_Format );
+    }
+
+    parser->error  = error;
     parser->cursor = cur;
   }
 
@@ -501,7 +642,6 @@
   {
     FT_Byte*  cur;
     FT_Byte*  limit;
-    FT_Byte   starter, ender;
     FT_Int    embed;
 
 
@@ -524,26 +664,27 @@
     case '(':
       token->type  = T1_TOKEN_TYPE_STRING;
       token->start = cur;
-      skip_literal_string( &cur, limit );
-      if ( cur < limit )
+
+      if ( skip_literal_string( &cur, limit ) == FT_Err_Ok )
         token->limit = cur;
       break;
 
       /************* check for programs/array *****************/
     case '{':
-      token->type = T1_TOKEN_TYPE_ARRAY;
-      ender = '}';
-      goto Lookup_Ender;
+      token->type  = T1_TOKEN_TYPE_ARRAY;
+      token->start = cur;
+
+      if ( skip_procedure( &cur, limit ) == FT_Err_Ok )
+        token->limit = cur;
+      break;
 
       /************* check for table/array ********************/
+      /* XXX: in theory we should also look for "<<"          */
+      /*      since this is semantically equivalent to "[";   */
+      /*      in practice it doesn't matter (?)               */
     case '[':
-      token->type = T1_TOKEN_TYPE_ARRAY;
-      ender = ']';
-      /* fall through */
-
-    Lookup_Ender:
+      token->type  = T1_TOKEN_TYPE_ARRAY;
       embed        = 1;
-      starter      = *cur;
       token->start = cur++;
 
       /* we need this to catch `[ ]' */
@@ -553,9 +694,11 @@
 
       while ( cur < limit && !parser->error )
       {
-        if ( *cur == starter )
+        /* XXX: this is wrong because it does not      */
+        /*      skip comments, procedures, and strings */
+        if ( *cur == '[' )
           embed++;
-        else if ( *cur == ender )
+        else if ( *cur == ']' )
         {
           embed--;
           if ( embed <= 0 )
@@ -576,7 +719,7 @@
       /* ************ otherwise, it is any token **************/
     default:
       token->start = cur;
-      token->type  = T1_TOKEN_TYPE_ANY;
+      token->type  = ( *cur == '/' ? T1_TOKEN_TYPE_KEY : T1_TOKEN_TYPE_ANY );
       ps_parser_skip_PS_token( parser );
       cur = parser->cursor;
       if ( !parser->error )
@@ -592,6 +735,9 @@
     parser->cursor = cur;
   }
 
+
+  /* NB: `tokens' can be NULL if we only want to count */
+  /* the number of array elements                      */
 
   FT_LOCAL_DEF( void )
   ps_parser_to_token_array( PS_Parser  parser,
@@ -628,7 +774,7 @@
         if ( !token.type )
           break;
 
-        if ( cur < limit )
+        if ( tokens != NULL && cur < limit )
           *cur = token;
 
         cur++;
@@ -643,6 +789,8 @@
 
 
   /* first character must be a delimiter or a part of a number */
+  /* NB: `coords' can be NULL if we just want to skip the      */
+  /*     array; in this case we ignore `max_coords'            */
 
   static FT_Int
   ps_tocoordarray( FT_Byte*  *acur,
@@ -665,8 +813,7 @@
 
     if ( c == '[' )
       ender = ']';
-
-    if ( c == '{' )
+    else if ( c == '{' )
       ender = '}';
 
     if ( ender )
@@ -675,23 +822,38 @@
     /* now, read the coordinates */
     while ( cur < limit )
     {
+      FT_Short  dummy;
+      FT_Byte*  old_cur;
+
+
       /* skip whitespace in front of data */
       skip_spaces( &cur, limit );
       if ( cur >= limit )
         goto Exit;
 
-      if ( count >= max_coords )
-        break;
-
-      if ( c == ender )
+      if ( *cur == ender )
       {
         cur++;
         break;
       }
 
-      coords[count] =
+      old_cur = cur;
+
+      if ( coords != NULL && count >= max_coords )
+        break;
+
+      /* call PS_Conv_ToFixed() even if coords == NULL */
+      /* to properly parse number at `cur'             */
+      *( coords != NULL ? &coords[count] : &dummy ) =
         (FT_Short)( PS_Conv_ToFixed( &cur, limit, 0 ) >> 16 );
-      count++;
+
+      if ( old_cur == cur )
+      {
+        count = -1;
+        goto Exit;
+      }
+      else
+        count++;
 
       if ( !ender )
         break;
@@ -704,6 +866,10 @@
 
 
   /* first character must be a delimiter or a part of a number */
+  /* NB: `values' can be NULL if we just want to skip the      */
+  /*     array; in this case we ignore `max_values'            */
+  /*                                                           */
+  /* return number of successfully parsed values               */
 
   static FT_Int
   ps_tofixedarray( FT_Byte*  *acur,
@@ -727,8 +893,7 @@
 
     if ( c == '[' )
       ender = ']';
-
-    if ( c == '{' )
+    else if ( c == '{' )
       ender = '}';
 
     if ( ender )
@@ -737,22 +902,38 @@
     /* now, read the values */
     while ( cur < limit )
     {
+      FT_Fixed  dummy;
+      FT_Byte*  old_cur;
+
+
       /* skip whitespace in front of data */
       skip_spaces( &cur, limit );
       if ( cur >= limit )
         goto Exit;
 
-      if ( count >= max_values )
-        break;
-
-      if ( c == ender )
+      if ( *cur == ender )
       {
         cur++;
         break;
       }
 
-      values[count] = PS_Conv_ToFixed( &cur, limit, power_ten );
-      count++;
+      old_cur = cur;
+
+      if ( values != NULL && count >= max_values )
+        break;
+
+      /* call PS_Conv_ToFixed() even if coords == NULL */
+      /* to properly parse number at `cur'             */
+      *( values != NULL ? &values[count] : &dummy ) =
+        PS_Conv_ToFixed( &cur, limit, power_ten );
+
+      if ( old_cur == cur )
+      {
+        count = -1;
+        goto Exit;
+      }
+      else
+        count++;
 
       if ( !ender )
         break;
@@ -869,12 +1050,13 @@
                         FT_UInt         max_objects,
                         FT_ULong*       pflags )
   {
-    T1_TokenRec  token;
-    FT_Byte*     cur;
-    FT_Byte*     limit;
-    FT_UInt      count;
-    FT_UInt      idx;
-    FT_Error     error;
+    T1_TokenRec   token;
+    FT_Byte*      cur;
+    FT_Byte*      limit;
+    FT_UInt       count;
+    FT_UInt       idx;
+    FT_Error      error;
+    T1_FieldType  type;
 
 
     /* this also skips leading whitespace */
@@ -887,8 +1069,10 @@
     cur   = token.start;
     limit = token.limit;
 
+    type = field->type;
+
     /* we must detect arrays in /FontBBox */
-    if ( field->type == T1_FIELD_TYPE_BBOX )
+    if ( type == T1_FIELD_TYPE_BBOX )
     {
       T1_TokenRec  token2;
       FT_Byte*     old_cur   = parser->cursor;
@@ -904,17 +1088,21 @@
       parser->limit  = old_limit;
 
       if ( token2.type == T1_TOKEN_TYPE_ARRAY )
+      {
+        type = T1_FIELD_TYPE_MM_BBOX;
         goto FieldArray;
+      }
     }
     else if ( token.type == T1_TOKEN_TYPE_ARRAY )
     {
+      count = max_objects;
+
     FieldArray:
       /* if this is an array and we have no blend, an error occurs */
       if ( max_objects == 0 )
         goto Fail;
 
-      count = max_objects;
-      idx   = 1;
+      idx = 1;
 
       /* don't include delimiters */
       cur++;
@@ -930,7 +1118,7 @@
 
       skip_spaces( &cur, limit );
 
-      switch ( field->type )
+      switch ( type )
       {
       case T1_FIELD_TYPE_BOOL:
         val = ps_tobool( &cur, limit );
@@ -978,17 +1166,42 @@
           if ( cur >= limit )
             break;
 
-          if ( field->type == T1_FIELD_TYPE_KEY )
+          /* we allow both a string or a name   */
+          /* for cases like /FontName (foo) def */
+          if ( token.type == T1_TOKEN_TYPE_KEY )
           {
             /* don't include leading `/' */
             len--;
             cur++;
           }
-          else
+          else if ( token.type == T1_TOKEN_TYPE_STRING )
           {
-            /* don't include delimiting parentheses */
+            /* don't include delimiting parentheses    */
+            /* XXX we don't handle <<...>> here        */
+            /* XXX should we convert octal escapes?    */
+            /*     if so, what encoding should we use? */
             cur++;
             len -= 2;
+          }
+          else
+          {
+            FT_ERROR(( "ps_parser_load_field:"
+                       " expected a name or string\n"
+                       "                     "
+                       " but found token of type %d instead\n",
+                       token.type ));
+            error = FT_THROW( Invalid_File_Format );
+            goto Exit;
+          }
+
+          /* for this to work (FT_String**)q must have been */
+          /* initialized to NULL                            */
+          if ( *(FT_String**)q != NULL )
+          {
+            FT_TRACE0(( "ps_parser_load_field: overwriting field %s\n",
+                        field->ident ));
+            FT_FREE( *(FT_String**)q );
+            *(FT_String**)q = NULL;
           }
 
           if ( FT_ALLOC( string, len + 1 ) )
@@ -1005,9 +1218,18 @@
         {
           FT_Fixed  temp[4];
           FT_BBox*  bbox = (FT_BBox*)q;
+          FT_Int    result;
 
 
-          (void)ps_tofixedarray( &token.start, token.limit, 4, temp, 0 );
+          result = ps_tofixedarray( &cur, limit, 4, temp, 0 );
+
+          if ( result < 4 )
+          {
+            FT_ERROR(( "ps_parser_load_field:"
+                       " expected four integers in bounding box\n" ));
+            error = FT_THROW( Invalid_File_Format );
+            goto Exit;
+          }
 
           bbox->xMin = FT_RoundFix( temp[0] );
           bbox->yMin = FT_RoundFix( temp[1] );
@@ -1016,8 +1238,56 @@
         }
         break;
 
+      case T1_FIELD_TYPE_MM_BBOX:
+        {
+          FT_Memory  memory = parser->memory;
+          FT_Fixed*  temp;
+          FT_Int     result;
+          FT_UInt    i;
+
+
+          if ( FT_NEW_ARRAY( temp, max_objects * 4 ) )
+            goto Exit;
+
+          for ( i = 0; i < 4; i++ )
+          {
+            result = ps_tofixedarray( &cur, limit, max_objects,
+                                      temp + i * max_objects, 0 );
+            if ( result < 0 || (FT_UInt)result < max_objects )
+            {
+              FT_ERROR(( "ps_parser_load_field:"
+                         " expected %d integers in the %s subarray\n"
+                         "                     "
+                         " of /FontBBox in the /Blend dictionary\n",
+                         max_objects,
+                         i == 0 ? "first"
+                                : ( i == 1 ? "second"
+                                           : ( i == 2 ? "third"
+                                                      : "fourth" ) ) ));
+              error = FT_THROW( Invalid_File_Format );
+              goto Exit;
+            }
+
+            skip_spaces( &cur, limit );
+          }
+
+          for ( i = 0; i < max_objects; i++ )
+          {
+            FT_BBox*  bbox = (FT_BBox*)objects[i];
+
+
+            bbox->xMin = FT_RoundFix( temp[i                  ] );
+            bbox->yMin = FT_RoundFix( temp[i +     max_objects] );
+            bbox->xMax = FT_RoundFix( temp[i + 2 * max_objects] );
+            bbox->yMax = FT_RoundFix( temp[i + 3 * max_objects] );
+          }
+
+          FT_FREE( temp );
+        }
+        break;
+
       default:
-        /* an error occured */
+        /* an error occurred */
         goto Fail;
       }
     }
@@ -1029,13 +1299,13 @@
     FT_UNUSED( pflags );
 #endif
 
-    error = PSaux_Err_Ok;
+    error = FT_Err_Ok;
 
   Exit:
     return error;
 
   Fail:
-    error = PSaux_Err_Invalid_File_Format;
+    error = FT_THROW( Invalid_File_Format );
     goto Exit;
   }
 
@@ -1053,34 +1323,35 @@
     T1_TokenRec  elements[T1_MAX_TABLE_ELEMENTS];
     T1_Token     token;
     FT_Int       num_elements;
-    FT_Error     error = PSaux_Err_Ok;
+    FT_Error     error = FT_Err_Ok;
     FT_Byte*     old_cursor;
     FT_Byte*     old_limit;
     T1_FieldRec  fieldrec = *(T1_Field)field;
 
 
-#if 1
     fieldrec.type = T1_FIELD_TYPE_INTEGER;
-    if ( field->type == T1_FIELD_TYPE_FIXED_ARRAY )
+    if ( field->type == T1_FIELD_TYPE_FIXED_ARRAY ||
+         field->type == T1_FIELD_TYPE_BBOX        )
       fieldrec.type = T1_FIELD_TYPE_FIXED;
-#endif
 
     ps_parser_to_token_array( parser, elements,
                               T1_MAX_TABLE_ELEMENTS, &num_elements );
     if ( num_elements < 0 )
     {
-      error = PSaux_Err_Ignore;
+      error = FT_ERR( Ignore );
       goto Exit;
     }
-    if ( num_elements > T1_MAX_TABLE_ELEMENTS )
-      num_elements = T1_MAX_TABLE_ELEMENTS;
+    if ( (FT_UInt)num_elements > field->array_max )
+      num_elements = field->array_max;
 
     old_cursor = parser->cursor;
     old_limit  = parser->limit;
 
-    /* we store the elements count */
-    *(FT_Byte*)( (FT_Byte*)objects[0] + field->count_offset ) =
-      (FT_Byte)num_elements;
+    /* we store the elements count if necessary;           */
+    /* we further assume that `count_offset' can't be zero */
+    if ( field->type != T1_FIELD_TYPE_BBOX && field->count_offset != 0 )
+      *(FT_Byte*)( (FT_Byte*)objects[0] + field->count_offset ) =
+        (FT_Byte)num_elements;
 
     /* we now load each element, adjusting the field.offset on each one */
     token = elements;
@@ -1120,14 +1391,14 @@
   FT_LOCAL_DEF( FT_Error )
   ps_parser_to_bytes( PS_Parser  parser,
                       FT_Byte*   bytes,
-                      FT_Long    max_bytes,
+                      FT_Offset  max_bytes,
                       FT_Long*   pnum_bytes,
                       FT_Bool    delimiters )
   {
-    FT_Error  error = PSaux_Err_Ok;
+    FT_Error  error = FT_Err_Ok;
     FT_Byte*  cur;
-    
-    
+
+
     ps_parser_skip_spaces( parser );
     cur = parser->cursor;
 
@@ -1139,7 +1410,7 @@
       if ( *cur != '<' )
       {
         FT_ERROR(( "ps_parser_to_bytes: Missing starting delimiter `<'\n" ));
-        error = PSaux_Err_Invalid_File_Format;
+        error = FT_THROW( Invalid_File_Format );
         goto Exit;
       }
 
@@ -1155,8 +1426,8 @@
     {
       if ( cur < parser->limit && *cur != '>' )
       {
-        FT_ERROR(( "ps_tobytes: Missing closing delimiter `>'\n" ));
-        error = PSaux_Err_Invalid_File_Format;
+        FT_ERROR(( "ps_parser_to_bytes: Missing closing delimiter `>'\n" ));
+        error = FT_THROW( Invalid_File_Format );
         goto Exit;
       }
 
@@ -1226,7 +1497,7 @@
                   FT_Byte*   limit,
                   FT_Memory  memory )
   {
-    parser->error  = PSaux_Err_Ok;
+    parser->error  = FT_Err_Ok;
     parser->base   = base;
     parser->limit  = limit;
     parser->cursor = base;
@@ -1301,12 +1572,6 @@
         builder->hints_funcs = glyph->internal->glyph_hints;
     }
 
-    if ( size )
-    {
-      builder->scale_x = size->metrics.x_scale;
-      builder->scale_y = size->metrics.y_scale;
-    }
-
     builder->pos_x = 0;
     builder->pos_y = 0;
 
@@ -1368,16 +1633,9 @@
       FT_Byte*    control = (FT_Byte*)outline->tags + outline->n_points;
 
 
-      if ( builder->shift )
-      {
-        x >>= 16;
-        y >>= 16;
-      }
-      point->x = x;
-      point->y = y;
+      point->x = FIXED_TO_INT( x );
+      point->y = FIXED_TO_INT( y );
       *control = (FT_Byte)( flag ? FT_CURVE_TAG_ON : FT_CURVE_TAG_CUBIC );
-
-      builder->last = *point;
     }
     outline->n_points++;
   }
@@ -1408,10 +1666,17 @@
     FT_Error     error;
 
 
+    /* this might happen in invalid fonts */
+    if ( !outline )
+    {
+      FT_ERROR(( "t1_builder_add_contour: no outline to add points to\n" ));
+      return FT_THROW( Invalid_File_Format );
+    }
+
     if ( !builder->load_points )
     {
       outline->n_contours++;
-      return PSaux_Err_Ok;
+      return FT_Err_Ok;
     }
 
     error = FT_GLYPHLOADER_CHECK_POINTS( builder->loader, 0, 1 );
@@ -1434,14 +1699,14 @@
                           FT_Pos      x,
                           FT_Pos      y )
   {
-    FT_Error  error = PSaux_Err_Invalid_File_Format;
+    FT_Error  error = FT_ERR( Invalid_File_Format );
 
 
     /* test whether we are building a new contour */
 
     if ( builder->parse_state == T1_Parse_Have_Path )
-      error = PSaux_Err_Ok;
-    else if ( builder->parse_state == T1_Parse_Have_Moveto )
+      error = FT_Err_Ok;
+    else
     {
       builder->parse_state = T1_Parse_Have_Path;
       error = t1_builder_add_contour( builder );
@@ -1458,26 +1723,23 @@
   t1_builder_close_contour( T1_Builder  builder )
   {
     FT_Outline*  outline = builder->current;
+    FT_Int       first;
 
 
     if ( !outline )
       return;
 
-    /* XXXX: We must not include the last point in the path if it */
-    /*       is located on the first point.                       */
+    first = outline->n_contours <= 1
+            ? 0 : outline->contours[outline->n_contours - 2] + 1;
+
+    /* We must not include the last point in the path if it */
+    /* is located on the first point.                       */
     if ( outline->n_points > 1 )
     {
-      FT_Int      first   = 0;
       FT_Vector*  p1      = outline->points + first;
       FT_Vector*  p2      = outline->points + outline->n_points - 1;
       FT_Byte*    control = (FT_Byte*)outline->tags + outline->n_points - 1;
 
-
-      if ( outline->n_contours > 1 )
-      {
-        first = outline->contours[outline->n_contours - 2] + 1;
-        p1    = outline->points + first;
-      }
 
       /* `delete' last point only if it coincides with the first */
       /* point and it is not a control point (which can happen). */
@@ -1487,8 +1749,18 @@
     }
 
     if ( outline->n_contours > 0 )
-      outline->contours[outline->n_contours - 1] =
-        (short)( outline->n_points - 1 );
+    {
+      /* Don't add contours only consisting of one point, i.e.,  */
+      /* check whether the first and the last point is the same. */
+      if ( first == outline->n_points - 1 )
+      {
+        outline->n_contours--;
+        outline->n_points--;
+      }
+      else
+        outline->contours[outline->n_contours - 1] =
+          (short)( outline->n_points - 1 );
+    }
   }
 
 
@@ -1514,7 +1786,6 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  psauxmod.c                                                             */
@@ -1640,7 +1911,7 @@
   const FT_Module_Class  psaux_module_class =
   {
     0,
-    sizeof( FT_ModuleRec ),
+    sizeof ( FT_ModuleRec ),
     "psaux",
     0x20000L,
     0x20000L,
@@ -1654,14 +1925,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  t1decode.c                                                             */
 /*                                                                         */
 /*    PostScript Type 1 decoding routines (body).                          */
 /*                                                                         */
-/*  Copyright 2000-2001, 2002, 2003, 2004, 2005 by                         */
+/*  Copyright 2000-2013 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1674,6 +1944,7 @@
 
 
 #include "ft2build.h"
+#include FT_INTERNAL_CALC_H
 #include FT_INTERNAL_DEBUG_H
 #include FT_INTERNAL_POSTSCRIPT_HINTS_H
 #include FT_OUTLINE_H
@@ -1683,6 +1954,8 @@
 
 #include "psauxerr.h"
 
+/* ensure proper sign extension */
+#define Fix2Int( f )  ( (FT_Int)(FT_Short)( (f) >> 16 ) )
 
   /*************************************************************************/
   /*                                                                       */
@@ -1722,6 +1995,7 @@
     op_pop,
     op_return,
     op_setcurrentpoint,
+    op_unknown15,
 
     op_max    /* never remove this one */
 
@@ -1756,7 +2030,8 @@
     1, /* callsubr */
     0, /* pop */
     0, /* return */
-    2  /* setcurrentpoint */
+    2, /* setcurrentpoint */
+    2  /* opcode 15 (undocumented and obsolete) */
   };
 
 
@@ -1799,7 +2074,8 @@
       FT_String*  name = (FT_String*)decoder->glyph_names[n];
 
 
-      if ( name && name[0] == glyph_name[0]  &&
+      if ( name                               &&
+           name[0] == glyph_name[0]           &&
            ft_strcmp( name, glyph_name ) == 0 )
         return n;
     }
@@ -1848,27 +2124,59 @@
 #endif
     FT_Vector    left_bearing, advance;
 
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
+    T1_Face      face  = (T1_Face)decoder->builder.face;
+#endif
+
+
+    if ( decoder->seac )
+    {
+      FT_ERROR(( "t1operator_seac: invalid nested seac\n" ));
+      return FT_THROW( Syntax_Error );
+    }
+
+    if ( decoder->builder.metrics_only )
+    {
+      FT_ERROR(( "t1operator_seac: unexpected seac\n" ));
+      return FT_THROW( Syntax_Error );
+    }
 
     /* seac weirdness */
     adx += decoder->builder.left_bearing.x;
 
     /* `glyph_names' is set to 0 for CID fonts which do not */
     /* include an encoding.  How can we deal with these?    */
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
+    if ( decoder->glyph_names == 0                   &&
+         !face->root.internal->incremental_interface )
+#else
     if ( decoder->glyph_names == 0 )
+#endif /* FT_CONFIG_OPTION_INCREMENTAL */
     {
-      FT_ERROR(( "t1operator_seac:" ));
-      FT_ERROR(( " glyph names table not available in this font!\n" ));
-      return PSaux_Err_Syntax_Error;
+      FT_ERROR(( "t1operator_seac:"
+                 " glyph names table not available in this font\n" ));
+      return FT_THROW( Syntax_Error );
     }
 
-    bchar_index = t1_lookup_glyph_by_stdcharcode( decoder, bchar );
-    achar_index = t1_lookup_glyph_by_stdcharcode( decoder, achar );
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
+    if ( face->root.internal->incremental_interface )
+    {
+      /* the caller must handle the font encoding also */
+      bchar_index = bchar;
+      achar_index = achar;
+    }
+    else
+#endif
+    {
+      bchar_index = t1_lookup_glyph_by_stdcharcode( decoder, bchar );
+      achar_index = t1_lookup_glyph_by_stdcharcode( decoder, achar );
+    }
 
     if ( bchar_index < 0 || achar_index < 0 )
     {
-      FT_ERROR(( "t1operator_seac:" ));
-      FT_ERROR(( " invalid seac character code arguments\n" ));
-      return PSaux_Err_Syntax_Error;
+      FT_ERROR(( "t1operator_seac:"
+                 " invalid seac character code arguments\n" ));
+      return FT_THROW( Syntax_Error );
     }
 
     /* if we are trying to load a composite glyph, do not load the */
@@ -1898,8 +2206,8 @@
       /* subglyph 1 = accent character */
       subg->index = achar_index;
       subg->flags = FT_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES;
-      subg->arg1  = (FT_Int)( adx - asb );
-      subg->arg2  = (FT_Int)ady;
+      subg->arg1  = (FT_Int)FIXED_TO_INT( adx - asb );
+      subg->arg2  = (FT_Int)FIXED_TO_INT( ady );
 
       /* set up remaining glyph fields */
       glyph->num_subglyphs = 2;
@@ -1915,7 +2223,10 @@
 
     FT_GlyphLoader_Prepare( decoder->builder.loader );  /* prepare loader */
 
+    /* the seac operator must not be nested */
+    decoder->seac = TRUE;
     error = t1_decoder_parse_glyph( decoder, bchar_index );
+    decoder->seac = FALSE;
     if ( error )
       goto Exit;
 
@@ -1933,7 +2244,11 @@
 
     /* Now load `achar' on top of */
     /* the base outline           */
+
+    /* the seac operator must not be nested */
+    decoder->seac = TRUE;
     error = t1_decoder_parse_glyph( decoder, achar_index );
+    decoder->seac = FALSE;
     if ( error )
       goto Exit;
 
@@ -1980,17 +2295,26 @@
     FT_Byte*         limit;
     T1_Builder       builder = &decoder->builder;
     FT_Pos           x, y, orig_x, orig_y;
+    FT_Int           known_othersubr_result_cnt   = 0;
+    FT_Int           unknown_othersubr_result_cnt = 0;
+    FT_Bool          large_int;
+    FT_Fixed         seed;
 
     T1_Hints_Funcs   hinter;
 
+#ifdef FT_DEBUG_LEVEL_TRACE
+    FT_Bool          bol = TRUE;
+#endif
 
-    /* we don't want to touch the source code -- use macro trick */
-#define start_point    t1_builder_start_point
-#define check_points   t1_builder_check_points
-#define add_point      t1_builder_add_point
-#define add_point1     t1_builder_add_point1
-#define add_contour    t1_builder_add_contour
-#define close_contour  t1_builder_close_contour
+
+    /* compute random seed from stack address of parameter */
+    seed = (FT_Fixed)( ( (FT_PtrDist)(char*)&seed              ^
+                         (FT_PtrDist)(char*)&decoder           ^
+                         (FT_PtrDist)(char*)&charstring_base ) &
+                         FT_ULONG_MAX ) ;
+    seed = ( seed ^ ( seed >> 10 ) ^ ( seed >> 20 ) ) & 0xFFFFL;
+    if ( seed == 0 )
+      seed = 0x7384;
 
     /* First of all, initialize the decoder */
     decoder->top  = decoder->stack;
@@ -2001,11 +2325,24 @@
 
     hinter = (T1_Hints_Funcs)builder->hints_funcs;
 
+    /* a font that reads BuildCharArray without setting */
+    /* its values first is buggy, but ...               */
+    FT_ASSERT( ( decoder->len_buildchar == 0 ) ==
+               ( decoder->buildchar == NULL )  );
+
+    if ( decoder->buildchar && decoder->len_buildchar > 0 )
+      ft_memset( &decoder->buildchar[0],
+                 0,
+                 sizeof ( decoder->buildchar[0] ) * decoder->len_buildchar );
+
+    FT_TRACE4(( "\n"
+                "Start charstring\n" ));
+
     zone->base           = charstring_base;
     limit = zone->limit  = charstring_base + charstring_len;
     ip    = zone->cursor = zone->base;
 
-    error = PSaux_Err_Ok;
+    error = FT_Err_Ok;
 
     x = orig_x = builder->pos_x;
     y = orig_y = builder->pos_y;
@@ -2014,13 +2351,26 @@
     if ( hinter )
       hinter->open( hinter->hints );
 
+    large_int = FALSE;
+
     /* now, execute loop */
     while ( ip < limit )
     {
       FT_Long*     top   = decoder->top;
       T1_Operator  op    = op_none;
-      FT_Long      value = 0;
+      FT_Int32     value = 0;
 
+
+      FT_ASSERT( known_othersubr_result_cnt == 0   ||
+                 unknown_othersubr_result_cnt == 0 );
+
+#ifdef FT_DEBUG_LEVEL_TRACE
+      if ( bol )
+      {
+        FT_TRACE5(( " (%d)", decoder->top - decoder->stack ));
+        bol = FALSE;
+      }
+#endif
 
       /*********************************************************************/
       /*                                                                   */
@@ -2071,7 +2421,7 @@
         break;
 
       case 15:          /* undocumented, obsolete operator */
-        op = op_none;
+        op = op_unknown15;
         break;
 
       case 21:
@@ -2091,8 +2441,8 @@
       case 12:
         if ( ip > limit )
         {
-          FT_ERROR(( "t1_decoder_parse_charstrings: "
-                     "invalid escape (12+EOF)\n" ));
+          FT_ERROR(( "t1_decoder_parse_charstrings:"
+                     " invalid escape (12+EOF)\n" ));
           goto Syntax_Error;
         }
 
@@ -2127,8 +2477,8 @@
           break;
 
         default:
-          FT_ERROR(( "t1_decoder_parse_charstrings: "
-                     "invalid escape (12+%d)\n",
+          FT_ERROR(( "t1_decoder_parse_charstrings:"
+                     " invalid escape (12+%d)\n",
                      ip[-1] ));
           goto Syntax_Error;
         }
@@ -2137,44 +2487,96 @@
       case 255:    /* four bytes integer */
         if ( ip + 4 > limit )
         {
-          FT_ERROR(( "t1_decoder_parse_charstrings: "
-                     "unexpected EOF in integer\n" ));
+          FT_ERROR(( "t1_decoder_parse_charstrings:"
+                     " unexpected EOF in integer\n" ));
           goto Syntax_Error;
         }
 
-        value = (FT_Int32)( ((FT_Long)ip[0] << 24) |
-                            ((FT_Long)ip[1] << 16) |
-                            ((FT_Long)ip[2] << 8 ) |
-                                      ip[3] );
+        value = (FT_Int32)( ( (FT_UInt32)ip[0] << 24 ) |
+                            ( (FT_UInt32)ip[1] << 16 ) |
+                            ( (FT_UInt32)ip[2] << 8  ) |
+                              (FT_UInt32)ip[3]         );
         ip += 4;
+
+        /* According to the specification, values > 32000 or < -32000 must */
+        /* be followed by a `div' operator to make the result be in the    */
+        /* range [-32000;32000].  We expect that the second argument of    */
+        /* `div' is not a large number.  Additionally, we don't handle     */
+        /* stuff like `<large1> <large2> <num> div <num> div' or           */
+        /* <large1> <large2> <num> div div'.  This is probably not allowed */
+        /* anyway.                                                         */
+        if ( value > 32000 || value < -32000 )
+        {
+          if ( large_int )
+          {
+            FT_ERROR(( "t1_decoder_parse_charstrings:"
+                       " no `div' after large integer\n" ));
+          }
+          else
+            large_int = TRUE;
+        }
+        else
+        {
+          if ( !large_int )
+            value = (FT_Int32)( (FT_UInt32)value << 16 );
+        }
+
         break;
 
       default:
         if ( ip[-1] >= 32 )
         {
           if ( ip[-1] < 247 )
-            value = (FT_Long)ip[-1] - 139;
+            value = (FT_Int32)ip[-1] - 139;
           else
           {
             if ( ++ip > limit )
             {
-              FT_ERROR(( "t1_decoder_parse_charstrings: " ));
-              FT_ERROR(( "unexpected EOF in integer\n" ));
+              FT_ERROR(( "t1_decoder_parse_charstrings:"
+                         " unexpected EOF in integer\n" ));
               goto Syntax_Error;
             }
 
             if ( ip[-2] < 251 )
-              value =  ( ( (FT_Long)ip[-2] - 247 ) << 8 ) + ip[-1] + 108;
+              value =    ( ( ip[-2] - 247 ) * 256 ) + ip[-1] + 108;
             else
-              value = -( ( ( (FT_Long)ip[-2] - 251 ) << 8 ) + ip[-1] + 108 );
+              value = -( ( ( ip[-2] - 251 ) * 256 ) + ip[-1] + 108 );
           }
+
+          if ( !large_int )
+            value = (FT_Int32)( (FT_UInt32)value << 16 );
         }
         else
         {
-          FT_ERROR(( "t1_decoder_parse_charstrings: "
-                     "invalid byte (%d)\n", ip[-1] ));
+          FT_ERROR(( "t1_decoder_parse_charstrings:"
+                     " invalid byte (%d)\n", ip[-1] ));
           goto Syntax_Error;
         }
+      }
+
+      if ( unknown_othersubr_result_cnt > 0 )
+      {
+        switch ( op )
+        {
+        case op_callsubr:
+        case op_return:
+        case op_none:
+        case op_pop:
+          break;
+
+        default:
+          /* all operands have been transferred by previous pops */
+          unknown_othersubr_result_cnt = 0;
+          break;
+        }
+      }
+
+      if ( large_int && !( op == op_none || op == op_div ) )
+      {
+        FT_ERROR(( "t1_decoder_parse_charstrings:"
+                   " no `div' after large integer\n" ));
+
+        large_int = FALSE;
       }
 
       /*********************************************************************/
@@ -2186,33 +2588,104 @@
       {
         if ( top - decoder->stack >= T1_MAX_CHARSTRINGS_OPERANDS )
         {
-          FT_ERROR(( "t1_decoder_parse_charstrings: stack overflow!\n" ));
+          FT_ERROR(( "t1_decoder_parse_charstrings: stack overflow\n" ));
           goto Syntax_Error;
         }
 
-        FT_TRACE4(( " %ld", value ));
+#ifdef FT_DEBUG_LEVEL_TRACE
+        if ( large_int )
+          FT_TRACE4(( " %ld", value ));
+        else
+          FT_TRACE4(( " %ld", Fix2Int( value ) ));
+#endif
 
         *top++       = value;
         decoder->top = top;
       }
       else if ( op == op_callothersubr )  /* callothersubr */
       {
-        FT_TRACE4(( " callothersubr" ));
+        FT_Int  subr_no;
+        FT_Int  arg_cnt;
+
+
+#ifdef FT_DEBUG_LEVEL_TRACE
+        FT_TRACE4(( " callothersubr\n" ));
+        bol = TRUE;
+#endif
 
         if ( top - decoder->stack < 2 )
           goto Stack_Underflow;
 
         top -= 2;
-        switch ( (FT_Int)top[1] )
+
+        subr_no = Fix2Int( top[1] );
+        arg_cnt = Fix2Int( top[0] );
+
+        /***********************************************************/
+        /*                                                         */
+        /* remove all operands to callothersubr from the stack     */
+        /*                                                         */
+        /* for handled othersubrs, where we know the number of     */
+        /* arguments, we increase the stack by the value of        */
+        /* known_othersubr_result_cnt                              */
+        /*                                                         */
+        /* for unhandled othersubrs the following pops adjust the  */
+        /* stack pointer as necessary                              */
+
+        if ( arg_cnt > top - decoder->stack )
+          goto Stack_Underflow;
+
+        top -= arg_cnt;
+
+        known_othersubr_result_cnt   = 0;
+        unknown_othersubr_result_cnt = 0;
+
+        /* XXX TODO: The checks to `arg_count == <whatever>'       */
+        /* might not be correct; an othersubr expects a certain    */
+        /* number of operands on the PostScript stack (as opposed  */
+        /* to the T1 stack) but it doesn't have to put them there  */
+        /* by itself; previous othersubrs might have left the      */
+        /* operands there if they were not followed by an          */
+        /* appropriate number of pops                              */
+        /*                                                         */
+        /* On the other hand, Adobe Reader 7.0.8 for Linux doesn't */
+        /* accept a font that contains charstrings like            */
+        /*                                                         */
+        /*     100 200 2 20 callothersubr                          */
+        /*     300 1 20 callothersubr pop                          */
+        /*                                                         */
+        /* Perhaps this is the reason why BuildCharArray exists.   */
+
+        switch ( subr_no )
         {
+        case 0:                     /* end flex feature */
+          if ( arg_cnt != 3 )
+            goto Unexpected_OtherSubr;
+
+          if ( decoder->flex_state       == 0 ||
+               decoder->num_flex_vectors != 7 )
+          {
+            FT_ERROR(( "t1_decoder_parse_charstrings:"
+                       " unexpected flex end\n" ));
+            goto Syntax_Error;
+          }
+
+          /* the two `results' are popped by the following setcurrentpoint */
+          top[0] = x;
+          top[1] = y;
+          known_othersubr_result_cnt = 2;
+          break;
+
         case 1:                     /* start flex feature */
-          if ( top[0] != 0 )
+          if ( arg_cnt != 0 )
             goto Unexpected_OtherSubr;
 
           decoder->flex_state        = 1;
           decoder->num_flex_vectors  = 0;
-          if ( start_point( builder, x, y ) ||
-               check_points( builder, 6 )   )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != FT_Err_Ok                                   ||
+               ( error = t1_builder_check_points( builder, 6 ) )
+                 != FT_Err_Ok                                   )
             goto Fail;
           break;
 
@@ -2221,71 +2694,36 @@
             FT_Int  idx;
 
 
-            if ( top[0] != 0 )
+            if ( arg_cnt != 0 )
               goto Unexpected_OtherSubr;
+
+            if ( decoder->flex_state == 0 )
+            {
+              FT_ERROR(( "t1_decoder_parse_charstrings:"
+                         " missing flex start\n" ));
+              goto Syntax_Error;
+            }
 
             /* note that we should not add a point for index 0; */
             /* this will move our current position to the flex  */
             /* point without adding any point to the outline    */
             idx = decoder->num_flex_vectors++;
             if ( idx > 0 && idx < 7 )
-              add_point( builder,
-                         x,
-                         y,
-                         (FT_Byte)( idx == 3 || idx == 6 ) );
+              t1_builder_add_point( builder,
+                                    x,
+                                    y,
+                                    (FT_Byte)( idx == 3 || idx == 6 ) );
           }
-          break;
-
-        case 0:                     /* end flex feature */
-          if ( top[0] != 3 )
-            goto Unexpected_OtherSubr;
-
-          if ( decoder->flex_state       == 0 ||
-               decoder->num_flex_vectors != 7 )
-          {
-            FT_ERROR(( "t1_decoder_parse_charstrings: "
-                       "unexpected flex end\n" ));
-            goto Syntax_Error;
-          }
-
-          /* now consume the remaining `pop pop setcurpoint' */
-          if ( ip + 6 > limit ||
-               ip[0] != 12 || ip[1] != 17 || /* pop */
-               ip[2] != 12 || ip[3] != 17 || /* pop */
-               ip[4] != 12 || ip[5] != 33 )  /* setcurpoint */
-          {
-            FT_ERROR(( "t1_decoder_parse_charstrings: "
-                       "invalid flex charstring\n" ));
-            goto Syntax_Error;
-          }
-
-          ip += 6;
-          decoder->flex_state = 0;
           break;
 
         case 3:                     /* change hints */
-          if ( top[0] != 1 )
+          if ( arg_cnt != 1 )
             goto Unexpected_OtherSubr;
 
-          /* eat the following `pop' */
-          if ( ip + 2 > limit )
-          {
-            FT_ERROR(( "t1_decoder_parse_charstrings: "
-                       "invalid escape (12+%d)\n", ip[-1] ));
-            goto Syntax_Error;
-          }
-
-          if ( ip[0] != 12 || ip[1] != 17 )
-          {
-            FT_ERROR(( "t1_decoder_parse_charstrings: " ));
-            FT_ERROR(( "`pop' expected, found (%d %d)\n", ip[0], ip[1] ));
-            goto Syntax_Error;
-          }
-          ip += 2;
+          known_othersubr_result_cnt = 1;
 
           if ( hinter )
             hinter->reset( hinter->hints, builder->current->n_points );
-
           break;
 
         case 12:
@@ -2308,34 +2746,31 @@
 
             if ( !blend )
             {
-              FT_ERROR(( "t1_decoder_parse_charstrings: " ));
-              FT_ERROR(( "unexpected multiple masters operator!\n" ));
+              FT_ERROR(( "t1_decoder_parse_charstrings:"
+                         " unexpected multiple masters operator\n" ));
               goto Syntax_Error;
             }
 
-            num_points = (FT_UInt)top[1] - 13 + ( top[1] == 18 );
-            if ( top[0] != (FT_Int)( num_points * blend->num_designs ) )
+            num_points = (FT_UInt)subr_no - 13 + ( subr_no == 18 );
+            if ( arg_cnt != (FT_Int)( num_points * blend->num_designs ) )
             {
-              FT_ERROR(( "t1_decoder_parse_charstrings: " ));
-              FT_ERROR(( "incorrect number of mm arguments\n" ));
+              FT_ERROR(( "t1_decoder_parse_charstrings:"
+                         " incorrect number of multiple masters arguments\n" ));
               goto Syntax_Error;
             }
 
-            top -= blend->num_designs * num_points;
-            if ( top < decoder->stack )
-              goto Stack_Underflow;
-
-            /* we want to compute:                                   */
+            /* We want to compute                                    */
             /*                                                       */
-            /*  a0*w0 + a1*w1 + ... + ak*wk                          */
+            /*   a0*w0 + a1*w1 + ... + ak*wk                         */
             /*                                                       */
-            /* but we only have the a0, a1-a0, a2-a0, .. ak-a0       */
-            /* however, given that w0 + w1 + ... + wk == 1, we can   */
-            /* rewrite it easily as:                                 */
+            /* but we only have a0, a1-a0, a2-a0, ..., ak-a0.        */
             /*                                                       */
-            /*  a0 + (a1-a0)*w1 + (a2-a0)*w2 + .. + (ak-a0)*wk       */
+            /* However, given that w0 + w1 + ... + wk == 1, we can   */
+            /* rewrite it easily as                                  */
             /*                                                       */
-            /* where k == num_designs-1                              */
+            /*   a0 + (a1-a0)*w1 + (a2-a0)*w2 + ... + (ak-a0)*wk     */
+            /*                                                       */
+            /* where k == num_designs-1.                             */
             /*                                                       */
             /* I guess that's why it's written in this `compact'     */
             /* form.                                                 */
@@ -2352,16 +2787,188 @@
 
               *values++ = tmp;
             }
-            /* note that `top' will be incremented later by calls to `pop' */
+
+            known_othersubr_result_cnt = num_points;
             break;
           }
 
+        case 19:
+          /* <idx> 1 19 callothersubr                             */
+          /* => replace elements starting from index cvi( <idx> ) */
+          /*    of BuildCharArray with WeightVector               */
+          {
+            FT_Int    idx;
+            PS_Blend  blend = decoder->blend;
+
+
+            if ( arg_cnt != 1 || blend == NULL )
+              goto Unexpected_OtherSubr;
+
+            idx = Fix2Int( top[0] );
+
+            if ( idx < 0                                           ||
+                 idx + blend->num_designs > decoder->len_buildchar )
+              goto Unexpected_OtherSubr;
+
+            ft_memcpy( &decoder->buildchar[idx],
+                       blend->weight_vector,
+                       blend->num_designs *
+                         sizeof ( blend->weight_vector[0] ) );
+          }
+          break;
+
+        case 20:
+          /* <arg1> <arg2> 2 20 callothersubr pop   */
+          /* ==> push <arg1> + <arg2> onto T1 stack */
+          if ( arg_cnt != 2 )
+            goto Unexpected_OtherSubr;
+
+          top[0] += top[1]; /* XXX (over|under)flow */
+
+          known_othersubr_result_cnt = 1;
+          break;
+
+        case 21:
+          /* <arg1> <arg2> 2 21 callothersubr pop   */
+          /* ==> push <arg1> - <arg2> onto T1 stack */
+          if ( arg_cnt != 2 )
+            goto Unexpected_OtherSubr;
+
+          top[0] -= top[1]; /* XXX (over|under)flow */
+
+          known_othersubr_result_cnt = 1;
+          break;
+
+        case 22:
+          /* <arg1> <arg2> 2 22 callothersubr pop   */
+          /* ==> push <arg1> * <arg2> onto T1 stack */
+          if ( arg_cnt != 2 )
+            goto Unexpected_OtherSubr;
+
+          top[0] = FT_MulFix( top[0], top[1] );
+
+          known_othersubr_result_cnt = 1;
+          break;
+
+        case 23:
+          /* <arg1> <arg2> 2 23 callothersubr pop   */
+          /* ==> push <arg1> / <arg2> onto T1 stack */
+          if ( arg_cnt != 2 || top[1] == 0 )
+            goto Unexpected_OtherSubr;
+
+          top[0] = FT_DivFix( top[0], top[1] );
+
+          known_othersubr_result_cnt = 1;
+          break;
+
+        case 24:
+          /* <val> <idx> 2 24 callothersubr               */
+          /* ==> set BuildCharArray[cvi( <idx> )] = <val> */
+          {
+            FT_Int    idx;
+            PS_Blend  blend = decoder->blend;
+
+
+            if ( arg_cnt != 2 || blend == NULL )
+              goto Unexpected_OtherSubr;
+
+            idx = Fix2Int( top[1] );
+
+            if ( idx < 0 || (FT_UInt) idx >= decoder->len_buildchar )
+              goto Unexpected_OtherSubr;
+
+            decoder->buildchar[idx] = top[0];
+          }
+          break;
+
+        case 25:
+          /* <idx> 1 25 callothersubr pop        */
+          /* ==> push BuildCharArray[cvi( idx )] */
+          /*     onto T1 stack                   */
+          {
+            FT_Int    idx;
+            PS_Blend  blend = decoder->blend;
+
+
+            if ( arg_cnt != 1 || blend == NULL )
+              goto Unexpected_OtherSubr;
+
+            idx = Fix2Int( top[0] );
+
+            if ( idx < 0 || (FT_UInt) idx >= decoder->len_buildchar )
+              goto Unexpected_OtherSubr;
+
+            top[0] = decoder->buildchar[idx];
+          }
+
+          known_othersubr_result_cnt = 1;
+          break;
+
+#if 0
+        case 26:
+          /* <val> mark <idx> ==> set BuildCharArray[cvi( <idx> )] = <val>, */
+          /*                      leave mark on T1 stack                    */
+          /* <val> <idx>      ==> set BuildCharArray[cvi( <idx> )] = <val>  */
+          XXX which routine has left its mark on the (PostScript) stack?;
+          break;
+#endif
+
+        case 27:
+          /* <res1> <res2> <val1> <val2> 4 27 callothersubr pop */
+          /* ==> push <res1> onto T1 stack if <val1> <= <val2>, */
+          /*     otherwise push <res2>                          */
+          if ( arg_cnt != 4 )
+            goto Unexpected_OtherSubr;
+
+          if ( top[2] > top[3] )
+            top[0] = top[1];
+
+          known_othersubr_result_cnt = 1;
+          break;
+
+        case 28:
+          /* 0 28 callothersubr pop                               */
+          /* => push random value from interval [0, 1) onto stack */
+          if ( arg_cnt != 0 )
+            goto Unexpected_OtherSubr;
+
+          {
+            FT_Fixed  Rand;
+
+
+            Rand = seed;
+            if ( Rand >= 0x8000L )
+              Rand++;
+
+            top[0] = Rand;
+
+            seed = FT_MulFix( seed, 0x10000L - seed );
+            if ( seed == 0 )
+              seed += 0x2873;
+          }
+
+          known_othersubr_result_cnt = 1;
+          break;
+
         default:
+          if ( arg_cnt >= 0 && subr_no >= 0 )
+          {
+            FT_ERROR(( "t1_decoder_parse_charstrings:"
+                       " unknown othersubr [%d %d], wish me luck\n",
+                       arg_cnt, subr_no ));
+            unknown_othersubr_result_cnt = arg_cnt;
+            break;
+          }
+          /* fall through */
+
         Unexpected_OtherSubr:
-          FT_ERROR(( "t1_decoder_parse_charstrings: "
-                     "invalid othersubr [%d %d]!\n", top[0], top[1] ));
+          FT_ERROR(( "t1_decoder_parse_charstrings:"
+                     " invalid othersubr [%d %d]\n", arg_cnt, subr_no ));
           goto Syntax_Error;
         }
+
+        top += known_othersubr_result_cnt;
+
         decoder->top = top;
       }
       else  /* general operator */
@@ -2369,37 +2976,87 @@
         FT_Int  num_args = t1_args_count[op];
 
 
+        FT_ASSERT( num_args >= 0 );
+
         if ( top - decoder->stack < num_args )
           goto Stack_Underflow;
+
+        /* XXX Operators usually take their operands from the        */
+        /*     bottom of the stack, i.e., the operands are           */
+        /*     decoder->stack[0], ..., decoder->stack[num_args - 1]; */
+        /*     only div, callsubr, and callothersubr are different.  */
+        /*     In practice it doesn't matter (?).                    */
+
+#ifdef FT_DEBUG_LEVEL_TRACE
+
+        switch ( op )
+        {
+        case op_callsubr:
+        case op_div:
+        case op_callothersubr:
+        case op_pop:
+        case op_return:
+          break;
+
+        default:
+          if ( top - decoder->stack != num_args )
+            FT_TRACE0(( "t1_decoder_parse_charstrings:"
+                        " too much operands on the stack"
+                        " (seen %d, expected %d)\n",
+                        top - decoder->stack, num_args ));
+            break;
+        }
+
+#endif /* FT_DEBUG_LEVEL_TRACE */
 
         top -= num_args;
 
         switch ( op )
         {
         case op_endchar:
-          FT_TRACE4(( " endchar" ));
+          FT_TRACE4(( " endchar\n" ));
 
-          close_contour( builder );
+          t1_builder_close_contour( builder );
 
           /* close hints recording session */
           if ( hinter )
           {
-            if (hinter->close( hinter->hints, builder->current->n_points ))
+            if ( hinter->close( hinter->hints, builder->current->n_points ) )
               goto Syntax_Error;
 
             /* apply hints to the loaded glyph outline now */
             hinter->apply( hinter->hints,
                            builder->current,
-                           (PSH_Globals) builder->hints_globals,
+                           (PSH_Globals)builder->hints_globals,
                            decoder->hint_mode );
           }
 
           /* add current outline to the glyph slot */
           FT_GlyphLoader_Add( builder->loader );
 
+          /* the compiler should optimize away this empty loop but ... */
+
+#ifdef FT_DEBUG_LEVEL_TRACE
+
+          if ( decoder->len_buildchar > 0 )
+          {
+            FT_UInt  i;
+
+
+            FT_TRACE4(( "BuildCharArray = [ " ));
+
+            for ( i = 0; i < decoder->len_buildchar; ++i )
+              FT_TRACE4(( "%d ", decoder->buildchar[i] ));
+
+            FT_TRACE4(( "]\n" ));
+          }
+
+#endif /* FT_DEBUG_LEVEL_TRACE */
+
+          FT_TRACE4(( "\n" ));
+
           /* return now! */
-          FT_TRACE4(( "\n\n" ));
-          return PSaux_Err_Ok;
+          return FT_Err_Ok;
 
         case op_hsbw:
           FT_TRACE4(( " hsbw" ));
@@ -2410,8 +3067,8 @@
           builder->advance.x       = top[1];
           builder->advance.y       = 0;
 
-          orig_x = builder->last.x = x = builder->pos_x + top[0];
-          orig_y = builder->last.y = y = builder->pos_y;
+          orig_x = x = builder->pos_x + top[0];
+          orig_y = y = builder->pos_y;
 
           FT_UNUSED( orig_y );
 
@@ -2419,14 +3076,17 @@
           /* the glyph's metrics (lsb + advance width), not load the   */
           /* rest of it; so exit immediately                           */
           if ( builder->metrics_only )
-            return PSaux_Err_Ok;
+            return FT_Err_Ok;
 
           break;
 
         case op_seac:
-          /* return immediately after the processing */
-          return t1operator_seac( decoder, top[0], top[1], top[2],
-                                           (FT_Int)top[3], (FT_Int)top[4] );
+          return t1operator_seac( decoder,
+                                  top[0],
+                                  top[1],
+                                  top[2],
+                                  Fix2Int( top[3] ),
+                                  Fix2Int( top[4] ) );
 
         case op_sbw:
           FT_TRACE4(( " sbw" ));
@@ -2438,31 +3098,33 @@
           builder->advance.x       = top[2];
           builder->advance.y       = top[3];
 
-          builder->last.x = x = builder->pos_x + top[0];
-          builder->last.y = y = builder->pos_y + top[1];
+          x = builder->pos_x + top[0];
+          y = builder->pos_y + top[1];
 
           /* the `metrics_only' indicates that we only want to compute */
           /* the glyph's metrics (lsb + advance width), not load the   */
           /* rest of it; so exit immediately                           */
           if ( builder->metrics_only )
-            return PSaux_Err_Ok;
+            return FT_Err_Ok;
 
           break;
 
         case op_closepath:
           FT_TRACE4(( " closepath" ));
 
-          close_contour( builder );
-          if ( !( builder->parse_state == T1_Parse_Have_Path   ||
-                  builder->parse_state == T1_Parse_Have_Moveto ) )
-            goto Syntax_Error;
+          /* if there is no path, `closepath' is a no-op */
+          if ( builder->parse_state == T1_Parse_Have_Path   ||
+               builder->parse_state == T1_Parse_Have_Moveto )
+            t1_builder_close_contour( builder );
+
           builder->parse_state = T1_Parse_Have_Width;
           break;
 
         case op_hlineto:
           FT_TRACE4(( " hlineto" ));
 
-          if ( start_point( builder, x, y ) )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != FT_Err_Ok )
             goto Fail;
 
           x += top[0];
@@ -2483,30 +3145,34 @@
         case op_hvcurveto:
           FT_TRACE4(( " hvcurveto" ));
 
-          if ( start_point( builder, x, y ) ||
-               check_points( builder, 3 )   )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != FT_Err_Ok                                   ||
+               ( error = t1_builder_check_points( builder, 3 ) )
+                 != FT_Err_Ok                                   )
             goto Fail;
 
           x += top[0];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
           x += top[1];
           y += top[2];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
           y += top[3];
-          add_point( builder, x, y, 1 );
+          t1_builder_add_point( builder, x, y, 1 );
           break;
 
         case op_rlineto:
           FT_TRACE4(( " rlineto" ));
 
-          if ( start_point( builder, x, y ) )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != FT_Err_Ok )
             goto Fail;
 
           x += top[0];
           y += top[1];
 
         Add_Line:
-          if ( add_point1( builder, x, y ) )
+          if ( ( error = t1_builder_add_point1( builder, x, y ) )
+                 != FT_Err_Ok )
             goto Fail;
           break;
 
@@ -2524,45 +3190,50 @@
           break;
 
         case op_rrcurveto:
-          FT_TRACE4(( " rcurveto" ));
+          FT_TRACE4(( " rrcurveto" ));
 
-          if ( start_point( builder, x, y ) ||
-               check_points( builder, 3 )   )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != FT_Err_Ok                                   ||
+               ( error = t1_builder_check_points( builder, 3 ) )
+                 != FT_Err_Ok                                   )
             goto Fail;
 
           x += top[0];
           y += top[1];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
 
           x += top[2];
           y += top[3];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
 
           x += top[4];
           y += top[5];
-          add_point( builder, x, y, 1 );
+          t1_builder_add_point( builder, x, y, 1 );
           break;
 
         case op_vhcurveto:
           FT_TRACE4(( " vhcurveto" ));
 
-          if ( start_point( builder, x, y ) ||
-               check_points( builder, 3 )   )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != FT_Err_Ok                                   ||
+               ( error = t1_builder_check_points( builder, 3 ) )
+                 != FT_Err_Ok                                   )
             goto Fail;
 
           y += top[0];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
           x += top[1];
           y += top[2];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
           x += top[3];
-          add_point( builder, x, y, 1 );
+          t1_builder_add_point( builder, x, y, 1 );
           break;
 
         case op_vlineto:
           FT_TRACE4(( " vlineto" ));
 
-          if ( start_point( builder, x, y ) )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != FT_Err_Ok )
             goto Fail;
 
           y += top[0];
@@ -2583,16 +3254,13 @@
         case op_div:
           FT_TRACE4(( " div" ));
 
-          if ( top[1] )
-          {
-            *top = top[0] / top[1];
-            ++top;
-          }
-          else
-          {
-            FT_ERROR(( "t1_decoder_parse_charstrings: division by 0\n" ));
-            goto Syntax_Error;
-          }
+          /* if `large_int' is set, we divide unscaled numbers; */
+          /* otherwise, we divide numbers in 16.16 format --    */
+          /* in both cases, it is the same operation            */
+          *top = FT_DivFix( top[0], top[1] );
+          ++top;
+
+          large_int = FALSE;
           break;
 
         case op_callsubr:
@@ -2602,18 +3270,18 @@
 
             FT_TRACE4(( " callsubr" ));
 
-            idx = (FT_Int)top[0];
+            idx = Fix2Int( top[0] );
             if ( idx < 0 || idx >= (FT_Int)decoder->num_subrs )
             {
-              FT_ERROR(( "t1_decoder_parse_charstrings: "
-                         "invalid subrs index\n" ));
+              FT_ERROR(( "t1_decoder_parse_charstrings:"
+                         " invalid subrs index\n" ));
               goto Syntax_Error;
             }
 
             if ( zone - decoder->zones >= T1_MAX_SUBRS_CALLS )
             {
-              FT_ERROR(( "t1_decoder_parse_charstrings: "
-                         "too many nested subrs\n" ));
+              FT_ERROR(( "t1_decoder_parse_charstrings:"
+                         " too many nested subrs\n" ));
               goto Syntax_Error;
             }
 
@@ -2640,8 +3308,8 @@
 
             if ( !zone->base )
             {
-              FT_ERROR(( "t1_decoder_parse_charstrings: "
-                         "invoking empty subrs!\n" ));
+              FT_ERROR(( "t1_decoder_parse_charstrings:"
+                         " invoking empty subrs\n" ));
               goto Syntax_Error;
             }
 
@@ -2654,8 +3322,22 @@
         case op_pop:
           FT_TRACE4(( " pop" ));
 
-          /* theoretically, the arguments are already on the stack */
-          top++;
+          if ( known_othersubr_result_cnt > 0 )
+          {
+            known_othersubr_result_cnt--;
+            /* ignore, we pushed the operands ourselves */
+            break;
+          }
+
+          if ( unknown_othersubr_result_cnt == 0 )
+          {
+            FT_ERROR(( "t1_decoder_parse_charstrings:"
+                       " no more operands for othersubr\n" ));
+            goto Syntax_Error;
+          }
+
+          unknown_othersubr_result_cnt--;
+          top++;   /* `push' the operand to callothersubr onto the stack */
           break;
 
         case op_return:
@@ -2663,7 +3345,8 @@
 
           if ( zone <= decoder->zones )
           {
-            FT_ERROR(( "t1_decoder_parse_charstrings: unexpected return\n" ));
+            FT_ERROR(( "t1_decoder_parse_charstrings:"
+                       " unexpected return\n" ));
             goto Syntax_Error;
           }
 
@@ -2687,7 +3370,6 @@
             /* top[0] += builder->left_bearing.y; */
             hinter->stem( hinter->hints, 1, top );
           }
-
           break;
 
         case op_hstem3:
@@ -2696,19 +3378,17 @@
           /* record horizontal counter-controlled hints */
           if ( hinter )
             hinter->stem3( hinter->hints, 1, top );
-
           break;
 
         case op_vstem:
           FT_TRACE4(( " vstem" ));
 
-          /* record vertical  hint */
+          /* record vertical hint */
           if ( hinter )
           {
             top[0] += orig_x;
             hinter->stem( hinter->hints, 0, top );
           }
-
           break;
 
         case op_vstem3:
@@ -2730,17 +3410,57 @@
         case op_setcurrentpoint:
           FT_TRACE4(( " setcurrentpoint" ));
 
-          FT_ERROR(( "t1_decoder_parse_charstrings: " ));
-          FT_ERROR(( "unexpected `setcurrentpoint'\n" ));
-          goto Syntax_Error;
+          /* From the T1 specification, section 6.4:                */
+          /*                                                        */
+          /*   The setcurrentpoint command is used only in          */
+          /*   conjunction with results from OtherSubrs procedures. */
+
+          /* known_othersubr_result_cnt != 0 is already handled     */
+          /* above.                                                 */
+
+          /* Note, however, that both Ghostscript and Adobe         */
+          /* Distiller handle this situation by silently ignoring   */
+          /* the inappropriate `setcurrentpoint' instruction.  So   */
+          /* we do the same.                                        */
+#if 0
+
+          if ( decoder->flex_state != 1 )
+          {
+            FT_ERROR(( "t1_decoder_parse_charstrings:"
+                       " unexpected `setcurrentpoint'\n" ));
+            goto Syntax_Error;
+          }
+          else
+            ...
+#endif
+
+          x = top[0];
+          y = top[1];
+          decoder->flex_state = 0;
+          break;
+
+        case op_unknown15:
+          FT_TRACE4(( " opcode_15" ));
+          /* nothing to do except to pop the two arguments */
+          break;
 
         default:
-          FT_ERROR(( "t1_decoder_parse_charstrings: "
-                     "unhandled opcode %d\n", op ));
+          FT_ERROR(( "t1_decoder_parse_charstrings:"
+                     " unhandled opcode %d\n", op ));
           goto Syntax_Error;
         }
 
+        /* XXX Operators usually clear the operand stack;  */
+        /*     only div, callsubr, callothersubr, pop, and */
+        /*     return are different.                       */
+        /*     In practice it doesn't matter (?).          */
+
         decoder->top = top;
+
+#ifdef FT_DEBUG_LEVEL_TRACE
+        FT_TRACE4(( "\n" ));
+        bol = TRUE;
+#endif
 
       } /* general operator processing */
 
@@ -2752,10 +3472,10 @@
     return error;
 
   Syntax_Error:
-    return PSaux_Err_Syntax_Error;
+    return FT_THROW( Syntax_Error );
 
   Stack_Underflow:
-    return PSaux_Err_Stack_Underflow;
+    return FT_THROW( Stack_Underflow );
   }
 
 
@@ -2790,15 +3510,19 @@
       FT_FACE_FIND_GLOBAL_SERVICE( face, psnames, POSTSCRIPT_CMAPS );
       if ( !psnames )
       {
-        FT_ERROR(( "t1_decoder_init: " ));
-        FT_ERROR(( "the `psnames' module is not available\n" ));
-        return PSaux_Err_Unimplemented_Feature;
+        FT_ERROR(( "t1_decoder_init:"
+                   " the `psnames' module is not available\n" ));
+        return FT_THROW( Unimplemented_Feature );
       }
 
       decoder->psnames = psnames;
     }
 
     t1_builder_init( &decoder->builder, face, size, slot, hinting );
+
+    /* decoder->buildchar and decoder->len_buildchar have to be  */
+    /* initialized by the caller since we cannot know the length */
+    /* of the BuildCharArray                                     */
 
     decoder->num_glyphs     = (FT_UInt)face->num_glyphs;
     decoder->glyph_names    = glyph_names;
@@ -2808,7 +3532,7 @@
 
     decoder->funcs          = t1_decoder_funcs;
 
-    return 0;
+    return FT_Err_Ok;
   }
 
 
@@ -2821,14 +3545,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  t1cmap.c                                                               */
 /*                                                                         */
 /*    Type 1 character map support (body).                                 */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2006 by                                          */
+/*  Copyright 2002, 2003, 2006, 2007, 2012 by                              */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -2919,7 +3642,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   t1_cmap_std_char_next( T1_CMapStd   cmap,
                          FT_UInt32   *pchar_code )
   {
@@ -2959,7 +3682,9 @@
     (FT_CMap_InitFunc)     t1_cmap_standard_init,
     (FT_CMap_DoneFunc)     t1_cmap_std_done,
     (FT_CMap_CharIndexFunc)t1_cmap_std_char_index,
-    (FT_CMap_CharNextFunc) t1_cmap_std_char_next
+    (FT_CMap_CharNextFunc) t1_cmap_std_char_next,
+
+    NULL, NULL, NULL, NULL, NULL
   };
 
 
@@ -2978,7 +3703,9 @@
     (FT_CMap_InitFunc)     t1_cmap_expert_init,
     (FT_CMap_DoneFunc)     t1_cmap_std_done,
     (FT_CMap_CharIndexFunc)t1_cmap_std_char_index,
-    (FT_CMap_CharNextFunc) t1_cmap_std_char_next
+    (FT_CMap_CharNextFunc) t1_cmap_std_char_next,
+
+    NULL, NULL, NULL, NULL, NULL
   };
 
 
@@ -2999,7 +3726,7 @@
 
 
     cmap->first   = encoding->code_first;
-    cmap->count   = (FT_UInt)( encoding->code_last - cmap->first + 1 );
+    cmap->count   = (FT_UInt)( encoding->code_last - cmap->first );
     cmap->indices = encoding->char_index;
 
     FT_ASSERT( cmap->indices != NULL );
@@ -3033,7 +3760,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   t1_cmap_custom_char_next( T1_CMapCustom  cmap,
                             FT_UInt32     *pchar_code )
   {
@@ -3069,7 +3796,9 @@
     (FT_CMap_InitFunc)     t1_cmap_custom_init,
     (FT_CMap_DoneFunc)     t1_cmap_custom_done,
     (FT_CMap_CharIndexFunc)t1_cmap_custom_char_index,
-    (FT_CMap_CharNextFunc) t1_cmap_custom_char_next
+    (FT_CMap_CharNextFunc) t1_cmap_custom_char_next,
+
+    NULL, NULL, NULL, NULL, NULL
   };
 
 
@@ -3082,8 +3811,8 @@
   /*************************************************************************/
 
   FT_CALLBACK_DEF( const char * )
-  t1_get_glyph_name( T1_Face  face,
-                     FT_UInt  idx )
+  psaux_get_glyph_name( T1_Face  face,
+                        FT_UInt  idx )
   {
     return face->type1.glyph_names[idx];
   }
@@ -3100,7 +3829,8 @@
     return psnames->unicodes_init( memory,
                                    unicodes,
                                    face->type1.num_glyphs,
-                                   (PS_Glyph_NameFunc)&t1_get_glyph_name,
+                                   (PS_GetGlyphNameFunc)&psaux_get_glyph_name,
+                                   (PS_FreeGlyphNameFunc)NULL,
                                    (FT_Pointer)face );
   }
 
@@ -3129,7 +3859,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   t1_cmap_unicode_char_next( PS_Unicodes  unicodes,
                              FT_UInt32   *pchar_code )
   {
@@ -3149,12 +3879,13 @@
     (FT_CMap_InitFunc)     t1_cmap_unicode_init,
     (FT_CMap_DoneFunc)     t1_cmap_unicode_done,
     (FT_CMap_CharIndexFunc)t1_cmap_unicode_char_index,
-    (FT_CMap_CharNextFunc) t1_cmap_unicode_char_next
+    (FT_CMap_CharNextFunc) t1_cmap_unicode_char_next,
+
+    NULL, NULL, NULL, NULL, NULL
   };
 
 
 /* END */
-
 
 #ifndef T1_CONFIG_OPTION_NO_AFM
 /***************************************************************************/
@@ -3163,7 +3894,7 @@
 /*                                                                         */
 /*    AFM parser (body).                                                   */
 /*                                                                         */
-/*  Copyright 2006 by                                                      */
+/*  Copyright 2006-2010, 2012, 2013 by                                     */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -3176,8 +3907,8 @@
 
 #include "ft2build.h"
 #include FT_FREETYPE_H
-#include FT_INTERNAL_POSTSCRIPT_AUX_H
 #include FT_INTERNAL_DEBUG_H
+#include FT_INTERNAL_POSTSCRIPT_AUX_H
 
 #include "afmparse.h"
 #include "psconv.h"
@@ -3279,7 +4010,6 @@
   afm_stream_read_one( AFM_Stream  stream )
   {
     char*  str;
-    int    ch;
 
 
     afm_stream_skip_spaces( stream );
@@ -3290,7 +4020,9 @@
 
     while ( 1 )
     {
-      ch = AFM_GETC();
+      int  ch = AFM_GETC();
+
+
       if ( AFM_IS_SPACE( ch ) )
         break;
       else if ( AFM_IS_NEWLINE( ch ) )
@@ -3319,7 +4051,6 @@
   afm_stream_read_string( AFM_Stream  stream )
   {
     char*  str;
-    int    ch;
 
 
     afm_stream_skip_spaces( stream );
@@ -3331,7 +4062,9 @@
     /* scan to eol */
     while ( 1 )
     {
-      ch = AFM_GETC();
+      int  ch = AFM_GETC();
+
+
       if ( AFM_IS_NEWLINE( ch ) )
       {
         stream->status = AFM_STREAM_STATUS_EOL;
@@ -3526,11 +4259,11 @@
   FT_LOCAL_DEF( FT_Int )
   afm_parser_read_vals( AFM_Parser  parser,
                         AFM_Value   vals,
-                        FT_Int      n )
+                        FT_UInt     n )
   {
     AFM_Stream  stream = parser->stream;
     char*       str;
-    FT_Int      i;
+    FT_UInt     i;
 
 
     if ( n > AFM_MAX_ARGUMENTS )
@@ -3538,7 +4271,7 @@
 
     for ( i = 0; i < n; i++ )
     {
-      FT_UInt    len;
+      FT_Offset  len;
       AFM_Value  val = vals + i;
 
 
@@ -3600,7 +4333,7 @@
   FT_LOCAL_DEF( char* )
   afm_parser_next_key( AFM_Parser  parser,
                        FT_Bool     line,
-                       FT_UInt*    len )
+                       FT_Offset*  len )
   {
     AFM_Stream  stream = parser->stream;
     char*       key    = 0;  /* make stupid compiler happy */
@@ -3648,7 +4381,7 @@
     }
 
     if ( len )
-      *len = ( key ) ? AFM_STREAM_KEY_LEN( stream, key )
+      *len = ( key ) ? (FT_Offset)AFM_STREAM_KEY_LEN( stream, key )
                      : 0;
 
     return key;
@@ -3657,7 +4390,7 @@
 
   static AFM_Token
   afm_tokenize( const char*  key,
-                FT_UInt      len )
+                FT_Offset    len )
   {
     int  n;
 
@@ -3687,7 +4420,7 @@
                    FT_Byte*    base,
                    FT_Byte*    limit )
   {
-    AFM_Stream  stream;
+    AFM_Stream  stream = NULL;
     FT_Error    error;
 
 
@@ -3705,7 +4438,7 @@
     parser->FontInfo  = NULL;
     parser->get_index = NULL;
 
-    return PSaux_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -3732,10 +4465,10 @@
     {
       *aint = val.u.i;
 
-      return PSaux_Err_Ok;
+      return FT_Err_Ok;
     }
     else
-      return PSaux_Err_Syntax_Error;
+      return FT_THROW( Syntax_Error );
   }
 
 
@@ -3745,7 +4478,7 @@
     AFM_FontInfo   fi = parser->FontInfo;
     AFM_TrackKern  tk;
     char*          key;
-    FT_UInt        len;
+    FT_Offset      len;
     int            n = -1;
 
 
@@ -3791,29 +4524,24 @@
         tk->max_ptsize = shared_vals[3].u.f;
         tk->max_kern   = shared_vals[4].u.f;
 
-        /* is this correct? */
-        if ( tk->degree < 0 && tk->min_kern > 0 )
-          tk->min_kern = -tk->min_kern;
         break;
 
       case AFM_TOKEN_ENDTRACKKERN:
       case AFM_TOKEN_ENDKERNDATA:
       case AFM_TOKEN_ENDFONTMETRICS:
         fi->NumTrackKern = n + 1;
-        return PSaux_Err_Ok;
-        /*break;*/
+        return FT_Err_Ok;
 
       case AFM_TOKEN_UNKNOWN:
         break;
 
       default:
         goto Fail;
-        /*break;*/
       }
     }
 
   Fail:
-    return PSaux_Err_Syntax_Error;
+    return FT_THROW( Syntax_Error );
   }
 
 
@@ -3833,7 +4561,12 @@
     FT_ULong  index2 = KERN_INDEX( kp2->index1, kp2->index2 );
 
 
-    return (int)( index1 - index2 );
+    if ( index1 > index2 )
+      return 1;
+    else if ( index1 < index2 )
+      return -1;
+    else
+      return 0;
   }
 
 
@@ -3843,7 +4576,7 @@
     AFM_FontInfo  fi = parser->FontInfo;
     AFM_KernPair  kp;
     char*         key;
-    FT_UInt       len;
+    FT_Offset     len;
     int           n = -1;
 
 
@@ -3911,30 +4644,29 @@
       case AFM_TOKEN_ENDFONTMETRICS:
         fi->NumKernPair = n + 1;
         ft_qsort( fi->KernPairs, fi->NumKernPair,
-                  sizeof( AFM_KernPairRec ),
+                  sizeof ( AFM_KernPairRec ),
                   afm_compare_kern_pairs );
-        return PSaux_Err_Ok;
+        return FT_Err_Ok;
 
       case AFM_TOKEN_UNKNOWN:
         break;
 
       default:
         goto Fail;
-        /*break;*/
       }
     }
 
   Fail:
-    return PSaux_Err_Syntax_Error;
+    return FT_THROW( Syntax_Error );
   }
 
 
   static FT_Error
   afm_parse_kern_data( AFM_Parser  parser )
   {
-    FT_Error  error;
-    char*     key;
-    FT_UInt   len;
+    FT_Error   error;
+    char*      key;
+    FT_Offset  len;
 
 
     while ( ( key = afm_parser_next_key( parser, 1, &len ) ) != 0 )
@@ -3956,19 +4688,18 @@
 
       case AFM_TOKEN_ENDKERNDATA:
       case AFM_TOKEN_ENDFONTMETRICS:
-        return PSaux_Err_Ok;
+        return FT_Err_Ok;
 
       case AFM_TOKEN_UNKNOWN:
         break;
 
       default:
         goto Fail;
-        /*break;*/
       }
     }
 
   Fail:
-    return PSaux_Err_Syntax_Error;
+    return FT_THROW( Syntax_Error );
   }
 
 
@@ -3977,8 +4708,8 @@
                            FT_UInt     n,
                            AFM_Token   end_section )
   {
-    char*    key;
-    FT_UInt  len;
+    char*      key;
+    FT_Offset  len;
 
 
     while ( n-- > 0 )
@@ -3994,11 +4725,11 @@
 
 
       if ( token == end_section || token == AFM_TOKEN_ENDFONTMETRICS )
-        return PSaux_Err_Ok;
+        return FT_Err_Ok;
     }
 
   Fail:
-    return PSaux_Err_Syntax_Error;
+    return FT_THROW( Syntax_Error );
   }
 
 
@@ -4007,19 +4738,19 @@
   {
     FT_Memory     memory = parser->memory;
     AFM_FontInfo  fi     = parser->FontInfo;
-    FT_Error      error  = PSaux_Err_Syntax_Error;
+    FT_Error      error  = FT_ERR( Syntax_Error );
     char*         key;
-    FT_UInt       len;
+    FT_Offset     len;
     FT_Int        metrics_sets = 0;
 
 
     if ( !fi )
-      return PSaux_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
 
     key = afm_parser_next_key( parser, 1, &len );
     if ( !key || len != 16                              ||
          ft_strncmp( key, "StartFontMetrics", 16 ) != 0 )
-      return PSaux_Err_Unknown_File_Format;
+      return FT_THROW( Unknown_File_Format );
 
     while ( ( key = afm_parser_next_key( parser, 1, &len ) ) != 0 )
     {
@@ -4034,7 +4765,7 @@
 
         if ( metrics_sets != 0 && metrics_sets != 2 )
         {
-          error = PSaux_Err_Unimplemented_Feature;
+          error = FT_THROW( Unimplemented_Feature );
 
           goto Fail;
         }
@@ -4080,7 +4811,7 @@
 
       case AFM_TOKEN_STARTCHARMETRICS:
         {
-          FT_Int  n;
+          FT_Int  n = 0;
 
 
           if ( afm_parser_read_int( parser, &n ) )
@@ -4100,8 +4831,7 @@
         /* fall through since we only support kern data */
 
       case AFM_TOKEN_ENDFONTMETRICS:
-        return PSaux_Err_Ok;
-        /*break;*/
+        return FT_Err_Ok;
 
       default:
         break;
@@ -4122,7 +4852,6 @@
 
 
 /* END */
-
 #endif
 
 /***************************************************************************/
@@ -4131,7 +4860,7 @@
 /*                                                                         */
 /*    Some convenience conversions (body).                                 */
 /*                                                                         */
-/*  Copyright 2006 by                                                      */
+/*  Copyright 2006, 2008, 2009, 2012-2013 by                               */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -4148,8 +4877,17 @@
 #include FT_INTERNAL_DEBUG_H
 
 #include "psconv.h"
-#include "psobjs.h"
 #include "psauxerr.h"
+
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+  /* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+  /* messages during execution.                                            */
+  /*                                                                       */
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_psconv
 
 
   /* The following array is used by various functions to quickly convert */
@@ -4198,18 +4936,29 @@
 #endif /* 'A' == 193 */
 
 
-  FT_LOCAL_DEF( FT_Int )
+  FT_LOCAL_DEF( FT_Long )
   PS_Conv_Strtol( FT_Byte**  cursor,
                   FT_Byte*   limit,
-                  FT_Int     base )
+                  FT_Long    base )
   {
     FT_Byte*  p = *cursor;
-    FT_Int    num = 0;
-    FT_Bool   sign = 0;
+
+    FT_Long   num           = 0;
+    FT_Bool   sign          = 0;
+    FT_Bool   have_overflow = 0;
+
+    FT_Long   num_limit;
+    FT_Char   c_limit;
 
 
-    if ( p == limit || base < 2 || base > 36 )
+    if ( p >= limit )
+      goto Bad;
+
+    if ( base < 2 || base > 36 )
+    {
+      FT_TRACE4(( "!!!INVALID BASE:!!!" ));
       return 0;
+    }
 
     if ( *p == '-' || *p == '+' )
     {
@@ -4217,8 +4966,11 @@
 
       p++;
       if ( p == limit )
-        return 0;
+        goto Bad;
     }
+
+    num_limit = 0x7FFFFFFFL / base;
+    c_limit   = (FT_Char)( 0x7FFFFFFFL % base );
 
     for ( ; p < limit; p++ )
     {
@@ -4233,11 +4985,58 @@
       if ( c < 0 || c >= base )
         break;
 
-      num = num * base + c;
+      if ( num > num_limit || ( num == num_limit && c > c_limit ) )
+        have_overflow = 1;
+      else
+        num = num * base + c;
+    }
+
+    *cursor = p;
+
+    if ( have_overflow )
+    {
+      num = 0x7FFFFFFFL;
+      FT_TRACE4(( "!!!OVERFLOW:!!!" ));
     }
 
     if ( sign )
       num = -num;
+
+    return num;
+
+  Bad:
+    FT_TRACE4(( "!!!END OF DATA:!!!" ));
+    return 0;
+  }
+
+
+  FT_LOCAL_DEF( FT_Long )
+  PS_Conv_ToInt( FT_Byte**  cursor,
+                 FT_Byte*   limit )
+
+  {
+    FT_Byte*  p = *cursor;
+    FT_Byte*  curp;
+
+    FT_Long   num;
+
+
+    curp = p;
+    num  = PS_Conv_Strtol( &p, limit, 10 );
+
+    if ( p == curp )
+      return 0;
+
+    if ( p < limit && *p == '#' )
+    {
+      p++;
+
+      curp = p;
+      num  = PS_Conv_Strtol( &p, limit, num );
+
+      if ( p == curp )
+        return 0;
+    }
 
     *cursor = p;
 
@@ -4245,42 +5044,25 @@
   }
 
 
-  FT_LOCAL_DEF( FT_Int )
-  PS_Conv_ToInt( FT_Byte**  cursor,
-                 FT_Byte*   limit )
-
-  {
-    FT_Byte*  p;
-    FT_Int    num;
-
-
-    num = PS_Conv_Strtol( cursor, limit, 10 );
-    p   = *cursor;
-
-    if ( p < limit && *p == '#' )
-    {
-      *cursor = p + 1;
-
-      return PS_Conv_Strtol( cursor, limit, num );
-    }
-    else
-      return num;
-  }
-
-
   FT_LOCAL_DEF( FT_Fixed )
   PS_Conv_ToFixed( FT_Byte**  cursor,
                    FT_Byte*   limit,
-                   FT_Int     power_ten )
+                   FT_Long    power_ten )
   {
     FT_Byte*  p = *cursor;
-    FT_Fixed  integral;
-    FT_Long   decimal = 0, divider = 1;
-    FT_Bool   sign = 0;
+    FT_Byte*  curp;
+
+    FT_Fixed  integral = 0;
+    FT_Long   decimal  = 0;
+    FT_Long   divider  = 1;
+
+    FT_Bool   sign           = 0;
+    FT_Bool   have_overflow  = 0;
+    FT_Bool   have_underflow = 0;
 
 
-    if ( p == limit )
-      return 0;
+    if ( p >= limit )
+      goto Bad;
 
     if ( *p == '-' || *p == '+' )
     {
@@ -4288,13 +5070,23 @@
 
       p++;
       if ( p == limit )
-        return 0;
+        goto Bad;
     }
 
+    /* read the integer part */
     if ( *p != '.' )
-      integral = (FT_Fixed)PS_Conv_ToInt( &p, limit ) << 16;
-    else
-      integral = 0;
+    {
+      curp     = p;
+      integral = PS_Conv_ToInt( &p, limit );
+
+      if ( p == curp )
+        return 0;
+
+      if ( integral > 0x7FFF )
+        have_overflow = 1;
+      else
+        integral = (FT_Fixed)( (FT_UInt32)integral << 16 );
+    }
 
     /* read the decimal part */
     if ( p < limit && *p == '.' )
@@ -4314,10 +5106,14 @@
         if ( c < 0 || c >= 10 )
           break;
 
-        if ( divider < 10000000L )
+        if ( decimal < 0xCCCCCCCL )
         {
           decimal = decimal * 10 + c;
-          divider *= 10;
+
+          if ( !integral && power_ten > 0 )
+            power_ten--;
+          else
+            divider *= 10;
         }
       }
     }
@@ -4325,33 +5121,94 @@
     /* read exponent, if any */
     if ( p + 1 < limit && ( *p == 'e' || *p == 'E' ) )
     {
+      FT_Long  exponent;
+
+
       p++;
-      power_ten += PS_Conv_ToInt( &p, limit );
+
+      curp     = p;
+      exponent = PS_Conv_ToInt( &p, limit );
+
+      if ( curp == p )
+        return 0;
+
+      /* arbitrarily limit exponent */
+      if ( exponent > 1000 )
+        have_overflow = 1;
+      else if ( exponent < -1000 )
+        have_underflow = 1;
+      else
+        power_ten += exponent;
     }
+
+    *cursor = p;
+
+    if ( !integral && !decimal )
+      return 0;
+
+    if ( have_overflow )
+      goto Overflow;
+    if ( have_underflow )
+      goto Underflow;
 
     while ( power_ten > 0 )
     {
+      if ( integral >= 0xCCCCCCCL )
+        goto Overflow;
       integral *= 10;
-      decimal  *= 10;
+
+      if ( decimal >= 0xCCCCCCCL )
+      {
+        if ( divider == 1 )
+          goto Overflow;
+        divider /= 10;
+      }
+      else
+        decimal *= 10;
+
       power_ten--;
     }
 
     while ( power_ten < 0 )
     {
       integral /= 10;
-      divider  *= 10;
+      if ( divider < 0xCCCCCCCL )
+        divider *= 10;
+      else
+        decimal /= 10;
+
+      if ( !integral && !decimal )
+        goto Underflow;
+
       power_ten++;
     }
 
     if ( decimal )
-      integral += FT_DivFix( decimal, divider );
+    {
+      decimal = FT_DivFix( decimal, divider );
+      /* it's not necessary to check this addition for overflow */
+      /* due to the structure of the real number representation */
+      integral += decimal;
+    }
 
+  Exit:
     if ( sign )
       integral = -integral;
 
-    *cursor = p;
-
     return integral;
+
+  Bad:
+    FT_TRACE4(( "!!!END OF DATA:!!!" ));
+    return 0;
+
+  Overflow:
+    integral = 0x7FFFFFFFL;
+    FT_TRACE4(( "!!!OVERFLOW:!!!" ));
+    goto Exit;
+
+  Underflow:
+    FT_TRACE4(( "!!!UNDERFLOW:!!!" ));
+    return 0;
   }
 
 
@@ -4360,7 +5217,7 @@
   PS_Conv_StringDecode( FT_Byte**  cursor,
                         FT_Byte*   limit,
                         FT_Byte*   buffer,
-                        FT_UInt    n )
+                        FT_Offset  n )
   {
     FT_Byte*  p;
     FT_UInt   r = 0;
@@ -4455,14 +5312,60 @@
   PS_Conv_ASCIIHexDecode( FT_Byte**  cursor,
                           FT_Byte*   limit,
                           FT_Byte*   buffer,
-                          FT_UInt    n )
+                          FT_Offset  n )
   {
     FT_Byte*  p;
-    FT_UInt   r = 0;
+    FT_UInt   r   = 0;
+    FT_UInt   w   = 0;
+    FT_UInt   pad = 0x01;
 
 
     n *= 2;
-    for ( p = *cursor; r < n && p < limit; p++ )
+
+#if 1
+
+    p = *cursor;
+
+    if ( p >= limit )
+      return 0;
+
+    if ( n > (FT_UInt)( limit - p ) )
+      n = (FT_UInt)( limit - p );
+
+    /* we try to process two nibbles at a time to be as fast as possible */
+    for ( ; r < n; r++ )
+    {
+      FT_UInt  c = p[r];
+
+
+      if ( IS_PS_SPACE( c ) )
+        continue;
+
+      if ( c OP 0x80 )
+        break;
+
+      c = ft_char_table[c & 0x7F];
+      if ( (unsigned)c >= 16 )
+        break;
+
+      pad = ( pad << 4 ) | c;
+      if ( pad & 0x100 )
+      {
+        buffer[w++] = (FT_Byte)pad;
+        pad         = 0x01;
+      }
+    }
+
+    if ( pad != 0x01 )
+      buffer[w++] = (FT_Byte)( pad << 4 );
+
+    *cursor = p + r;
+
+    return w;
+
+#else /* 0 */
+
+    for ( r = 0; r < n; r++ )
     {
       FT_Char  c;
 
@@ -4475,10 +5378,10 @@
 
       c = ft_char_table[*p & 0x7f];
 
-      if ( c < 0 || c >= 16 )
+      if ( (unsigned)c >= 16 )
         break;
 
-      if ( r % 2 )
+      if ( r & 1 )
       {
         *buffer = (FT_Byte)(*buffer + c);
         buffer++;
@@ -4492,6 +5395,9 @@
     *cursor = p;
 
     return ( r + 1 ) / 2;
+
+#endif /* 0 */
+
   }
 
 
@@ -4499,13 +5405,38 @@
   PS_Conv_EexecDecode( FT_Byte**   cursor,
                        FT_Byte*    limit,
                        FT_Byte*    buffer,
-                       FT_UInt     n,
+                       FT_Offset   n,
                        FT_UShort*  seed )
   {
-    FT_Byte*   p;
-    FT_UInt    r;
-    FT_UShort  s = *seed;
+    FT_Byte*  p;
+    FT_UInt   r;
+    FT_UInt   s = *seed;
 
+
+#if 1
+
+    p = *cursor;
+
+    if ( p >= limit )
+      return 0;
+
+    if ( n > (FT_UInt)(limit - p) )
+      n = (FT_UInt)(limit - p);
+
+    for ( r = 0; r < n; r++ )
+    {
+      FT_UInt  val = p[r];
+      FT_UInt  b   = ( val ^ ( s >> 8 ) );
+
+
+      s         = ( (val + s)*52845U + 22719 ) & 0xFFFFU;
+      buffer[r] = (FT_Byte) b;
+    }
+
+    *cursor = p + n;
+    *seed   = (FT_UShort)s;
+
+#else /* 0 */
 
     for ( r = 0, p = *cursor; r < n && p < limit; r++, p++ )
     {
@@ -4515,16 +5446,16 @@
       s = (FT_UShort)( ( *p + s ) * 52845U + 22719 );
       *buffer++ = b;
     }
-
     *cursor = p;
     *seed   = s;
+
+#endif /* 0 */
 
     return r;
   }
 
 
 /* END */
-
 
 
 /* END */

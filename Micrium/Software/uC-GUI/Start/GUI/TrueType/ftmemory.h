@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    The FreeType memory management macros (specification).               */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2004, 2005, 2006 by                         */
+/*  Copyright 1996-2002, 2004-2007, 2010, 2013 by                          */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg                       */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -58,15 +58,27 @@ FT_BEGIN_HEADER
 
 
   /*
-   *  C++ refuses to handle statements like p = (void*)anything; where `p'
-   *  is a typed pointer.  Since we don't have a `typeof' operator in
-   *  standard C++, we have to use ugly casts.
+   *  C++ refuses to handle statements like p = (void*)anything, with `p' a
+   *  typed pointer.  Since we don't have a `typeof' operator in standard
+   *  C++, we have to use a template to emulate it.
    */
 
 #ifdef __cplusplus
-#define FT_ASSIGNP( p, val )  *((void**)&(p)) = (val)
+
+  extern "C++"
+  template <typename T> inline T*
+  cplusplus_typeof(        T*,
+                    void  *v )
+  {
+    return static_cast <T*> ( v );
+  }
+
+#define FT_ASSIGNP( p, val )  (p) = cplusplus_typeof( (p), (val) )
+
 #else
+
 #define FT_ASSIGNP( p, val )  (p) = (val)
+
 #endif
 
 
@@ -129,8 +141,10 @@ FT_BEGIN_HEADER
                const void*  P );
 
 
-#define FT_MEM_ALLOC( ptr, size )                                         \
-          FT_ASSIGNP_INNER( ptr, ft_mem_alloc( memory, (size), &error ) )
+#define FT_MEM_ALLOC( ptr, size )                               \
+          FT_ASSIGNP_INNER( ptr, ft_mem_alloc( memory,          \
+                                               (FT_Long)(size), \
+                                               &error ) )
 
 #define FT_MEM_FREE( ptr )                \
           FT_BEGIN_STMNT                  \
@@ -142,45 +156,60 @@ FT_BEGIN_HEADER
           FT_MEM_ALLOC( ptr, sizeof ( *(ptr) ) )
 
 #define FT_MEM_REALLOC( ptr, cursz, newsz )                        \
-          FT_ASSIGNP_INNER( ptr, ft_mem_realloc( memory, 1,        \
-                                                 (cursz), (newsz), \
-                                                 (ptr), &error ) )
+          FT_ASSIGNP_INNER( ptr, ft_mem_realloc( memory,           \
+                                                 1,                \
+                                                 (FT_Long)(cursz), \
+                                                 (FT_Long)(newsz), \
+                                                 (ptr),            \
+                                                 &error ) )
 
-#define FT_MEM_QALLOC( ptr, size )                                         \
-          FT_ASSIGNP_INNER( ptr, ft_mem_qalloc( memory, (size), &error ) )
+#define FT_MEM_QALLOC( ptr, size )                               \
+          FT_ASSIGNP_INNER( ptr, ft_mem_qalloc( memory,          \
+                                                (FT_Long)(size), \
+                                                &error ) )
 
 #define FT_MEM_QNEW( ptr )                        \
           FT_MEM_QALLOC( ptr, sizeof ( *(ptr) ) )
 
-#define FT_MEM_QREALLOC( ptr, cursz, newsz )                         \
-          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory, 1,        \
-                                                  (cursz), (newsz), \
-                                                  (ptr), &error ) )
+#define FT_MEM_QREALLOC( ptr, cursz, newsz )                        \
+          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory,           \
+                                                  1,                \
+                                                  (FT_Long)(cursz), \
+                                                  (FT_Long)(newsz), \
+                                                  (ptr),            \
+                                                  &error ) )
 
-#define FT_MEM_QRENEW_ARRAY( ptr, cursz, newsz )                             \
-          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory, sizeof ( *(ptr) ), \
-                                                  (cursz), (newsz),          \
-                                                  (ptr), &error ) )
+#define FT_MEM_ALLOC_MULT( ptr, count, item_size )                     \
+          FT_ASSIGNP_INNER( ptr, ft_mem_realloc( memory,               \
+                                                 (FT_Long)(item_size), \
+                                                 0,                    \
+                                                 (FT_Long)(count),     \
+                                                 NULL,                 \
+                                                 &error ) )
 
-#define FT_MEM_ALLOC_MULT( ptr, count, item_size )                    \
-          FT_ASSIGNP_INNER( ptr, ft_mem_realloc( memory, (item_size), \
-                                                 0, (count),          \
-                                                 NULL, &error ) )
+#define FT_MEM_REALLOC_MULT( ptr, oldcnt, newcnt, itmsz )           \
+          FT_ASSIGNP_INNER( ptr, ft_mem_realloc( memory,            \
+                                                 (FT_Long)(itmsz),  \
+                                                 (FT_Long)(oldcnt), \
+                                                 (FT_Long)(newcnt), \
+                                                 (ptr),             \
+                                                 &error ) )
 
-#define FT_MEM_REALLOC_MULT( ptr, oldcnt, newcnt, itmsz )            \
-          FT_ASSIGNP_INNER( ptr, ft_mem_realloc( memory, (itmsz),    \
-                                                 (oldcnt), (newcnt), \
-                                                 (ptr), &error ) )
+#define FT_MEM_QALLOC_MULT( ptr, count, item_size )                     \
+          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory,               \
+                                                  (FT_Long)(item_size), \
+                                                  0,                    \
+                                                  (FT_Long)(count),     \
+                                                  NULL,                 \
+                                                  &error ) )
 
-#define FT_MEM_QALLOC_MULT( ptr, count, item_size )                    \
-          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory, (item_size), \
-                                                  0, (count),          \
-                                                  NULL, &error ) )
-
-#define FT_MEM_QREALLOC_MULT( ptr, oldcnt, newcnt, itmsz)             \
-          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory, (itmsz),    \
-                                                  (oldcnt), (newcnt), \
-                                                  (ptr), &error ) )
+#define FT_MEM_QREALLOC_MULT( ptr, oldcnt, newcnt, itmsz)            \
+          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory,            \
+                                                  (FT_Long)(itmsz),  \
+                                                  (FT_Long)(oldcnt), \
+                                                  (FT_Long)(newcnt), \
+                                                  (ptr),             \
+                                                  &error ) )
 
 
 #define FT_MEM_SET_ERROR( cond )  ( (cond), error != 0 )
@@ -209,7 +238,7 @@ FT_BEGIN_HEADER
 
 
   /*
-   *  Return the maximum number of adressable elements in an array.
+   *  Return the maximum number of addressable elements in an array.
    *  We limit ourselves to INT_MAX, rather than UINT_MAX, to avoid
    *  any problems.
    */
@@ -224,26 +253,37 @@ FT_BEGIN_HEADER
   /* _typed_ in order to automatically compute array element sizes.        */
   /*                                                                       */
 
-#define FT_MEM_NEW_ARRAY( ptr, count )                                      \
-          FT_ASSIGNP_INNER( ptr, ft_mem_realloc( memory, sizeof ( *(ptr) ), \
-                                                 0, (count),                \
-                                                 NULL, &error ) )
+#define FT_MEM_NEW_ARRAY( ptr, count )                              \
+          FT_ASSIGNP_INNER( ptr, ft_mem_realloc( memory,            \
+                                                 sizeof ( *(ptr) ), \
+                                                 0,                 \
+                                                 (FT_Long)(count),  \
+                                                 NULL,              \
+                                                 &error ) )
 
-#define FT_MEM_RENEW_ARRAY( ptr, cursz, newsz )                             \
-          FT_ASSIGNP_INNER( ptr, ft_mem_realloc( memory, sizeof ( *(ptr) ), \
-                                                 (cursz), (newsz),          \
-                                                 (ptr), &error ) )
+#define FT_MEM_RENEW_ARRAY( ptr, cursz, newsz )                     \
+          FT_ASSIGNP_INNER( ptr, ft_mem_realloc( memory,            \
+                                                 sizeof ( *(ptr) ), \
+                                                 (FT_Long)(cursz),  \
+                                                 (FT_Long)(newsz),  \
+                                                 (ptr),             \
+                                                 &error ) )
 
-#define FT_MEM_QNEW_ARRAY( ptr, count )                                      \
-          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory, sizeof ( *(ptr) ), \
-                                                  0, (count),                \
-                                                  NULL, &error ) )
+#define FT_MEM_QNEW_ARRAY( ptr, count )                              \
+          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory,            \
+                                                  sizeof ( *(ptr) ), \
+                                                  0,                 \
+                                                  (FT_Long)(count),  \
+                                                  NULL,              \
+                                                  &error ) )
 
-#define FT_MEM_QRENEW_ARRAY( ptr, cursz, newsz )                             \
-          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory, sizeof ( *(ptr) ), \
-                                                  (cursz), (newsz),          \
-                                                  (ptr), &error ) )
-
+#define FT_MEM_QRENEW_ARRAY( ptr, cursz, newsz )                     \
+          FT_ASSIGNP_INNER( ptr, ft_mem_qrealloc( memory,            \
+                                                  sizeof ( *(ptr) ), \
+                                                  (FT_Long)(cursz),  \
+                                                  (FT_Long)(newsz),  \
+                                                  (ptr),             \
+                                                  &error ) )
 
 #define FT_ALLOC( ptr, size )                           \
           FT_MEM_SET_ERROR( FT_MEM_ALLOC( ptr, size ) )
@@ -291,36 +331,41 @@ FT_BEGIN_HEADER
           FT_MEM_SET_ERROR( FT_MEM_RENEW_ARRAY( ptr, curcnt, newcnt ) )
 
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
+  FT_BASE( FT_Pointer )
+  ft_mem_strdup( FT_Memory    memory,
+                 const char*  str,
+                 FT_Error    *p_error );
 
-  FT_BASE( FT_Error )
-  FT_Alloc( FT_Memory  memory,
-            FT_Long    size,
-            void*     *P );
+  FT_BASE( FT_Pointer )
+  ft_mem_dup( FT_Memory    memory,
+              const void*  address,
+              FT_ULong     size,
+              FT_Error    *p_error );
 
-  FT_BASE( FT_Error )
-  FT_QAlloc( FT_Memory  memory,
-             FT_Long    size,
-             void*     *p );
 
-  FT_BASE( FT_Error )
-  FT_Realloc( FT_Memory  memory,
-              FT_Long    current,
-              FT_Long    size,
-              void*     *P );
+#define FT_MEM_STRDUP( dst, str )                                            \
+          (dst) = (char*)ft_mem_strdup( memory, (const char*)(str), &error )
 
-  FT_BASE( FT_Error )
-  FT_QRealloc( FT_Memory  memory,
-               FT_Long    current,
-               FT_Long    size,
-               void*     *p );
+#define FT_STRDUP( dst, str )                           \
+          FT_MEM_SET_ERROR( FT_MEM_STRDUP( dst, str ) )
 
-  FT_BASE( void )
-  FT_Free( FT_Memory  memory,
-           void*     *P );
+#define FT_MEM_DUP( dst, address, size )                                    \
+          (dst) = ft_mem_dup( memory, (address), (FT_ULong)(size), &error )
 
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
+#define FT_DUP( dst, address, size )                           \
+          FT_MEM_SET_ERROR( FT_MEM_DUP( dst, address, size ) )
 
+
+  /* Return >= 1 if a truncation occurs.            */
+  /* Return 0 if the source string fits the buffer. */
+  /* This is *not* the same as strlcpy().           */
+  FT_BASE( FT_Int )
+  ft_mem_strcpyn( char*        dst,
+                  const char*  src,
+                  FT_ULong     size );
+
+#define FT_STRCPYN( dst, src, size )                                         \
+          ft_mem_strcpyn( (char*)dst, (const char*)(src), (FT_ULong)(size) )
 
  /* */
 

@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType API for validating OpenType tables (specification).         */
 /*                                                                         */
-/*  Copyright 2004, 2005, 2006 by                                          */
+/*  Copyright 2004-2007, 2013 by                                           */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -56,7 +56,7 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* <Description>                                                         */
   /*    This section contains the declaration of functions to validate     */
-  /*    some OpenType tables (BASE, GDEF, GPOS, GSUB, JSTF).               */
+  /*    some OpenType tables (BASE, GDEF, GPOS, GSUB, JSTF, MATH).         */
   /*                                                                       */
   /*************************************************************************/
 
@@ -86,8 +86,11 @@ FT_BEGIN_HEADER
   *    FT_VALIDATE_JSTF ::
   *      Validate JSTF table.
   *
+  *    FT_VALIDATE_MATH ::
+  *      Validate MATH table.
+  *
   *    FT_VALIDATE_OT ::
-  *      Validate all OpenType tables (BASE, GDEF, GPOS, GSUB, JSTF).
+  *      Validate all OpenType tables (BASE, GDEF, GPOS, GSUB, JSTF, MATH).
   *
   */
 #define FT_VALIDATE_BASE  0x0100
@@ -95,12 +98,14 @@ FT_BEGIN_HEADER
 #define FT_VALIDATE_GPOS  0x0400
 #define FT_VALIDATE_GSUB  0x0800
 #define FT_VALIDATE_JSTF  0x1000
+#define FT_VALIDATE_MATH  0x2000
 
 #define FT_VALIDATE_OT  FT_VALIDATE_BASE | \
                         FT_VALIDATE_GDEF | \
                         FT_VALIDATE_GPOS | \
                         FT_VALIDATE_GSUB | \
-                        FT_VALIDATE_JSTF
+                        FT_VALIDATE_JSTF | \
+                        FT_VALIDATE_MATH
 
   /* */
 
@@ -111,7 +116,7 @@ FT_BEGIN_HEADER
   *
   * @description:
   *    Validate various OpenType tables to assure that all offsets and
-  *    indices are valid.  The idea is that a higher-level library which
+  *    indices are valid.  The idea is that a higher-level library that
   *    actually does the text layout can access those tables without
   *    error checking (which can be quite time consuming).
   *
@@ -120,7 +125,7 @@ FT_BEGIN_HEADER
   *       A handle to the input face.
   *
   *    validation_flags ::
-  *       A bit field which specifies the tables to be validated.  See
+  *       A bit field that specifies the tables to be validated.  See
   *       @FT_VALIDATE_OTXXX for possible values.
   *
   * @output:
@@ -140,7 +145,7 @@ FT_BEGIN_HEADER
   *       A pointer to the JSTF table.
   *
   * @return:
-  *   FreeType error code.  0 means success.
+  *   FreeType error code.  0~means success.
   *
   * @note:
   *   This function only works with OpenType fonts, returning an error
@@ -154,10 +159,10 @@ FT_BEGIN_HEADER
   FT_EXPORT( FT_Error )
   FT_OpenType_Validate( FT_Face    face,
                         FT_UInt    validation_flags,
-                        FT_Bytes  *BASE_table, 
-                        FT_Bytes  *GDEF_table, 
-                        FT_Bytes  *GPOS_table, 
-                        FT_Bytes  *GSUB_table, 
+                        FT_Bytes  *BASE_table,
+                        FT_Bytes  *GDEF_table,
+                        FT_Bytes  *GPOS_table,
+                        FT_Bytes  *GSUB_table,
                         FT_Bytes  *JSTF_table );
 
   /* */

@@ -25,7 +25,7 @@
 /*                                                                         */
 /*    FreeType MRU support (body).                                         */
 /*                                                                         */
-/*  Copyright 2003, 2004, 2006 by                                          */
+/*  Copyright 2003, 2004, 2006, 2009 by                                    */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -67,7 +67,7 @@
         {
           if ( cnode == node )
           {
-            fprintf( stderr, "FTC_MruNode_Prepend: invalid action!\n" );
+            fprintf( stderr, "FTC_MruNode_Prepend: invalid action\n" );
             exit( 2 );
           }
           cnode = cnode->next;
@@ -115,7 +115,7 @@
 
         } while ( cnode != first );
 
-        fprintf( stderr, "FTC_MruNode_Up: invalid action!\n" );
+        fprintf( stderr, "FTC_MruNode_Up: invalid action\n" );
         exit( 2 );
       Ok:
       }
@@ -162,7 +162,7 @@
 
         } while ( cnode != first );
 
-        fprintf( stderr, "FTC_MruNode_Remove: invalid action!\n" );
+        fprintf( stderr, "FTC_MruNode_Remove: invalid action\n" );
         exit( 2 );
       Ok:
       }
@@ -182,7 +182,7 @@
       *plist = NULL;
     }
     else if ( node == first )
-        *plist = next;
+      *plist = next;
   }
 
 
@@ -259,7 +259,7 @@
                    FTC_MruNode  *anode )
   {
     FT_Error     error;
-    FTC_MruNode  node;
+    FTC_MruNode  node = NULL;
     FT_Memory    memory = list->memory;
 
 
@@ -285,14 +285,14 @@
         list->clazz.node_done( node, list->data );
     }
     else if ( FT_ALLOC( node, list->clazz.node_size ) )
-        goto Exit;
+      goto Exit;
 
     error = list->clazz.node_init( node, key, list->data );
     if ( error )
       goto Fail;
 
-      FTC_MruNode_Prepend( &list->nodes, node );
-      list->num_nodes++;
+    FTC_MruNode_Prepend( &list->nodes, node );
+    list->num_nodes++;
 
   Exit:
     *anode = node;
@@ -337,7 +337,7 @@
 
 
       if ( list->clazz.node_done )
-       list->clazz.node_done( node, list->data );
+        list->clazz.node_done( node, list->data );
 
       FT_FREE( node );
     }
@@ -376,14 +376,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  ftcmanag.c                                                             */
 /*                                                                         */
 /*    FreeType Cache Manager (body).                                       */
 /*                                                                         */
-/*  Copyright 2000-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 2000-2006, 2008-2010, 2013 by                                */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -404,6 +403,10 @@
 
 #include "ftccback.h"
 #include "ftcerror.h"
+
+#ifdef FT_CONFIG_OPTION_PIC
+#error "cache system does not support PIC yet"
+#endif
 
 
 #undef  FT_COMPONENT
@@ -456,6 +459,8 @@
     FTC_ScalerRec   scaler;
 
   } FTC_SizeNodeRec, *FTC_SizeNode;
+
+#define FTC_SIZE_NODE( x ) ( (FTC_SizeNode)( x ) )
 
 
   FT_CALLBACK_DEF( void )
@@ -555,29 +560,29 @@
                           FTC_Scaler   scaler,
                           FT_Size     *asize )
   {
-    FT_Error      error;
-    FTC_SizeNode  node;
+    FT_Error     error;
+    FTC_MruNode  mrunode;
 
 
     if ( asize == NULL )
-      return FTC_Err_Bad_Argument;
+      return FT_THROW( Invalid_Argument );
 
     *asize = NULL;
 
     if ( !manager )
-      return FTC_Err_Invalid_Cache_Handle;
+      return FT_THROW( Invalid_Cache_Handle );
 
 #ifdef FTC_INLINE
 
     FTC_MRULIST_LOOKUP_CMP( &manager->sizes, scaler, ftc_size_node_compare,
-                            node, error );
+                            mrunode, error );
 
 #else
-    error = FTC_MruList_Lookup( &manager->sizes, scaler, (FTC_MruNode*)&node );
+    error = FTC_MruList_Lookup( &manager->sizes, scaler, &mrunode );
 #endif
 
     if ( !error )
-      *asize = node->size;
+      *asize = FTC_SIZE_NODE( mrunode )->size;
 
     return error;
   }
@@ -598,6 +603,8 @@
     FT_Face         face;
 
   } FTC_FaceNodeRec, *FTC_FaceNode;
+
+#define FTC_FACE_NODE( x ) ( ( FTC_FaceNode )( x ) )
 
 
   FT_CALLBACK_DEF( FT_Error )
@@ -680,30 +687,30 @@
                           FTC_FaceID   face_id,
                           FT_Face     *aface )
   {
-    FT_Error      error;
-    FTC_FaceNode  node;
+    FT_Error     error;
+    FTC_MruNode  mrunode;
 
 
     if ( aface == NULL )
-      return FTC_Err_Bad_Argument;
+      return FT_THROW( Invalid_Argument );
 
     *aface = NULL;
 
     if ( !manager )
-      return FTC_Err_Invalid_Cache_Handle;
+      return FT_THROW( Invalid_Cache_Handle );
 
     /* we break encapsulation for the sake of speed */
 #ifdef FTC_INLINE
 
     FTC_MRULIST_LOOKUP_CMP( &manager->faces, face_id, ftc_face_node_compare,
-                            node, error );
+                            mrunode, error );
 
 #else
-    error = FTC_MruList_Lookup( &manager->faces, face_id, (FTC_MruNode*)&node );
+    error = FTC_MruList_Lookup( &manager->faces, face_id, &mrunode );
 #endif
 
     if ( !error )
-      *aface = node->face;
+      *aface = FTC_FACE_NODE( mrunode )->face;
 
     return error;
   }
@@ -735,7 +742,7 @@
 
 
     if ( !library )
-      return FTC_Err_Invalid_Library_Handle;
+      return FT_THROW( Invalid_Library_Handle );
 
     memory = library->memory;
 
@@ -827,7 +834,8 @@
       FTC_MruList_Reset( &manager->sizes );
       FTC_MruList_Reset( &manager->faces );
     }
-    /* XXX: FIXME: flush the caches? */
+
+    FTC_Manager_FlushN( manager, manager->num_nodes );
   }
 
 
@@ -844,7 +852,7 @@
     /* check node weights */
     if ( first )
     {
-      FT_ULong  weight = 0;
+      FT_Offset  weight = 0;
 
 
       node = first;
@@ -855,8 +863,8 @@
 
 
         if ( (FT_UInt)node->cache_index >= manager->num_caches )
-          FT_ERROR(( "FTC_Manager_Check: invalid node (cache index = %ld\n",
-                     node->cache_index ));
+          FT_TRACE0(( "FTC_Manager_Check: invalid node (cache index = %ld\n",
+                      node->cache_index ));
         else
           weight += cache->clazz.node_weight( node, cache );
 
@@ -865,8 +873,8 @@
       } while ( node != first );
 
       if ( weight != manager->cur_weight )
-        FT_ERROR(( "FTC_Manager_Check: invalid weight %ld instead of %ld\n",
-                   manager->cur_weight, weight ));
+        FT_TRACE0(( "FTC_Manager_Check: invalid weight %ld instead of %ld\n",
+                    manager->cur_weight, weight ));
     }
 
     /* check circular list */
@@ -884,9 +892,9 @@
       } while ( node != first );
 
       if ( count != manager->num_nodes )
-        FT_ERROR((
-          "FTC_Manager_Check: invalid cache node count %d instead of %d\n",
-          manager->num_nodes, count ));
+        FT_TRACE0(( "FTC_Manager_Check:"
+                    " invalid cache node count %d instead of %d\n",
+                    manager->num_nodes, count ));
     }
   }
 
@@ -913,9 +921,9 @@
 #ifdef FT_DEBUG_ERROR
     FTC_Manager_Check( manager );
 
-    FT_ERROR(( "compressing, weight = %ld, max = %ld, nodes = %d\n",
-               manager->cur_weight, manager->max_weight,
-               manager->num_nodes ));
+    FT_TRACE0(( "compressing, weight = %ld, max = %ld, nodes = %d\n",
+                manager->cur_weight, manager->max_weight,
+                manager->num_nodes ));
 #endif
 
     if ( manager->cur_weight < manager->max_weight || first == NULL )
@@ -946,7 +954,7 @@
                              FTC_CacheClass   clazz,
                              FTC_Cache       *acache )
   {
-    FT_Error   error = FTC_Err_Invalid_Argument;
+    FT_Error   error = FT_ERR( Invalid_Argument );
     FTC_Cache  cache = NULL;
 
 
@@ -957,9 +965,9 @@
 
       if ( manager->num_caches >= FTC_MAX_CACHES )
       {
-        error = FTC_Err_Too_Many_Caches;
-        FT_ERROR(( "%s: too many registered caches\n",
-                   "FTC_Manager_Register_Cache" ));
+        error = FT_THROW( Too_Many_Caches );
+        FT_ERROR(( "FTC_Manager_RegisterCache:"
+                   " too many registered caches\n" ));
         goto Exit;
       }
 
@@ -987,7 +995,8 @@
     }
 
   Exit:
-    *acache = cache;
+    if ( acache )
+      *acache = cache;
     return error;
   }
 
@@ -1039,7 +1048,9 @@
     /* this will remove all FTC_SizeNode that correspond to
      * the face_id as well
      */
-    FTC_MruList_RemoveSelection( &manager->faces, NULL, face_id );
+    FTC_MruList_RemoveSelection( &manager->faces,
+                                 ftc_face_node_compare,
+                                 face_id );
 
     for ( nn = 0; nn < manager->num_caches; nn++ )
       FTC_Cache_RemoveFaceID( manager->caches[nn], face_id );
@@ -1057,66 +1068,14 @@
   }
 
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-
-  FT_EXPORT_DEF( FT_Error )
-  FTC_Manager_Lookup_Face( FTC_Manager  manager,
-                           FTC_FaceID   face_id,
-                           FT_Face     *aface )
-  {
-    return FTC_Manager_LookupFace( manager, face_id, aface );
-  }
-
-
-  FT_EXPORT( FT_Error )
-  FTC_Manager_Lookup_Size( FTC_Manager  manager,
-                           FTC_Font     font,
-                           FT_Face     *aface,
-                           FT_Size     *asize )
-  {
-    FTC_ScalerRec  scaler;
-    FT_Error       error;
-    FT_Size        size;
-    FT_Face        face;
-
-
-    scaler.face_id = font->face_id;
-    scaler.width   = font->pix_width;
-    scaler.height  = font->pix_height;
-    scaler.pixel   = TRUE;
-    scaler.x_res   = 0;
-    scaler.y_res   = 0;
-
-    error = FTC_Manager_LookupSize( manager, &scaler, &size );
-    if ( error )
-    {
-      face = NULL;
-      size = NULL;
-    }
-    else
-      face = size->face;
-
-    if ( aface )
-      *aface = face;
-
-    if ( asize )
-      *asize = size;
-
-    return error;
-  }
-
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
-
-
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  ftccache.c                                                             */
 /*                                                                         */
 /*    The FreeType internal cache interface (body).                        */
 /*                                                                         */
-/*  Copyright 2000-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 2000-2007, 2009-2011, 2013 by                                */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1136,12 +1095,15 @@
 #include "ftccback.h"
 #include "ftcerror.h"
 
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_cache
+
 
 #define FTC_HASH_MAX_LOAD  2
 #define FTC_HASH_MIN_LOAD  1
 #define FTC_HASH_SUB_LOAD  ( FTC_HASH_MAX_LOAD - FTC_HASH_MIN_LOAD )
 
-/* this one _must_ be a power of 2! */
+  /* this one _must_ be a power of 2! */
 #define FTC_HASH_INITIAL_SIZE  8
 
 
@@ -1158,7 +1120,10 @@
   ftc_node_mru_link( FTC_Node     node,
                      FTC_Manager  manager )
   {
-    FTC_MruNode_Prepend( (FTC_MruNode*)&manager->nodes_list,
+    void  *nl = &manager->nodes_list;
+
+
+    FTC_MruNode_Prepend( (FTC_MruNode*)nl,
                          (FTC_MruNode)node );
     manager->num_nodes++;
   }
@@ -1169,7 +1134,10 @@
   ftc_node_mru_unlink( FTC_Node     node,
                        FTC_Manager  manager )
   {
-    FTC_MruNode_Remove( (FTC_MruNode*)&manager->nodes_list,
+    void  *nl = &manager->nodes_list;
+
+
+    FTC_MruNode_Remove( (FTC_MruNode*)nl,
                         (FTC_MruNode)node );
     manager->num_nodes--;
   }
@@ -1186,6 +1154,25 @@
                     (FTC_MruNode)node );
   }
 
+
+  /* get a top bucket for specified hash from cache,
+   * body for FTC_NODE__TOP_FOR_HASH( cache, hash )
+   */
+  FT_LOCAL_DEF( FTC_Node* )
+  ftc_get_top_node_for_hash( FTC_Cache   cache,
+                             FT_PtrDist  hash )
+  {
+    FTC_Node*  pnode;
+    FT_UInt    idx;
+
+
+    idx = (FT_UInt)( hash & cache->mask );
+    if ( idx < cache->p )
+      idx = (FT_UInt)( hash & ( 2 * cache->mask + 1 ) );
+    pnode = cache->buckets + idx;
+    return pnode;
+  }
+
 #endif /* !FTC_INLINE */
 
 
@@ -1199,9 +1186,9 @@
     for (;;)
     {
       FTC_Node  node, *pnode;
-      FT_UInt   p      = cache->p;
-      FT_UInt   mask   = cache->mask;
-      FT_UInt   count  = mask + p + 1;    /* number of buckets */
+      FT_UFast  p     = cache->p;
+      FT_UFast  mask  = cache->mask;
+      FT_UFast  count = mask + p + 1;    /* number of buckets */
 
 
       /* do we need to shrink the buckets array? */
@@ -1220,7 +1207,8 @@
 
 
           /* if we can't expand the array, leave immediately */
-          if ( FT_RENEW_ARRAY( cache->buckets, (mask+1)*2, (mask+1)*4 ) )
+          if ( FT_RENEW_ARRAY( cache->buckets,
+                               ( mask + 1 ) * 2, ( mask + 1 ) * 4 ) )
             break;
         }
 
@@ -1259,7 +1247,7 @@
       /* do we need to expand the buckets array? */
       else if ( cache->slack > (FT_Long)count * FTC_HASH_SUB_LOAD )
       {
-        FT_UInt    old_index = p + mask;
+        FT_UFast   old_index = p + mask;
         FTC_Node*  pold;
 
 
@@ -1294,7 +1282,9 @@
         cache->slack -= FTC_HASH_MAX_LOAD;
         cache->p      = p;
       }
-      else /* the hash table is balanced */
+
+      /* otherwise, the hash table is balanced */
+      else
         break;
     }
   }
@@ -1305,15 +1295,8 @@
   ftc_node_hash_unlink( FTC_Node   node0,
                         FTC_Cache  cache )
   {
-    FTC_Node  *pnode;
-    FT_UInt    idx;
+    FTC_Node  *pnode = FTC_NODE__TOP_FOR_HASH( cache, node0->hash );
 
-
-    idx = (FT_UInt)( node0->hash & cache->mask );
-    if ( idx < cache->p )
-      idx = (FT_UInt)( node0->hash & ( 2 * cache->mask + 1 ) );
-
-    pnode = cache->buckets + idx;
 
     for (;;)
     {
@@ -1322,7 +1305,7 @@
 
       if ( node == NULL )
       {
-        FT_ERROR(( "ftc_node_hash_unlink: unknown node!\n" ));
+        FT_TRACE0(( "ftc_node_hash_unlink: unknown node\n" ));
         return;
       }
 
@@ -1345,15 +1328,8 @@
   ftc_node_hash_link( FTC_Node   node,
                       FTC_Cache  cache )
   {
-    FTC_Node  *pnode;
-    FT_UInt    idx;
+    FTC_Node  *pnode = FTC_NODE__TOP_FOR_HASH( cache, node->hash );
 
-
-    idx = (FT_UInt)( node->hash & cache->mask );
-    if ( idx < cache->p )
-      idx = (FT_UInt)( node->hash & (2 * cache->mask + 1 ) );
-
-    pnode = cache->buckets + idx;
 
     node->link = *pnode;
     *pnode     = node;
@@ -1364,11 +1340,7 @@
 
 
   /* remove a node from the cache manager */
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-  FT_BASE_DEF( void )
-#else
   FT_LOCAL_DEF( void )
-#endif
   ftc_node_destroy( FTC_Node     node,
                     FTC_Manager  manager )
   {
@@ -1379,7 +1351,7 @@
     /* find node's cache */
     if ( node->cache_index >= manager->num_caches )
     {
-      FT_ERROR(( "ftc_node_destroy: invalid node handle\n" ));
+      FT_TRACE0(( "ftc_node_destroy: invalid node handle\n" ));
       return;
     }
 #endif
@@ -1389,7 +1361,7 @@
 #ifdef FT_DEBUG_ERROR
     if ( cache == NULL )
     {
-      FT_ERROR(( "ftc_node_destroy: invalid node handle\n" ));
+      FT_TRACE0(( "ftc_node_destroy: invalid node handle\n" ));
       return;
     }
 #endif
@@ -1408,7 +1380,7 @@
 #if 0
     /* check, just in case of general corruption :-) */
     if ( manager->num_nodes == 0 )
-      FT_ERROR(( "ftc_node_destroy: invalid cache node count! = %d\n",
+      FT_TRACE0(( "ftc_node_destroy: invalid cache node count (%d)\n",
                   manager->num_nodes ));
 #endif
   }
@@ -1449,11 +1421,11 @@
   static void
   FTC_Cache_Clear( FTC_Cache  cache )
   {
-    if ( cache )
+    if ( cache && cache->buckets )
     {
       FTC_Manager  manager = cache->manager;
       FT_UFast     i;
-      FT_UInt      count;
+      FT_UFast     count;
 
 
       count = cache->p + cache->mask + 1;
@@ -1513,11 +1485,11 @@
 
   static void
   ftc_cache_add( FTC_Cache  cache,
-                 FT_UInt32  hash,
+                 FT_PtrDist hash,
                  FTC_Node   node )
   {
-    node->hash = hash;
-    node->cache_index = (FT_UInt16) cache->index;
+    node->hash        = hash;
+    node->cache_index = (FT_UInt16)cache->index;
     node->ref_count   = 0;
 
     ftc_node_hash_link( node, cache );
@@ -1541,7 +1513,7 @@
 
   FT_LOCAL_DEF( FT_Error )
   FTC_Cache_NewNode( FTC_Cache   cache,
-                     FT_UInt32   hash,
+                     FT_PtrDist  hash,
                      FT_Pointer  query,
                      FTC_Node   *anode )
   {
@@ -1559,7 +1531,7 @@
     {
       error = cache->clazz.node_new( &node, query, cache );
     }
-    FTC_CACHE_TRYLOOP_END();
+    FTC_CACHE_TRYLOOP_END( NULL );
 
     if ( error )
       node = NULL;
@@ -1580,40 +1552,59 @@
 
   FT_LOCAL_DEF( FT_Error )
   FTC_Cache_Lookup( FTC_Cache   cache,
-                    FT_UInt32   hash,
+                    FT_PtrDist  hash,
                     FT_Pointer  query,
                     FTC_Node   *anode )
   {
-    FT_UFast   idx;
     FTC_Node*  bucket;
     FTC_Node*  pnode;
     FTC_Node   node;
-    FT_Error   error = 0;
+    FT_Error   error        = FT_Err_Ok;
+    FT_Bool    list_changed = FALSE;
 
     FTC_Node_CompareFunc  compare = cache->clazz.node_compare;
 
 
     if ( cache == NULL || anode == NULL )
-      return FT_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
 
-    idx = hash & cache->mask;
-    if ( idx < cache->p )
-      idx = hash & ( cache->mask * 2 + 1 );
+    /* Go to the `top' node of the list sharing same masked hash */
+    bucket = pnode = FTC_NODE__TOP_FOR_HASH( cache, hash );
 
-    bucket = cache->buckets + idx;
-    pnode  = bucket;
+    /* Lookup a node with exactly same hash and queried properties.  */
+    /* NOTE: _nodcomp() may change the linked list to reduce memory. */
     for (;;)
     {
       node = *pnode;
       if ( node == NULL )
         goto NewNode;
 
-      if ( node->hash == hash && compare( node, query, cache ) )
+      if ( node->hash == hash                           &&
+           compare( node, query, cache, &list_changed ) )
         break;
 
       pnode = &node->link;
     }
 
+    if ( list_changed )
+    {
+      /* Update bucket by modified linked list */
+      bucket = pnode = FTC_NODE__TOP_FOR_HASH( cache, hash );
+
+      /* Update pnode by modified linked list */
+      while ( *pnode != node )
+      {
+        if ( *pnode == NULL )
+        {
+          FT_ERROR(( "FTC_Cache_Lookup: oops!!!  node missing\n" ));
+          goto NewNode;
+        }
+        else
+          pnode = &((*pnode)->link);
+      }
+    }
+
+    /* Reorder the list to move the found node to the `top' */
     if ( node != *bucket )
     {
       *pnode     = node->link;
@@ -1630,6 +1621,7 @@
         ftc_node_mru_up( node, manager );
     }
     *anode = node;
+
     return error;
 
   NewNode:
@@ -1648,7 +1640,7 @@
     FTC_Node     frees   = NULL;
 
 
-    count = cache->p + cache->mask;
+    count = cache->p + cache->mask + 1;
     for ( i = 0; i < count; i++ )
     {
       FTC_Node*  bucket = cache->buckets + i;
@@ -1658,12 +1650,14 @@
       for ( ;; )
       {
         FTC_Node  node = *pnode;
+        FT_Bool   list_changed = FALSE;
 
 
         if ( node == NULL )
           break;
 
-        if ( cache->clazz.node_remove_faceid( node, face_id, cache ) )
+        if ( cache->clazz.node_remove_faceid( node, face_id,
+                                              cache, &list_changed ) )
         {
           *pnode     = node->link;
           node->link = frees;
@@ -1696,14 +1690,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  ftccmap.c                                                              */
 /*                                                                         */
 /*    FreeType CharMap cache (body)                                        */
 /*                                                                         */
-/*  Copyright 2000-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 2000-2013 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1720,51 +1713,14 @@
 #include FT_CACHE_H
 #include "ftcmanag.h"
 #include FT_INTERNAL_MEMORY_H
+#include FT_INTERNAL_OBJECTS_H
 #include FT_INTERNAL_DEBUG_H
-#include FT_TRUETYPE_IDS_H
 
 #include "ftccback.h"
 #include "ftcerror.h"
 
 #undef  FT_COMPONENT
 #define FT_COMPONENT  trace_cache
-
-
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-
-  typedef enum  FTC_OldCMapType_
-  {
-    FTC_OLD_CMAP_BY_INDEX    = 0,
-    FTC_OLD_CMAP_BY_ENCODING = 1,
-    FTC_OLD_CMAP_BY_ID       = 2
-
-  } FTC_OldCMapType;
-
-
-  typedef struct  FTC_OldCMapIdRec_
-  {
-    FT_UInt  platform;
-    FT_UInt  encoding;
-
-  } FTC_OldCMapIdRec, *FTC_OldCMapId;
-
-
-  typedef struct  FTC_OldCMapDescRec_
-  {
-    FTC_FaceID       face_id;
-    FTC_OldCMapType  type;
-
-    union
-    {
-      FT_UInt           index;
-      FT_Encoding       encoding;
-      FTC_OldCMapIdRec  id;
-
-    } u;
-
-  } FTC_OldCMapDescRec, *FTC_OldCMapDesc;
-
-#endif /* FT_CONFIG_OLD_INTERNALS */
 
 
   /*************************************************************************/
@@ -1785,9 +1741,9 @@
 #define FTC_CMAP_INDICES_MAX  128
 
   /* compute a query/node hash */
-#define FTC_CMAP_HASH( faceid, index, charcode )           \
-          ( FTC_FACE_ID_HASH( faceid ) + 211 * ( index ) + \
-            ( (char_code) / FTC_CMAP_INDICES_MAX )       )
+#define FTC_CMAP_HASH( faceid, index, charcode )         \
+          ( _FTC_FACE_ID_HASH( faceid ) + 211 * (index) + \
+            ( (charcode) / FTC_CMAP_INDICES_MAX )      )
 
   /* the charmap query */
   typedef struct  FTC_CMapQueryRec_
@@ -1819,7 +1775,7 @@
 
   /* if (indices[n] == FTC_CMAP_UNKNOWN), we assume that the corresponding */
   /* glyph indices haven't been queried through FT_Get_Glyph_Index() yet   */
-#define FTC_CMAP_UNKNOWN  ( (FT_UInt16)-1 )
+#define FTC_CMAP_UNKNOWN  (FT_UInt16)~0
 
 
   /*************************************************************************/
@@ -1853,7 +1809,7 @@
     FTC_CMapQuery  query  = (FTC_CMapQuery)ftcquery;
     FT_Error       error;
     FT_Memory      memory = cache->memory;
-    FTC_CMapNode   node;
+    FTC_CMapNode   node   = NULL;
     FT_UInt        nn;
 
 
@@ -1874,7 +1830,7 @@
 
 
   /* compute the weight of a given cmap node */
-  FT_CALLBACK_DEF( FT_ULong )
+  FT_CALLBACK_DEF( FT_Offset )
   ftc_cmap_node_weight( FTC_Node   cnode,
                         FTC_Cache  cache )
   {
@@ -1889,13 +1845,16 @@
   FT_CALLBACK_DEF( FT_Bool )
   ftc_cmap_node_compare( FTC_Node    ftcnode,
                          FT_Pointer  ftcquery,
-                         FTC_Cache   cache )
+                         FTC_Cache   cache,
+                         FT_Bool*    list_changed )
   {
     FTC_CMapNode   node  = (FTC_CMapNode)ftcnode;
     FTC_CMapQuery  query = (FTC_CMapQuery)ftcquery;
     FT_UNUSED( cache );
 
 
+    if ( list_changed )
+      *list_changed = FALSE;
     if ( node->face_id    == query->face_id    &&
          node->cmap_index == query->cmap_index )
     {
@@ -1912,12 +1871,16 @@
   FT_CALLBACK_DEF( FT_Bool )
   ftc_cmap_node_remove_faceid( FTC_Node    ftcnode,
                                FT_Pointer  ftcface_id,
-                               FTC_Cache   cache )
+                               FTC_Cache   cache,
+                               FT_Bool*    list_changed )
   {
     FTC_CMapNode  node    = (FTC_CMapNode)ftcnode;
     FTC_FaceID    face_id = (FTC_FaceID)ftcface_id;
     FT_UNUSED( cache );
 
+
+    if ( list_changed )
+      *list_changed = FALSE;
     return FT_BOOL( node->face_id == face_id );
   }
 
@@ -1958,21 +1921,6 @@
   }
 
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-
-  /*
-   *  Unfortunately, it is not possible to support binary backwards
-   *  compatibility in the cmap cache.  The FTC_CMapCache_Lookup signature
-   *  changes were too deep, and there is no clever hackish way to detect
-   *  what kind of structure we are being passed.
-   *
-   *  On the other hand it seems that no production code is using this
-   *  function on Unix distributions.
-   */
-
-#endif
-
-
   /* documentation is in ftcache.h */
 
   FT_EXPORT_DEF( FT_UInt )
@@ -1983,74 +1931,33 @@
   {
     FTC_Cache         cache = FTC_CACHE( cmap_cache );
     FTC_CMapQueryRec  query;
-    FTC_CMapNode      node;
+    FTC_Node          node;
     FT_Error          error;
     FT_UInt           gindex = 0;
-    FT_UInt32         hash;
+    FT_PtrDist        hash;
+    FT_Int            no_cmap_change = 0;
 
+
+    if ( cmap_index < 0 )
+    {
+      /* Treat a negative cmap index as a special value, meaning that you */
+      /* don't want to change the FT_Face's character map through this    */
+      /* call.  This can be useful if the face requester callback already */
+      /* sets the face's charmap to the appropriate value.                */
+
+      no_cmap_change = 1;
+      cmap_index     = 0;
+    }
 
     if ( !cache )
     {
-      FT_ERROR(( "FTC_CMapCache_Lookup: bad arguments, returning 0!\n" ));
+      FT_TRACE0(( "FTC_CMapCache_Lookup: bad arguments, returning 0\n" ));
       return 0;
     }
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-
-    /*
-     *  Detect a call from a rogue client that thinks it is linking
-     *  to FreeType 2.1.7.  This is possible because the third parameter
-     *  is then a character code, and we have never seen any font with
-     *  more than a few charmaps, so if the index is very large...
-     *
-     *  It is also very unlikely that a rogue client is interested
-     *  in Unicode values 0 to 3.
-     */
-    if ( cmap_index >= 4 )
-    {
-      FTC_OldCMapDesc  desc = (FTC_OldCMapDesc) face_id;
-
-
-      char_code     = (FT_UInt32)cmap_index;
-      query.face_id = desc->face_id;
-
-
-      switch ( desc->type )
-      {
-      case FTC_OLD_CMAP_BY_INDEX:
-        query.cmap_index = desc->u.index;
-        query.char_code  = (FT_UInt32)cmap_index;
-        break;
-
-      case FTC_OLD_CMAP_BY_ENCODING:
-        {
-          FT_Face  face;
-
-
-          error = FTC_Manager_LookupFace( cache->manager, desc->face_id,
-                                          &face );
-          if ( error )
-            return 0;
-
-          FT_Select_Charmap( face, desc->u.encoding );
-
-          return FT_Get_Char_Index( face, char_code );
-        }
-        /*break;*/
-
-      default:
-        return 0;
-      }
-    }
-    else
-
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
-
-    {
-      query.face_id    = face_id;
-      query.cmap_index = (FT_UInt)cmap_index;
-      query.char_code  = char_code;
-    }
+    query.face_id    = face_id;
+    query.cmap_index = (FT_UInt)cmap_index;
+    query.char_code  = char_code;
 
     hash = FTC_CMAP_HASH( face_id, cmap_index, char_code );
 
@@ -2058,18 +1965,21 @@
     FTC_CACHE_LOOKUP_CMP( cache, ftc_cmap_node_compare, hash, &query,
                           node, error );
 #else
-    error = FTC_Cache_Lookup( cache, hash, &query, (FTC_Node*) &node );
+    error = FTC_Cache_Lookup( cache, hash, &query, &node );
 #endif
     if ( error )
       goto Exit;
 
-    FT_ASSERT( (FT_UInt)( char_code - node->first ) < FTC_CMAP_INDICES_MAX );
+    FT_ASSERT( (FT_UInt)( char_code - FTC_CMAP_NODE( node )->first ) <
+                FTC_CMAP_INDICES_MAX );
 
     /* something rotten can happen with rogue clients */
-    if ( (FT_UInt)( char_code - node->first >= FTC_CMAP_INDICES_MAX ) )
-      return 0;
+    if ( (FT_UInt)( char_code - FTC_CMAP_NODE( node )->first >=
+                    FTC_CMAP_INDICES_MAX ) )
+      return 0; /* XXX: should return appropriate error */
 
-    gindex = node->indices[char_code - node->first];
+    gindex = FTC_CMAP_NODE( node )->indices[char_code -
+                                            FTC_CMAP_NODE( node )->first];
     if ( gindex == FTC_CMAP_UNKNOWN )
     {
       FT_Face  face;
@@ -2077,9 +1987,17 @@
 
       gindex = 0;
 
-      error = FTC_Manager_LookupFace( cache->manager, node->face_id, &face );
+      error = FTC_Manager_LookupFace( cache->manager,
+                                      FTC_CMAP_NODE( node )->face_id,
+                                      &face );
       if ( error )
         goto Exit;
+
+#ifdef FT_MAX_CHARMAP_CACHEABLE
+      /* something rotten can happen with rogue clients */
+      if ( cmap_index > FT_MAX_CHARMAP_CACHEABLE )
+        return 0; /* XXX: should return appropriate error */
+#endif
 
       if ( (FT_UInt)cmap_index < (FT_UInt)face->num_charmaps )
       {
@@ -2089,16 +2007,18 @@
         old  = face->charmap;
         cmap = face->charmaps[cmap_index];
 
-        if ( old != cmap )
+        if ( old != cmap && !no_cmap_change )
           FT_Set_Charmap( face, cmap );
 
         gindex = FT_Get_Char_Index( face, char_code );
 
-        if ( old != cmap )
+        if ( old != cmap && !no_cmap_change )
           FT_Set_Charmap( face, old );
       }
 
-      node->indices[char_code - node->first] = (FT_UShort)gindex;
+      FTC_CMAP_NODE( node )->indices[char_code -
+                                     FTC_CMAP_NODE( node )->first]
+        = (FT_UShort)gindex;
     }
 
   Exit:
@@ -2107,14 +2027,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  ftcglyph.c                                                             */
 /*                                                                         */
 /*    FreeType Glyph Image (FT_Glyph) cache (body).                        */
 /*                                                                         */
-/*  Copyright 2000-2001, 2003, 2004, 2006 by                               */
+/*  Copyright 2000-2001, 2003, 2004, 2006, 2009, 2011 by                   */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -2127,11 +2046,10 @@
 
 
 #include "ft2build.h"
+#include FT_INTERNAL_OBJECTS_H
 #include FT_CACHE_H
 #include "ftcglyph.h"
 #include FT_ERRORS_H
-#include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_DEBUG_H
 
 #include "ftccback.h"
 #include "ftcerror.h"
@@ -2176,25 +2094,34 @@
   FT_LOCAL_DEF( FT_Bool )
   ftc_gnode_compare( FTC_Node    ftcgnode,
                      FT_Pointer  ftcgquery,
-                     FTC_Cache   cache )
+                     FTC_Cache   cache,
+                     FT_Bool*    list_changed )
   {
     FTC_GNode   gnode  = (FTC_GNode)ftcgnode;
     FTC_GQuery  gquery = (FTC_GQuery)ftcgquery;
     FT_UNUSED( cache );
 
 
-    return FT_BOOL(  gnode->family == gquery->family &&
-                     gnode->gindex == gquery->gindex );
+    if ( list_changed )
+      *list_changed = FALSE;
+    return FT_BOOL( gnode->family == gquery->family &&
+                    gnode->gindex == gquery->gindex );
   }
 
+
+#ifdef FTC_INLINE
 
   FT_LOCAL_DEF( FT_Bool )
   FTC_GNode_Compare( FTC_GNode   gnode,
-                     FTC_GQuery  gquery )
+                     FTC_GQuery  gquery,
+                     FTC_Cache   cache,
+                     FT_Bool*    list_changed )
   {
-    return ftc_gnode_compare( FTC_NODE( gnode ), gquery, NULL );
+    return ftc_gnode_compare( FTC_NODE( gnode ), gquery,
+                              cache, list_changed );
   }
 
+#endif
 
   /*************************************************************************/
   /*************************************************************************/
@@ -2287,7 +2214,7 @@
 
   FT_LOCAL_DEF( FT_Error )
   FTC_GCache_Lookup( FTC_GCache   cache,
-                     FT_UInt32    hash,
+                     FT_PtrDist   hash,
                      FT_UInt      gindex,
                      FTC_GQuery   query,
                      FTC_Node    *anode )
@@ -2319,14 +2246,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  ftcimage.c                                                             */
 /*                                                                         */
 /*    FreeType Image cache (body).                                         */
 /*                                                                         */
-/*  Copyright 2000-2001, 2003, 2004, 2006 by                               */
+/*  Copyright 2000-2001, 2003, 2004, 2006, 2010 by                         */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -2383,7 +2309,7 @@
   {
     FT_Memory  memory = cache->memory;
     FT_Error   error;
-    FTC_INode  inode;
+    FTC_INode  inode  = NULL;
 
 
     if ( !FT_NEW( inode ) )
@@ -2425,12 +2351,12 @@
   }
 
 
-  FT_LOCAL_DEF( FT_ULong )
+  FT_LOCAL_DEF( FT_Offset )
   ftc_inode_weight( FTC_Node   ftcinode,
                     FTC_Cache  ftccache )
   {
     FTC_INode  inode = (FTC_INode)ftcinode;
-    FT_ULong   size  = 0;
+    FT_Offset  size  = 0;
     FT_Glyph   glyph = inode->glyph;
 
     FT_UNUSED( ftccache );
@@ -2473,7 +2399,7 @@
 
 #if 0
 
-  FT_LOCAL_DEF( FT_ULong )
+  FT_LOCAL_DEF( FT_Offset )
   FTC_INode_Weight( FTC_INode  inode )
   {
     return ftc_inode_weight( FTC_NODE( inode ), NULL );
@@ -2483,14 +2409,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  ftcsbits.c                                                             */
 /*                                                                         */
 /*    FreeType sbits manager (body).                                       */
 /*                                                                         */
-/*  Copyright 2000-2001, 2002, 2003, 2004, 2005, 2006 by                   */
+/*  Copyright 2000-2006, 2009-2011, 2013 by                                */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -2511,6 +2436,9 @@
 
 #include "ftccback.h"
 #include "ftcerror.h"
+
+#undef  FT_COMPONENT
+#define FT_COMPONENT  trace_cache
 
 
   /*************************************************************************/
@@ -2599,7 +2527,7 @@
     if ( (FT_UInt)(gindex - gnode->gindex) >= snode->count )
     {
       FT_ERROR(( "ftc_snode_load: invalid glyph index" ));
-      return FTC_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
     }
 
     sbit  = snode->sbits + ( gindex - gnode->gindex );
@@ -2615,13 +2543,13 @@
       FT_Int        temp;
       FT_GlyphSlot  slot   = face->glyph;
       FT_Bitmap*    bitmap = &slot->bitmap;
-      FT_Int        xadvance, yadvance;
+      FT_Pos        xadvance, yadvance; /* FT_GlyphSlot->advance.{x|y} */
 
 
       if ( slot->format != FT_GLYPH_FORMAT_BITMAP )
       {
-        FT_ERROR(( "%s: glyph loaded didn't return a bitmap!\n",
-                   "ftc_snode_load" ));
+        FT_TRACE0(( "ftc_snode_load:"
+                    " glyph loaded didn't return a bitmap\n" ));
         goto BadGlyph;
       }
 
@@ -2643,7 +2571,11 @@
            !CHECK_CHAR( slot->bitmap_top  ) ||
            !CHECK_CHAR( xadvance )          ||
            !CHECK_CHAR( yadvance )          )
+      {
+        FT_TRACE2(( "ftc_snode_load:"
+                    " glyph too large for small bitmap cache\n"));
         goto BadGlyph;
+      }
 
       sbit->width     = (FT_Byte)bitmap->width;
       sbit->height    = (FT_Byte)bitmap->rows;
@@ -2668,13 +2600,13 @@
     /* we mark unloaded glyphs with `sbit.buffer == 0' */
     /* and `width == 255', `height == 0'               */
     /*                                                 */
-    if ( error && error != FTC_Err_Out_Of_Memory )
+    if ( error && FT_ERR_NEQ( error, Out_Of_Memory ) )
     {
     BadGlyph:
       sbit->width  = 255;
       sbit->height = 0;
       sbit->buffer = NULL;
-      error        = 0;
+      error        = FT_Err_Ok;
       if ( asize )
         *asize = 0;
     }
@@ -2696,12 +2628,13 @@
 
     FTC_SFamilyClass  clazz = FTC_CACHE__SFAMILY_CLASS( cache );
     FT_UInt           total;
+    FT_UInt           node_count;
 
 
     total = clazz->family_get_count( family, cache->manager );
     if ( total == 0 || gindex >= total )
     {
-      error = FT_Err_Invalid_Argument;
+      error = FT_THROW( Invalid_Argument );
       goto Exit;
     }
 
@@ -2718,6 +2651,10 @@
       FTC_GNode_Init( FTC_GNODE( snode ), start, family );
 
       snode->count = count;
+      for ( node_count = 0; node_count < count; node_count++ )
+      {
+        snode->sbits[node_count].width = 255;
+      }
 
       error = ftc_snode_load( snode,
                               cache->manager,
@@ -2749,7 +2686,7 @@
   }
 
 
-  FT_LOCAL_DEF( FT_ULong )
+  FT_LOCAL_DEF( FT_Offset )
   ftc_snode_weight( FTC_Node   ftcsnode,
                     FTC_Cache  cache )
   {
@@ -2757,7 +2694,7 @@
     FT_UInt    count = snode->count;
     FTC_SBit   sbit  = snode->sbits;
     FT_Int     pitch;
-    FT_ULong   size;
+    FT_Offset  size;
 
     FT_UNUSED( cache );
 
@@ -2786,7 +2723,7 @@
 
 #if 0
 
-  FT_LOCAL_DEF( FT_ULong )
+  FT_LOCAL_DEF( FT_Offset )
   FTC_SNode_Weight( FTC_SNode  snode )
   {
     return ftc_snode_weight( FTC_NODE( snode ), NULL );
@@ -2798,7 +2735,8 @@
   FT_LOCAL_DEF( FT_Bool )
   ftc_snode_compare( FTC_Node    ftcsnode,
                      FT_Pointer  ftcgquery,
-                     FTC_Cache   cache )
+                     FTC_Cache   cache,
+                     FT_Bool*    list_changed )
   {
     FTC_SNode   snode  = (FTC_SNode)ftcsnode;
     FTC_GQuery  gquery = (FTC_GQuery)ftcgquery;
@@ -2807,6 +2745,8 @@
     FT_Bool     result;
 
 
+    if (list_changed)
+      *list_changed = FALSE;
     result = FT_BOOL( gnode->family == gquery->family                    &&
                       (FT_UInt)( gindex - gnode->gindex ) < snode->count );
     if ( result )
@@ -2847,7 +2787,7 @@
        *
        */
 
-      if ( sbit->buffer == NULL && sbit->width != 255 )
+      if ( sbit->buffer == NULL && sbit->width == 255 )
       {
         FT_ULong  size;
         FT_Error  error;
@@ -2860,7 +2800,7 @@
         {
           error = ftc_snode_load( snode, cache->manager, gindex, &size );
         }
-        FTC_CACHE_TRYLOOP_END();
+        FTC_CACHE_TRYLOOP_END( list_changed );
 
         ftcsnode->ref_count--;  /* unlock the node */
 
@@ -2875,24 +2815,28 @@
   }
 
 
+#ifdef FTC_INLINE
+
   FT_LOCAL_DEF( FT_Bool )
   FTC_SNode_Compare( FTC_SNode   snode,
                      FTC_GQuery  gquery,
-                     FTC_Cache   cache )
+                     FTC_Cache   cache,
+                     FT_Bool*    list_changed )
   {
-    return ftc_snode_compare( FTC_NODE( snode ), gquery, cache );
+    return ftc_snode_compare( FTC_NODE( snode ), gquery,
+                              cache, list_changed );
   }
 
+#endif
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  ftcbasic.c                                                             */
 /*                                                                         */
 /*    The FreeType basic cache interface (body).                           */
 /*                                                                         */
-/*  Copyright 2003, 2004, 2005, 2006 by                                    */
+/*  Copyright 2003-2007, 2009-2011, 2013 by                                */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -2905,52 +2849,17 @@
 
 
 #include "ft2build.h"
+#include FT_INTERNAL_OBJECTS_H
+#include FT_INTERNAL_DEBUG_H
 #include FT_CACHE_H
 #include "ftcglyph.h"
 #include "ftcimage.h"
 #include "ftcsbits.h"
-#include FT_INTERNAL_MEMORY_H
 
 #include "ftccback.h"
 #include "ftcerror.h"
 
-
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-
-  /*
-   *  These structures correspond to the FTC_Font and FTC_ImageDesc types
-   *  that were defined in version 2.1.7.
-   */
-  typedef struct  FTC_OldFontRec_
-  {
-    FTC_FaceID  face_id;
-    FT_UShort   pix_width;
-    FT_UShort   pix_height;
-
-  } FTC_OldFontRec, *FTC_OldFont;
-
-
-  typedef struct  FTC_OldImageDescRec_
-  {
-    FTC_OldFontRec  font;
-    FT_UInt32       flags;
-
-  } FTC_OldImageDescRec, *FTC_OldImageDesc;
-
-
-  /*
-   *  Notice that FTC_OldImageDescRec and FTC_ImageTypeRec are nearly
-   *  identical, bit-wise.  The only difference is that the `width' and
-   *  `height' fields are expressed as 16-bit integers in the old structure,
-   *  and as normal `int' in the new one.
-   *
-   *  We are going to perform a weird hack to detect which structure is
-   *  being passed to the image and sbit caches.  If the new structure's
-   *  `width' is larger than 0x10000, we assume that we are really receiving
-   *  an FTC_OldImageDesc.
-   */
-
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
+#define FT_COMPONENT  trace_cache
 
 
   /*
@@ -3028,8 +2937,18 @@
 
     error = FTC_Manager_LookupFace( manager, family->attrs.scaler.face_id,
                                     &face );
+
+    if ( error || !face )
+      return result;
+
+    if ( (FT_ULong)face->num_glyphs > FT_UINT_MAX || 0 > face->num_glyphs )
+    {
+      FT_TRACE1(( "ftc_basic_family_get_count: too large number of glyphs " ));
+      FT_TRACE1(( "in this face, truncated\n", face->num_glyphs ));
+    }
+
     if ( !error )
-      result = face->num_glyphs;
+      result = (FT_UInt)face->num_glyphs;
 
     return result;
   }
@@ -3101,7 +3020,7 @@
           }
         }
         else
-          error = FTC_Err_Invalid_Argument;
+          error = FT_THROW( Invalid_Argument );
       }
     }
 
@@ -3113,7 +3032,8 @@
   FT_CALLBACK_DEF( FT_Bool )
   ftc_basic_gnode_compare_faceid( FTC_Node    ftcgnode,
                                   FT_Pointer  ftcface_id,
-                                  FTC_Cache   cache )
+                                  FTC_Cache   cache,
+                                  FT_Bool*    list_changed )
   {
     FTC_GNode        gnode   = (FTC_GNode)ftcgnode;
     FTC_FaceID       face_id = (FTC_FaceID)ftcface_id;
@@ -3121,6 +3041,8 @@
     FT_Bool          result;
 
 
+    if ( list_changed )
+      *list_changed = FALSE;
     result = FT_BOOL( family->attrs.scaler.face_id == face_id );
     if ( result )
     {
@@ -3192,15 +3114,15 @@
                          FTC_Node       *anode )
   {
     FTC_BasicQueryRec  query;
-    FTC_INode          node = 0;  /* make compiler happy */
+    FTC_Node           node = 0; /* make compiler happy */
     FT_Error           error;
-    FT_UInt32          hash;
+    FT_PtrDist         hash;
 
 
     /* some argument checks are delayed to FTC_Cache_Lookup */
     if ( !aglyph )
     {
-      error = FTC_Err_Invalid_Argument;
+      error = FT_THROW( Invalid_Argument );
       goto Exit;
     }
 
@@ -3208,31 +3130,17 @@
     if ( anode )
       *anode  = NULL;
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-
-    /*
-     *  This one is a major hack used to detect whether we are passed a
-     *  regular FTC_ImageType handle, or a legacy FTC_OldImageDesc one.
-     */
-    if ( type->width >= 0x10000 )
     {
-      FTC_OldImageDesc  desc = (FTC_OldImageDesc)type;
+      if ( (FT_ULong)(type->flags - FT_INT_MIN) > FT_UINT_MAX )
+      {
+        FT_TRACE1(( "FTC_ImageCache_Lookup: higher bits in load_flags" ));
+        FT_TRACE1(( "0x%x are dropped\n", (type->flags & ~((FT_ULong)FT_UINT_MAX)) ));
+      }
 
-
-      query.attrs.scaler.face_id = desc->font.face_id;
-      query.attrs.scaler.width   = desc->font.pix_width;
-      query.attrs.scaler.height  = desc->font.pix_height;
-      query.attrs.load_flags     = desc->flags;
-    }
-    else
-
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
-
-    {
       query.attrs.scaler.face_id = type->face_id;
       query.attrs.scaler.width   = type->width;
       query.attrs.scaler.height  = type->height;
-      query.attrs.load_flags     = type->flags;
+      query.attrs.load_flags     = (FT_UInt)type->flags;
     }
 
     query.attrs.scaler.pixel = 1;
@@ -3253,7 +3161,7 @@
     error = FTC_GCache_Lookup( FTC_GCACHE( cache ),
                                hash, gindex,
                                FTC_GQUERY( &query ),
-                               (FTC_Node*) &node );
+                               &node );
 #endif
     if ( !error )
     {
@@ -3261,8 +3169,8 @@
 
       if ( anode )
       {
-        *anode = FTC_NODE( node );
-        FTC_NODE( node )->ref_count++;
+        *anode = node;
+        node->ref_count++;
       }
     }
 
@@ -3271,147 +3179,79 @@
   }
 
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
+  /* documentation is in ftcache.h */
 
-  /* yet another backwards-legacy structure */
-  typedef struct  FTC_OldImage_Desc_
+  FT_EXPORT_DEF( FT_Error )
+  FTC_ImageCache_LookupScaler( FTC_ImageCache  cache,
+                               FTC_Scaler      scaler,
+                               FT_ULong        load_flags,
+                               FT_UInt         gindex,
+                               FT_Glyph       *aglyph,
+                               FTC_Node       *anode )
   {
-    FTC_FontRec  font;
-    FT_UInt      image_type;
-
-  } FTC_OldImage_Desc;
-
-
-#define FTC_OLD_IMAGE_FORMAT( x )  ( (x) & 7 )
+    FTC_BasicQueryRec  query;
+    FTC_Node           node = 0; /* make compiler happy */
+    FT_Error           error;
+    FT_PtrDist         hash;
 
 
-#define ftc_old_image_format_bitmap    0x0000
-#define ftc_old_image_format_outline   0x0001
-
-#define ftc_old_image_format_mask      0x000F
-
-#define ftc_old_image_flag_monochrome  0x0010
-#define ftc_old_image_flag_unhinted    0x0020
-#define ftc_old_image_flag_autohinted  0x0040
-#define ftc_old_image_flag_unscaled    0x0080
-#define ftc_old_image_flag_no_sbits    0x0100
-
-  /* monochrome bitmap */
-#define ftc_old_image_mono             ftc_old_image_format_bitmap   | \
-                                       ftc_old_image_flag_monochrome
-
-  /* anti-aliased bitmap */
-#define ftc_old_image_grays            ftc_old_image_format_bitmap
-
-  /* scaled outline */
-#define ftc_old_image_outline          ftc_old_image_format_outline
-
-
-  static void
-  ftc_image_type_from_old_desc( FTC_ImageType       typ,
-                                FTC_OldImage_Desc*  desc )
-  {
-    typ->face_id = desc->font.face_id;
-    typ->width   = desc->font.pix_width;
-    typ->height  = desc->font.pix_height;
-
-    /* convert image type flags to load flags */
+    /* some argument checks are delayed to FTC_Cache_Lookup */
+    if ( !aglyph || !scaler )
     {
-      FT_UInt  load_flags = FT_LOAD_DEFAULT;
-      FT_UInt  type       = desc->image_type;
-
-
-      /* determine load flags, depending on the font description's */
-      /* image type                                                */
-
-      if ( FTC_OLD_IMAGE_FORMAT( type ) == ftc_old_image_format_bitmap )
-      {
-        if ( type & ftc_old_image_flag_monochrome )
-          load_flags |= FT_LOAD_MONOCHROME;
-
-        /* disable embedded bitmaps loading if necessary */
-        if ( type & ftc_old_image_flag_no_sbits )
-          load_flags |= FT_LOAD_NO_BITMAP;
-      }
-      else
-      {
-        /* we want an outline, don't load embedded bitmaps */
-        load_flags |= FT_LOAD_NO_BITMAP;
-
-        if ( type & ftc_old_image_flag_unscaled )
-          load_flags |= FT_LOAD_NO_SCALE;
-      }
-
-      /* always render glyphs to bitmaps */
-      load_flags |= FT_LOAD_RENDER;
-
-      if ( type & ftc_old_image_flag_unhinted )
-        load_flags |= FT_LOAD_NO_HINTING;
-
-      if ( type & ftc_old_image_flag_autohinted )
-        load_flags |= FT_LOAD_FORCE_AUTOHINT;
-
-      typ->flags = load_flags;
+      error = FT_THROW( Invalid_Argument );
+      goto Exit;
     }
+
+    *aglyph = NULL;
+    if ( anode )
+      *anode  = NULL;
+
+    /* FT_Load_Glyph(), FT_Load_Char() take FT_UInt flags */
+    if ( load_flags > FT_UINT_MAX )
+    {
+      FT_TRACE1(( "FTC_ImageCache_LookupScaler: higher bits in load_flags" ));
+      FT_TRACE1(( "0x%x are dropped\n", (load_flags & ~((FT_ULong)FT_UINT_MAX)) ));
+    }
+
+    query.attrs.scaler     = scaler[0];
+    query.attrs.load_flags = (FT_UInt)load_flags;
+
+    hash = FTC_BASIC_ATTR_HASH( &query.attrs ) + gindex;
+
+    FTC_GCACHE_LOOKUP_CMP( cache,
+                           ftc_basic_family_compare,
+                           FTC_GNode_Compare,
+                           hash, gindex,
+                           &query,
+                           node,
+                           error );
+    if ( !error )
+    {
+      *aglyph = FTC_INODE( node )->glyph;
+
+      if ( anode )
+      {
+        *anode = node;
+        node->ref_count++;
+      }
+    }
+
+  Exit:
+    return error;
   }
 
 
-  FT_EXPORT( FT_Error )
-  FTC_Image_Cache_New( FTC_Manager      manager,
-                       FTC_ImageCache  *acache );
-
-  FT_EXPORT( FT_Error )
-  FTC_Image_Cache_Lookup( FTC_ImageCache      icache,
-                          FTC_OldImage_Desc*  desc,
-                          FT_UInt             gindex,
-                          FT_Glyph           *aglyph );
-
-
-  FT_EXPORT_DEF( FT_Error )
-  FTC_Image_Cache_New( FTC_Manager      manager,
-                       FTC_ImageCache  *acache )
-  {
-    return FTC_ImageCache_New( manager, (FTC_ImageCache*)acache );
-  }
-
-
-
-  FT_EXPORT_DEF( FT_Error )
-  FTC_Image_Cache_Lookup( FTC_ImageCache      icache,
-                          FTC_OldImage_Desc*  desc,
-                          FT_UInt             gindex,
-                          FT_Glyph           *aglyph )
-  {
-    FTC_ImageTypeRec  type0;
-
-
-    if ( !desc )
-      return FTC_Err_Invalid_Argument;
-
-    ftc_image_type_from_old_desc( &type0, desc );
-
-    return FTC_ImageCache_Lookup( (FTC_ImageCache)icache,
-                                   &type0,
-                                   gindex,
-                                   aglyph,
-                                   NULL );
-  }
-
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
-
-
- /*
-  *
-  * basic small bitmap cache
-  *
-  */
-
+  /*
+   *
+   * basic small bitmap cache
+   *
+   */
 
   FT_CALLBACK_TABLE_DEF
   const FTC_SFamilyClassRec  ftc_basic_sbit_family_class =
   {
     {
-      sizeof( FTC_BasicFamilyRec ),
+      sizeof ( FTC_BasicFamilyRec ),
       ftc_basic_family_compare,
       ftc_basic_family_init,
       0,                            /* FTC_MruNode_ResetFunc */
@@ -3462,8 +3302,8 @@
   {
     FT_Error           error;
     FTC_BasicQueryRec  query;
-    FTC_SNode          node = 0; /* make compiler happy */
-    FT_UInt32          hash;
+    FTC_Node           node = 0; /* make compiler happy */
+    FT_PtrDist         hash;
 
 
     if ( anode )
@@ -3471,34 +3311,21 @@
 
     /* other argument checks delayed to FTC_Cache_Lookup */
     if ( !ansbit )
-      return FTC_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
 
     *ansbit = NULL;
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-
-    /*  This one is a major hack used to detect whether we are passed a
-     *  regular FTC_ImageType handle, or a legacy FTC_OldImageDesc one.
-     */
-    if ( type->width >= 0x10000 )
     {
-      FTC_OldImageDesc  desc = (FTC_OldImageDesc)type;
+      if ( (FT_ULong)(type->flags - FT_INT_MIN) > FT_UINT_MAX )
+      {
+        FT_TRACE1(( "FTC_ImageCache_Lookup: higher bits in load_flags" ));
+        FT_TRACE1(( "0x%x are dropped\n", (type->flags & ~((FT_ULong)FT_UINT_MAX)) ));
+      }
 
-
-      query.attrs.scaler.face_id = desc->font.face_id;
-      query.attrs.scaler.width   = desc->font.pix_width;
-      query.attrs.scaler.height  = desc->font.pix_height;
-      query.attrs.load_flags     = desc->flags;
-    }
-    else
-
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
-
-    {
       query.attrs.scaler.face_id = type->face_id;
       query.attrs.scaler.width   = type->width;
       query.attrs.scaler.height  = type->height;
-      query.attrs.load_flags     = type->flags;
+      query.attrs.load_flags     = (FT_UInt)type->flags;
     }
 
     query.attrs.scaler.pixel = 1;
@@ -3522,17 +3349,18 @@
                                hash,
                                gindex,
                                FTC_GQUERY( &query ),
-                               (FTC_Node*)&node );
+                               &node );
 #endif
     if ( error )
       goto Exit;
 
-    *ansbit = node->sbits + ( gindex - FTC_GNODE( node )->gindex );
+    *ansbit = FTC_SNODE( node )->sbits +
+              ( gindex - FTC_GNODE( node )->gindex );
 
     if ( anode )
     {
-      *anode = FTC_NODE( node );
-      FTC_NODE( node )->ref_count++;
+      *anode = node;
+      node->ref_count++;
     }
 
   Exit:
@@ -3540,52 +3368,69 @@
   }
 
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-
-  FT_EXPORT( FT_Error )
-  FTC_SBit_Cache_New( FTC_Manager     manager,
-                      FTC_SBitCache  *acache );
-
-  FT_EXPORT( FT_Error )
-  FTC_SBit_Cache_Lookup( FTC_SBitCache       cache,
-                         FTC_OldImage_Desc*  desc,
-                         FT_UInt             gindex,
-                         FTC_SBit           *ansbit );
-
+  /* documentation is in ftcache.h */
 
   FT_EXPORT_DEF( FT_Error )
-  FTC_SBit_Cache_New( FTC_Manager     manager,
-                      FTC_SBitCache  *acache )
+  FTC_SBitCache_LookupScaler( FTC_SBitCache  cache,
+                              FTC_Scaler     scaler,
+                              FT_ULong       load_flags,
+                              FT_UInt        gindex,
+                              FTC_SBit      *ansbit,
+                              FTC_Node      *anode )
   {
-    return FTC_SBitCache_New( manager, (FTC_SBitCache*)acache );
+    FT_Error           error;
+    FTC_BasicQueryRec  query;
+    FTC_Node           node = 0; /* make compiler happy */
+    FT_PtrDist         hash;
+
+
+    if ( anode )
+        *anode = NULL;
+
+    /* other argument checks delayed to FTC_Cache_Lookup */
+    if ( !ansbit || !scaler )
+        return FT_THROW( Invalid_Argument );
+
+    *ansbit = NULL;
+
+    /* FT_Load_Glyph(), FT_Load_Char() take FT_UInt flags */
+    if ( load_flags > FT_UINT_MAX )
+    {
+      FT_TRACE1(( "FTC_ImageCache_LookupScaler: higher bits in load_flags" ));
+      FT_TRACE1(( "0x%x are dropped\n", (load_flags & ~((FT_ULong)FT_UINT_MAX)) ));
+    }
+
+    query.attrs.scaler     = scaler[0];
+    query.attrs.load_flags = (FT_UInt)load_flags;
+
+    /* beware, the hash must be the same for all glyph ranges! */
+    hash = FTC_BASIC_ATTR_HASH( &query.attrs ) +
+             gindex / FTC_SBIT_ITEMS_PER_NODE;
+
+    FTC_GCACHE_LOOKUP_CMP( cache,
+                           ftc_basic_family_compare,
+                           FTC_SNode_Compare,
+                           hash, gindex,
+                           &query,
+                           node,
+                           error );
+    if ( error )
+      goto Exit;
+
+    *ansbit = FTC_SNODE( node )->sbits +
+              ( gindex - FTC_GNODE( node )->gindex );
+
+    if ( anode )
+    {
+      *anode = node;
+      node->ref_count++;
+    }
+
+  Exit:
+    return error;
   }
-
-
-  FT_EXPORT_DEF( FT_Error )
-  FTC_SBit_Cache_Lookup( FTC_SBitCache       cache,
-                         FTC_OldImage_Desc*  desc,
-                         FT_UInt             gindex,
-                         FTC_SBit           *ansbit )
-  {
-    FTC_ImageTypeRec  type0;
-
-
-    if ( !desc )
-      return FT_Err_Invalid_Argument;
-
-    ftc_image_type_from_old_desc( &type0, desc );
-
-    return FTC_SBitCache_Lookup( (FTC_SBitCache)cache,
-                                  &type0,
-                                  gindex,
-                                  ansbit,
-                                  NULL );
-  }
-
-#endif /* FT_CONFIG_OPTION_OLD_INTERNALS */
 
 
 /* END */
-
 
 /* END */

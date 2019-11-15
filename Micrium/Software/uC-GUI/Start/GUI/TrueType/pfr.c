@@ -25,7 +25,7 @@
 /*                                                                         */
 /*    FreeType PFR loader (body).                                          */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2004, 2005 by                                    */
+/*  Copyright 2002-2005, 2007, 2009, 2010, 2013, 2014 by                   */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -70,7 +70,7 @@
                          PFR_ExtraItem   item_list,
                          FT_Pointer      item_data )
   {
-    FT_Error  error = 0;
+    FT_Error  error = FT_Err_Ok;
     FT_Byte*  p     = *pp;
     FT_UInt   num_items, item_type, item_size;
 
@@ -112,7 +112,7 @@
 
   Too_Short:
     FT_ERROR(( "pfr_extra_items_parse: invalid extra items table\n" ));
-    error = PFR_Err_Invalid_Table;
+    error = FT_THROW( Invalid_Table );
     goto Exit;
   }
 
@@ -257,7 +257,7 @@
       goto Exit;
 
     if ( idx >= num_log_fonts )
-      return PFR_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
 
     if ( FT_STREAM_SKIP( idx * 5 ) ||
          FT_READ_USHORT( size )    ||
@@ -350,7 +350,7 @@
 
   Too_Short:
     FT_ERROR(( "pfr_log_font_load: invalid logical font table\n" ));
-    error = PFR_Err_Invalid_Table;
+    error = FT_THROW( Invalid_Table );
     goto Fail;
   }
 
@@ -374,7 +374,7 @@
     PFR_Strike  strike;
     FT_UInt     flags0;
     FT_UInt     n, count, size1;
-    FT_Error    error = 0;
+    FT_Error    error = FT_Err_Ok;
 
 
     PFR_CHECK( 5 );
@@ -448,8 +448,9 @@
     return error;
 
   Too_Short:
-    error = PFR_Err_Invalid_Table;
-    FT_ERROR(( "pfr_extra_item_load_bitmap_info: invalid bitmap info table\n" ));
+    error = FT_THROW( Invalid_Table );
+    FT_ERROR(( "pfr_extra_item_load_bitmap_info:"
+               " invalid bitmap info table\n" ));
     goto Exit;
   }
 
@@ -469,7 +470,7 @@
                                FT_Byte*     limit,
                                PFR_PhyFont  phy_font )
   {
-    FT_Error    error  = 0;
+    FT_Error    error  = FT_Err_Ok;
     FT_Memory   memory = phy_font->memory;
     FT_PtrDist  len    = limit - p;
 
@@ -496,8 +497,8 @@
                                   PFR_PhyFont  phy_font )
   {
     FT_UInt    count, num_vert, num_horz;
-    FT_Int*    snaps;
-    FT_Error   error  = 0;
+    FT_Int*    snaps  = NULL;
+    FT_Error   error  = FT_Err_Ok;
     FT_Memory  memory = phy_font->memory;
 
 
@@ -526,8 +527,9 @@
     return error;
 
   Too_Short:
-    error = PFR_Err_Invalid_Table;
-    FT_ERROR(( "pfr_exta_item_load_stem_snaps: invalid stem snaps table\n" ));
+    error = FT_THROW( Invalid_Table );
+    FT_ERROR(( "pfr_exta_item_load_stem_snaps:"
+               " invalid stem snaps table\n" ));
     goto Exit;
   }
 
@@ -539,8 +541,8 @@
                                      FT_Byte*     limit,
                                      PFR_PhyFont  phy_font )
   {
-    PFR_KernItem  item;
-    FT_Error      error  = 0;
+    PFR_KernItem  item   = NULL;
+    FT_Error      error  = FT_Err_Ok;
     FT_Memory     memory = phy_font->memory;
 
 
@@ -623,9 +625,9 @@
   Too_Short:
     FT_FREE( item );
 
-    error = PFR_Err_Invalid_Table;
-    FT_ERROR(( "pfr_extra_item_load_kerning_pairs: "
-               "invalid kerning pairs table\n" ));
+    error = FT_THROW( Invalid_Table );
+    FT_ERROR(( "pfr_extra_item_load_kerning_pairs:"
+               " invalid kerning pairs table\n" ));
     goto Exit;
   }
 
@@ -650,7 +652,7 @@
                      FT_Memory    memory,
                      FT_String*  *astring )
   {
-    FT_Error    error = 0;
+    FT_Error    error  = FT_Err_Ok;
     FT_String*  result = NULL;
     FT_UInt     n, ok;
 
@@ -735,7 +737,8 @@
   {
     FT_Error   error;
     FT_Memory  memory = stream->memory;
-    FT_UInt    flags, num_aux;
+    FT_UInt    flags;
+    FT_ULong   num_aux;
     FT_Byte*   p;
     FT_Byte*   limit;
 
@@ -764,7 +767,7 @@
     phy_font->bbox.yMax          = PFR_NEXT_SHORT( p );
     phy_font->flags      = flags = PFR_NEXT_BYTE( p );
 
-    /* get the standard advance for non-proprotional fonts */
+    /* get the standard advance for non-proportional fonts */
     if ( !(flags & PFR_PHY_PROPORTIONAL) )
     {
       PFR_CHECK( 2 );
@@ -831,7 +834,6 @@
           phy_font->ascent  = PFR_NEXT_SHORT( q );
           phy_font->descent = PFR_NEXT_SHORT( q );
           phy_font->leading = PFR_NEXT_SHORT( q );
-          q += 16;
           break;
 
         case 3:
@@ -950,21 +952,20 @@
     return error;
 
   Too_Short:
-    error = PFR_Err_Invalid_Table;
+    error = FT_THROW( Invalid_Table );
     FT_ERROR(( "pfr_phy_font_load: invalid physical font table\n" ));
     goto Fail;
   }
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  pfrgload.c                                                             */
 /*                                                                         */
 /*    FreeType PFR glyph loader (body).                                    */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2005 by                                          */
+/*  Copyright 2002, 2003, 2005, 2007, 2010, 2013 by                        */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1019,8 +1020,10 @@
     glyph->y_control = NULL;
 
     glyph->max_xy_control = 0;
+#if 0
     glyph->num_x_control  = 0;
     glyph->num_y_control  = 0;
+#endif
 
     FT_FREE( glyph->subs );
 
@@ -1091,7 +1094,12 @@
 
 
     /* check that we have begun a new path */
-    FT_ASSERT( glyph->path_begun != 0 );
+    if ( !glyph->path_begun )
+    {
+      error = FT_THROW( Invalid_Table );
+      FT_ERROR(( "pfr_glyph_line_to: invalid glyph data\n" ));
+      goto Exit;
+    }
 
     error = FT_GLYPHLOADER_CHECK_POINTS( loader, 1, 0 );
     if ( !error )
@@ -1105,6 +1113,7 @@
       outline->n_points++;
     }
 
+  Exit:
     return error;
   }
 
@@ -1121,7 +1130,12 @@
 
 
     /* check that we have begun a new path */
-    FT_ASSERT( glyph->path_begun != 0 );
+    if ( !glyph->path_begun )
+    {
+      error = FT_THROW( Invalid_Table );
+      FT_ERROR(( "pfr_glyph_line_to: invalid glyph data\n" ));
+      goto Exit;
+    }
 
     error = FT_GLYPHLOADER_CHECK_POINTS( loader, 3, 0 );
     if ( !error )
@@ -1140,6 +1154,7 @@
       outline->n_points = (FT_Short)( outline->n_points + 3 );
     }
 
+  Exit:
     return error;
   }
 
@@ -1194,7 +1209,7 @@
                          FT_Byte*   p,
                          FT_Byte*   limit )
   {
-    FT_Error   error  = 0;
+    FT_Error   error  = FT_Err_Ok;
     FT_Memory  memory = glyph->loader->memory;
     FT_UInt    flags, x_count, y_count, i, count, mask;
     FT_Int     x;
@@ -1204,7 +1219,8 @@
     flags = PFR_NEXT_BYTE( p );
 
     /* test for composite glyphs */
-    FT_ASSERT( ( flags & PFR_GLYPH_IS_COMPOUND ) == 0 );
+    if ( flags & PFR_GLYPH_IS_COMPOUND )
+      goto Failure;
 
     x_count = 0;
     y_count = 0;
@@ -1213,8 +1229,8 @@
     {
       PFR_CHECK( 1 );
       count   = PFR_NEXT_BYTE( p );
-      x_count = ( count & 15 );
-      y_count = ( count >> 4 );
+      x_count = count & 15;
+      y_count = count >> 4;
     }
     else
     {
@@ -1299,14 +1315,15 @@
 
       for (;;)
       {
-        FT_Int  format, args_format = 0, args_count, n;
+        FT_UInt  format, format_low, args_format = 0, args_count, n;
 
 
         /***************************************************************/
         /*  read instruction                                           */
         /*                                                             */
         PFR_CHECK( 1 );
-        format = PFR_NEXT_BYTE( p );
+        format     = PFR_NEXT_BYTE( p );
+        format_low = format & 15;
 
         switch ( format >> 4 )
         {
@@ -1326,30 +1343,34 @@
         case 5:                             /* move to outside contour */
           FT_TRACE6(( "- move to outside" ));
         Line1:
-          args_format = format & 15;
+          args_format = format_low;
           args_count  = 1;
           break;
 
         case 2:                             /* horizontal line to */
-          FT_TRACE6(( "- horizontal line to cx.%d", format & 15 ));
+          FT_TRACE6(( "- horizontal line to cx.%d", format_low ));
+          if ( format_low >= x_count )
+            goto Failure;
+          pos[0].x   = glyph->x_control[format_low];
           pos[0].y   = pos[3].y;
-          pos[0].x   = glyph->x_control[format & 15];
           pos[3]     = pos[0];
           args_count = 0;
           break;
 
         case 3:                             /* vertical line to */
-          FT_TRACE6(( "- vertical line to cy.%d", format & 15 ));
+          FT_TRACE6(( "- vertical line to cy.%d", format_low ));
+          if ( format_low >= y_count )
+            goto Failure;
           pos[0].x   = pos[3].x;
-          pos[0].y   = glyph->y_control[format & 15];
-          pos[3] = pos[0];
+          pos[0].y   = glyph->y_control[format_low];
+          pos[3]     = pos[0];
           args_count = 0;
           break;
 
         case 6:                             /* horizontal to vertical curve */
           FT_TRACE6(( "- hv curve " ));
-          args_format  = 0xB8E;
-          args_count   = 3;
+          args_format = 0xB8E;
+          args_count  = 3;
           break;
 
         case 7:                             /* vertical to horizontal curve */
@@ -1361,7 +1382,7 @@
         default:                            /* general curve to */
           FT_TRACE6(( "- general curve" ));
           args_count  = 4;
-          args_format = format & 15;
+          args_format = format_low;
         }
 
         /***********************************************************/
@@ -1370,7 +1391,8 @@
         cur = pos;
         for ( n = 0; n < args_count; n++ )
         {
-          FT_Int  idx, delta;
+          FT_UInt  idx;
+          FT_Int   delta;
 
 
           /* read the X argument */
@@ -1379,6 +1401,8 @@
           case 0:                           /* 8-bit index */
             PFR_CHECK( 1 );
             idx  = PFR_NEXT_BYTE( p );
+            if ( idx >= x_count )
+              goto Failure;
             cur->x = glyph->x_control[idx];
             FT_TRACE7(( " cx#%d", idx ));
             break;
@@ -1407,6 +1431,8 @@
           case 0:                           /* 8-bit index */
             PFR_CHECK( 1 );
             idx  = PFR_NEXT_BYTE( p );
+            if ( idx >= y_count )
+              goto Failure;
             cur->y = glyph->y_control[idx];
             FT_TRACE7(( " cy#%d", idx ));
             break;
@@ -1479,8 +1505,9 @@
   Exit:
     return error;
 
+  Failure:
   Too_Short:
-    error = PFR_Err_Invalid_Table;
+    error = FT_THROW( Invalid_Table );
     FT_ERROR(( "pfr_glyph_load_simple: invalid glyph data\n" ));
     goto Exit;
   }
@@ -1492,7 +1519,7 @@
                            FT_Byte*   p,
                            FT_Byte*   limit )
   {
-    FT_Error        error  = 0;
+    FT_Error        error  = FT_Err_Ok;
     FT_GlyphLoader  loader = glyph->loader;
     FT_Memory       memory = loader->memory;
     PFR_SubGlyph    subglyph;
@@ -1504,7 +1531,8 @@
     flags = PFR_NEXT_BYTE( p );
 
     /* test for composite glyphs */
-    FT_ASSERT( ( flags & PFR_GLYPH_IS_COMPOUND ) != 0 );
+    if ( !( flags & PFR_GLYPH_IS_COMPOUND ) )
+      goto Failure;
 
     count = flags & 0x3F;
 
@@ -1530,6 +1558,16 @@
     {
       FT_UInt  new_max = ( org_count + count + 3 ) & (FT_UInt)-4;
 
+
+      /* we arbitrarily limit the number of subglyphs */
+      /* to avoid endless recursion                   */
+      if ( new_max > 64 )
+      {
+        error = FT_THROW( Invalid_Table );
+        FT_ERROR(( "pfr_glyph_load_compound:"
+                   " too many compound glyphs components\n" ));
+        goto Exit;
+      }
 
       if ( FT_RENEW_ARRAY( glyph->subs, glyph->max_subs, new_max ) )
         goto Exit;
@@ -1630,14 +1668,12 @@
   Exit:
     return error;
 
+  Failure:
   Too_Short:
-    error = PFR_Err_Invalid_Table;
+    error = FT_THROW( Invalid_Table );
     FT_ERROR(( "pfr_glyph_load_compound: invalid glyph data\n" ));
     goto Exit;
   }
-
-
-
 
 
   static FT_Error
@@ -1678,12 +1714,17 @@
 
       count = glyph->num_subs - old_count;
 
+      FT_TRACE4(( "compound glyph with %d elements (offset %lu):\n",
+                  count, offset ));
+
       /* now, load each individual glyph */
       for ( n = 0; n < count; n++ )
       {
         FT_Int        i, old_points, num_points;
         PFR_SubGlyph  subglyph;
 
+
+        FT_TRACE4(( "  subglyph %d:\n", n ));
 
         subglyph   = glyph->subs + old_count + n;
         old_points = base->n_points;
@@ -1692,7 +1733,7 @@
                                     subglyph->gps_offset,
                                     subglyph->gps_size );
         if ( error )
-          goto Exit;
+          break;
 
         /* note that `glyph->subs' might have been re-allocated */
         subglyph   = glyph->subs + old_count + n;
@@ -1726,9 +1767,13 @@
 
         /* proceed to next sub-glyph */
       }
+
+      FT_TRACE4(( "end compound glyph with %d elements\n", count ));
     }
     else
     {
+      FT_TRACE4(( "simple glyph (offset %lu)\n", offset ));
+
       /* load a simple glyph */
       error = pfr_glyph_load_simple( glyph, p, limit );
 
@@ -1738,9 +1783,6 @@
   Exit:
     return error;
   }
-
-
-
 
 
   FT_LOCAL_DEF( FT_Error )
@@ -1761,14 +1803,13 @@
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  pfrcmap.c                                                              */
 /*                                                                         */
 /*    FreeType PFR cmap handling (body).                                   */
 /*                                                                         */
-/*  Copyright 2002 by                                                      */
+/*  Copyright 2002, 2007, 2009, 2013 by                                    */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1780,15 +1821,19 @@
 /***************************************************************************/
 
 
+#include "ft2build.h"
+#include FT_INTERNAL_DEBUG_H
 #include "pfrcmap.h"
 #include "pfrobjs.h"
-#include FT_INTERNAL_DEBUG_H
+
+#include "pfrerror.h"
 
 
   FT_CALLBACK_DEF( FT_Error )
   pfr_cmap_init( PFR_CMap  cmap )
   {
-    PFR_Face  face = (PFR_Face)FT_CMAP_FACE( cmap );
+    FT_Error  error = FT_Err_Ok;
+    PFR_Face  face  = (PFR_Face)FT_CMAP_FACE( cmap );
 
 
     cmap->num_chars = face->phy_font.num_chars;
@@ -1803,11 +1848,15 @@
       for ( n = 1; n < cmap->num_chars; n++ )
       {
         if ( cmap->chars[n - 1].char_code >= cmap->chars[n].char_code )
-          FT_ASSERT( 0 );
+        {
+          error = FT_THROW( Invalid_Table );
+          goto Exit;
+        }
       }
     }
 
-    return 0;
+  Exit:
+    return error;
   }
 
 
@@ -1823,14 +1872,16 @@
   pfr_cmap_char_index( PFR_CMap   cmap,
                        FT_UInt32  char_code )
   {
-    FT_UInt   min = 0;
-    FT_UInt   max = cmap->num_chars;
-    FT_UInt   mid;
-    PFR_Char  gchar;
+    FT_UInt  min = 0;
+    FT_UInt  max = cmap->num_chars;
 
 
     while ( min < max )
     {
+      PFR_Char  gchar;
+      FT_UInt   mid;
+
+
       mid   = min + ( max - min ) / 2;
       gchar = cmap->chars + mid;
 
@@ -1846,7 +1897,7 @@
   }
 
 
-  FT_CALLBACK_DEF( FT_UInt )
+  FT_CALLBACK_DEF( FT_UInt32 )
   pfr_cmap_char_next( PFR_CMap    cmap,
                       FT_UInt32  *pchar_code )
   {
@@ -1915,19 +1966,20 @@
     (FT_CMap_InitFunc)     pfr_cmap_init,
     (FT_CMap_DoneFunc)     pfr_cmap_done,
     (FT_CMap_CharIndexFunc)pfr_cmap_char_index,
-    (FT_CMap_CharNextFunc) pfr_cmap_char_next
+    (FT_CMap_CharNextFunc) pfr_cmap_char_next,
+
+    NULL, NULL, NULL, NULL, NULL
   };
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  pfrobjs.c                                                              */
 /*                                                                         */
 /*    FreeType PFR object methods (body).                                  */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2004, 2005, 2006 by                              */
+/*  Copyright 2002-2008, 2010-2011, 2013 by                                */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1946,6 +1998,7 @@
 #include "pfrsbit.h"
 #include FT_OUTLINE_H
 #include FT_INTERNAL_DEBUG_H
+#include FT_TRUETYPE_IDS_H
 
 #include "pfrerror.h"
 
@@ -1964,9 +2017,14 @@
   FT_LOCAL_DEF( void )
   pfr_face_done( FT_Face  pfrface )     /* PFR_Face */
   {
-    PFR_Face   face   = (PFR_Face)pfrface;
-    FT_Memory  memory = pfrface->driver->root.memory;
+    PFR_Face   face = (PFR_Face)pfrface;
+    FT_Memory  memory;
 
+
+    if ( !face )
+      return;
+
+    memory = pfrface->driver->root.memory;
 
     /* we don't want dangling pointers */
     pfrface->family_name = NULL;
@@ -1994,6 +2052,8 @@
     FT_UNUSED( params );
 
 
+    FT_TRACE2(( "PFR driver\n" ));
+
     /* load the header and check it */
     error = pfr_header_load( &face->header, stream );
     if ( error )
@@ -2001,8 +2061,8 @@
 
     if ( !pfr_header_check( &face->header ) )
     {
-      FT_TRACE4(( "pfr_face_init: not a valid PFR font\n" ));
-      error = PFR_Err_Unknown_File_Format;
+      FT_TRACE2(( "  not a PFR font\n" ));
+      error = FT_THROW( Unknown_File_Format );
       goto Exit;
     }
 
@@ -2026,7 +2086,7 @@
     if ( face_index >= pfrface->num_faces )
     {
       FT_ERROR(( "pfr_face_init: invalid face index\n" ));
-      error = PFR_Err_Invalid_Argument;
+      error = FT_THROW( Invalid_Argument );
       goto Exit;
     }
 
@@ -2045,14 +2105,38 @@
     if ( error )
       goto Exit;
 
-    /* now, set-up all root face fields */
+    /* now set up all root face fields */
     {
       PFR_PhyFont  phy_font = &face->phy_font;
 
 
       pfrface->face_index = face_index;
-      pfrface->num_glyphs = phy_font->num_chars;
-      pfrface->face_flags = FT_FACE_FLAG_SCALABLE;
+      pfrface->num_glyphs = phy_font->num_chars + 1;
+
+      pfrface->face_flags |= FT_FACE_FLAG_SCALABLE;
+
+      /* if all characters point to the same gps_offset 0, we */
+      /* assume that the font only contains bitmaps           */
+      {
+        FT_UInt  nn;
+
+
+        for ( nn = 0; nn < phy_font->num_chars; nn++ )
+          if ( phy_font->chars[nn].gps_offset != 0 )
+            break;
+
+        if ( nn == phy_font->num_chars )
+        {
+          if ( phy_font->num_strikes > 0 )
+            pfrface->face_flags = 0;        /* not scalable */
+          else
+          {
+            FT_ERROR(( "pfr_face_init: font doesn't contain glyphs\n" ));
+            error = FT_THROW( Invalid_File_Format );
+            goto Exit;
+          }
+        }
+      }
 
       if ( (phy_font->flags & PFR_PHY_PROPORTIONAL) == 0 )
         pfrface->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
@@ -2147,11 +2231,11 @@
 
 
         charmap.face        = pfrface;
-        charmap.platform_id = 3;
-        charmap.encoding_id = 1;
+        charmap.platform_id = TT_PLATFORM_MICROSOFT;
+        charmap.encoding_id = TT_MS_ID_UNICODE_CS;
         charmap.encoding    = FT_ENCODING_UNICODE;
 
-        FT_CMap_New( &pfr_cmap_class_rec, NULL, &charmap, NULL );
+        error = FT_CMap_New( &pfr_cmap_class_rec, NULL, &charmap, NULL );
 
 #if 0
         /* Select default charmap */
@@ -2216,11 +2300,16 @@
     FT_ULong     gps_offset;
 
 
+    FT_TRACE1(( "pfr_slot_load: glyph index %d\n", gindex ));
+
     if ( gindex > 0 )
       gindex--;
 
-    /* check that the glyph index is correct */
-    FT_ASSERT( gindex < face->phy_font.num_chars );
+    if ( !face || gindex >= face->phy_font.num_chars )
+    {
+      error = FT_THROW( Invalid_Argument );
+      goto Exit;
+    }
 
     /* try to load an embedded bitmap */
     if ( ( load_flags & ( FT_LOAD_NO_SCALE | FT_LOAD_NO_BITMAP ) ) == 0 )
@@ -2232,7 +2321,7 @@
 
     if ( load_flags & FT_LOAD_SBITS_ONLY )
     {
-      error = PFR_Err_Invalid_Argument;
+      error = FT_THROW( Invalid_Argument );
       goto Exit;
     }
 
@@ -2357,7 +2446,7 @@
                         FT_Vector*  kerning )
   {
     PFR_Face     face     = (PFR_Face)pfrface;
-    FT_Error     error    = PFR_Err_Ok;
+    FT_Error     error    = FT_Err_Ok;
     PFR_PhyFont  phy_font = &face->phy_font;
     FT_UInt32    code1, code2, pair;
 
@@ -2399,13 +2488,14 @@
         goto Exit;
 
       {
-        FT_UInt    count    = item->pair_count;
-        FT_UInt    size     = item->pair_size;
-        FT_UInt    power    = (FT_UInt)ft_highpow2( (FT_UInt32)count );
-        FT_UInt    probe    = power * size;
-        FT_UInt    extra    = count - power;
-        FT_Byte*   base     = stream->cursor;
-        FT_Bool    twobytes = FT_BOOL( item->flags & 1 );
+        FT_UInt    count       = item->pair_count;
+        FT_UInt    size        = item->pair_size;
+        FT_UInt    power       = (FT_UInt)ft_highpow2( (FT_UInt32)count );
+        FT_UInt    probe       = power * size;
+        FT_UInt    extra       = count - power;
+        FT_Byte*   base        = stream->cursor;
+        FT_Bool    twobytes    = FT_BOOL( item->flags & 1 );
+        FT_Bool    twobyte_adj = FT_BOOL( item->flags & 2 );
         FT_Byte*   p;
         FT_UInt32  cpair;
 
@@ -2423,7 +2513,13 @@
             goto Found;
 
           if ( cpair < pair )
+          {
+            if ( twobyte_adj )
+              p += 2;
+            else
+              p++;
             base = p;
+          }
         }
 
         while ( probe > size )
@@ -2456,7 +2552,7 @@
 
 
         Found:
-          if ( item->flags & 2 )
+          if ( twobyte_adj )
             value = FT_PEEK_SHORT( p );
           else
             value = p[0];
@@ -2473,14 +2569,13 @@
   }
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  pfrdrivr.c                                                             */
 /*                                                                         */
 /*    FreeType PFR driver interface (body).                                */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2004, 2006 by                                    */
+/*  Copyright 2002-2004, 2006, 2008, 2010, 2011, 2013 by                   */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -2527,7 +2622,7 @@
                                             phys->metrics_resolution );
     }
 
-    return PFR_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -2542,10 +2637,16 @@
                    FT_Pos   *anadvance )
   {
     PFR_Face  face  = (PFR_Face)pfrface;
-    FT_Error  error = PFR_Err_Bad_Argument;
+    FT_Error  error = FT_ERR( Invalid_Argument );
 
 
     *anadvance = 0;
+
+    if ( !gindex )
+      goto Exit;
+
+    gindex--;
+
     if ( face )
     {
       PFR_PhyFont  phys = &face->phy_font;
@@ -2554,10 +2655,11 @@
       if ( gindex < phys->num_chars )
       {
         *anadvance = phys->chars[gindex].advance;
-        error = 0;
+        error      = FT_Err_Ok;
       }
     }
 
+  Exit:
     return error;
   }
 
@@ -2599,7 +2701,7 @@
     if ( ametrics_y_scale )
       *ametrics_y_scale = y_scale;
 
-    return PFR_Err_Ok;
+    return FT_Err_Ok;
   }
 
 
@@ -2642,7 +2744,7 @@
       FT_MODULE_FONT_DRIVER     |
       FT_MODULE_DRIVER_SCALABLE,
 
-      sizeof( FT_DriverRec ),
+      sizeof ( FT_DriverRec ),
 
       "pfr",
       0x10000L,
@@ -2650,14 +2752,14 @@
 
       NULL,
 
-      0,
-      0,
+      0,                /* FT_Module_Constructor */
+      0,                /* FT_Module_Destructor  */
       pfr_get_service
     },
 
-    sizeof( PFR_FaceRec ),
-    sizeof( PFR_SizeRec ),
-    sizeof( PFR_SlotRec ),
+    sizeof ( PFR_FaceRec ),
+    sizeof ( PFR_SizeRec ),
+    sizeof ( PFR_SlotRec ),
 
     pfr_face_init,
     pfr_face_done,
@@ -2666,29 +2768,24 @@
     pfr_slot_init,
     pfr_slot_done,
 
-#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
-    ft_stub_set_char_sizes,
-    ft_stub_set_pixel_sizes,
-#endif
     pfr_slot_load,
 
     pfr_get_kerning,
     0,                  /* FT_Face_AttachFunc      */
-    0,                   /* FT_Face_GetAdvancesFunc */
-    0,                  /* FT_Size_RequestFunc */
-    0,                  /* FT_Size_SelectFunc  */
+    0,                  /* FT_Face_GetAdvancesFunc */
+    0,                  /* FT_Size_RequestFunc     */
+    0,                  /* FT_Size_SelectFunc      */
   };
 
 
 /* END */
-
 /***************************************************************************/
 /*                                                                         */
 /*  pfrsbit.c                                                              */
 /*                                                                         */
 /*    FreeType PFR bitmap loader (body).                                   */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2006 by                                          */
+/*  Copyright 2002, 2003, 2006, 2009, 2010, 2013 by                        */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -3037,7 +3134,7 @@
                            FT_Long   *aadvance,
                            FT_UInt   *aformat )
   {
-    FT_Error  error = 0;
+    FT_Error  error = FT_Err_Ok;
     FT_Byte   flags;
     FT_Char   b;
     FT_Byte*  p = *pdata;
@@ -3155,7 +3252,7 @@
     return error;
 
   Too_Short:
-    error = PFR_Err_Invalid_Table;
+    error = FT_THROW( Invalid_Table );
     FT_ERROR(( "pfr_load_bitmap_metrics: invalid glyph data\n" ));
     goto Exit;
   }
@@ -3168,7 +3265,7 @@
                         FT_Bool     decreasing,
                         FT_Bitmap*  target )
   {
-    FT_Error          error = 0;
+    FT_Error          error = FT_Err_Ok;
     PFR_BitWriterRec  writer;
 
 
@@ -3192,7 +3289,7 @@
 
       default:
         FT_ERROR(( "pfr_read_bitmap_data: invalid image type\n" ));
-        error = PFR_Err_Invalid_File_Format;
+        error = FT_THROW( Invalid_File_Format );
       }
     }
 
@@ -3244,7 +3341,7 @@
       }
 
       /* couldn't find it */
-      return PFR_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
     }
 
   Found_Strike:
@@ -3277,15 +3374,15 @@
       if ( gps_size == 0 )
       {
         /* Could not find a bitmap program string for this glyph */
-        error = PFR_Err_Invalid_Argument;
+        error = FT_THROW( Invalid_Argument );
         goto Exit;
       }
     }
 
     /* get the bitmap metrics */
     {
-      FT_Long   xpos, ypos, advance;
-      FT_UInt   xsize, ysize, format;
+      FT_Long   xpos = 0, ypos = 0, advance = 0;
+      FT_UInt   xsize = 0, ysize = 0, format = 0;
       FT_Byte*  p;
 
 
@@ -3314,18 +3411,35 @@
                                        &xpos, &ypos,
                                        &xsize, &ysize,
                                        &advance, &format );
+
+      /*
+       * XXX: on 16bit system, we return an error for huge bitmap
+       *      which causes a size truncation, because truncated
+       *      size properties makes bitmap glyph broken.
+       */
+      if ( xpos > FT_INT_MAX || ( ypos + ysize ) > FT_INT_MAX )
+      {
+        FT_TRACE1(( "pfr_slot_load_bitmap:" ));
+        FT_TRACE1(( "huge bitmap glyph %dx%d over FT_GlyphSlot\n",
+                     xpos, ypos ));
+        error = FT_THROW( Invalid_Pixel_Size );
+      }
+
       if ( !error )
       {
         glyph->root.format = FT_GLYPH_FORMAT_BITMAP;
 
         /* Set up glyph bitmap and metrics */
+
+        /* XXX: needs casts to fit FT_Bitmap.{width|rows|pitch} */
         glyph->root.bitmap.width      = (FT_Int)xsize;
         glyph->root.bitmap.rows       = (FT_Int)ysize;
-        glyph->root.bitmap.pitch      = (FT_Long)( xsize + 7 ) >> 3;
+        glyph->root.bitmap.pitch      = (FT_Int)( xsize + 7 ) >> 3;
         glyph->root.bitmap.pixel_mode = FT_PIXEL_MODE_MONO;
 
-        glyph->root.metrics.width        = (FT_Long)xsize << 6;
-        glyph->root.metrics.height       = (FT_Long)ysize << 6;
+        /* XXX: needs casts to fit FT_Glyph_Metrics.{width|height} */
+        glyph->root.metrics.width        = (FT_Pos)xsize << 6;
+        glyph->root.metrics.height       = (FT_Pos)ysize << 6;
         glyph->root.metrics.horiBearingX = xpos << 6;
         glyph->root.metrics.horiBearingY = ypos << 6;
         glyph->root.metrics.horiAdvance  = FT_PIX_ROUND( ( advance >> 2 ) );
@@ -3333,8 +3447,9 @@
         glyph->root.metrics.vertBearingY = 0;
         glyph->root.metrics.vertAdvance  = size->root.metrics.height;
 
-        glyph->root.bitmap_left = xpos;
-        glyph->root.bitmap_top  = ypos + ysize;
+        /* XXX: needs casts fit FT_GlyphSlotRec.bitmap_{left|top} */
+        glyph->root.bitmap_left = (FT_Int)xpos;
+        glyph->root.bitmap_top  = (FT_Int)(ypos + ysize);
 
         /* Allocate and read bitmap data */
         {
@@ -3362,6 +3477,5 @@
   }
 
 /* END */
-
 
 /* END */
