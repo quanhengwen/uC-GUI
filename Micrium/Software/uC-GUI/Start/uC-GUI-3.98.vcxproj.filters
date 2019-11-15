@@ -2673,9 +2673,6 @@
     <ClCompile Include="GUI\TrueType\Source\base\ftinit.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\TrueType\Source\base\ftlcdfil.c">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base</Filter>
-    </ClCompile>
     <ClCompile Include="GUI\TrueType\Source\base\ftmm.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base</Filter>
     </ClCompile>
@@ -2701,12 +2698,6 @@
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base</Filter>
     </ClCompile>
     <ClCompile Include="GUI\TrueType\Source\base\ftwinfnt.c">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\Source\base\ftxf86.c">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\TrueType\Source\base\md5.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base</Filter>
     </ClCompile>
     <ClCompile Include="GUI\TrueType\Source\base\ftbase.c">
@@ -3350,9 +3341,6 @@
     <ClInclude Include="GUI\TrueType\Source\autofit\afcover.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\TrueType\Source\base\md5.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\TrueType\Source\base\ftbase.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base</Filter>
     </ClInclude>
@@ -3368,22 +3356,10 @@
     <ClInclude Include="GUI\TrueType\Source\cache\ftcerror.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cache</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\TrueType\Source\cff\cf2glue.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\Source\cff\cf2types.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\TrueType\Source\cff\cfferrs.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff</Filter>
     </ClInclude>
     <ClInclude Include="GUI\TrueType\Source\cff\cfftoken.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\Source\cff\cfftypes.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\TrueType\Source\cff\cf2fixed.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff</Filter>
     </ClInclude>
     <ClInclude Include="GUI\TrueType\Source\cid\cidtoken.h">
@@ -3469,6 +3445,15 @@
     </ClInclude>
     <ClInclude Include="GUI\TrueType\Source\winfonts\fnterrs.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\winfonts</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\Source\psaux\psfixed.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\Source\psaux\psglue.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\TrueType\Source\psaux\pstypes.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

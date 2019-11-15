@@ -83,7 +83,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\..\..\Utility\ZLib;..\..\..\..\Utility\ZLib\Port;Application;Config;Sample\GUIDemo;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\BMP;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\PNG\Port;GUI\Widget;GUI\WM;GUI\TrueType\Include;GUI\TrueType\Include\config;GUI\TrueType\Include\internal;GUI\TrueType\Include\internal\services;GUI\TrueType\Source\autofit;GUI\TrueType\Source\base;GUI\TrueType\Source\bdf;GUI\TrueType\Source\bzip2;GUI\TrueType\Source\cache;GUI\TrueType\Source\cff;GUI\TrueType\Source\cid;GUI\TrueType\Source\gxvalid;GUI\TrueType\Source\gzip;GUI\TrueType\Source\lzw;GUI\TrueType\Source\otvalid;GUI\TrueType\Source\pcf;GUI\TrueType\Source\pfr;GUI\TrueType\Source\psaux;GUI\TrueType\Source\pshinter;GUI\TrueType\Source\psnames;GUI\TrueType\Source\raster;GUI\TrueType\Source\sfnt;GUI\TrueType\Source\smooth;GUI\TrueType\Source\truetype;GUI\TrueType\Source\type42;GUI\TrueType\Source\type1;GUI\TrueType\Source\winfonts;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\Utility\ZLib;..\..\..\..\Utility\ZLib\Port;Application;Config;Sample\GUIDemo;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\BMP;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\PNG\Port;GUI\Widget;GUI\WM;GUI\TrueType\Include;GUI\TrueType\Include\freetype;GUI\TrueType\Include\freetype\config;GUI\TrueType\Include\freetype\internal;GUI\TrueType\Include\freetype\internal\services;GUI\TrueType\Source\autofit;GUI\TrueType\Source\base;GUI\TrueType\Source\bdf;GUI\TrueType\Source\bzip2;GUI\TrueType\Source\cache;GUI\TrueType\Source\cff;GUI\TrueType\Source\cid;GUI\TrueType\Source\gxvalid;GUI\TrueType\Source\gzip;GUI\TrueType\Source\lzw;GUI\TrueType\Source\otvalid;GUI\TrueType\Source\pcf;GUI\TrueType\Source\pfr;GUI\TrueType\Source\psaux;GUI\TrueType\Source\pshinter;GUI\TrueType\Source\psnames;GUI\TrueType\Source\raster;GUI\TrueType\Source\sfnt;GUI\TrueType\Source\smooth;GUI\TrueType\Source\truetype;GUI\TrueType\Source\type42;GUI\TrueType\Source\type1;GUI\TrueType\Source\winfonts;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;_DEBUG;WIN32;_WINDOWS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -110,7 +110,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\..\..\Utility\ZLib;..\..\..\..\Utility\ZLib\Port;Application;Config;Sample\GUIDemo;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\BMP;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\PNG\Port;GUI\Widget;GUI\WM;GUI\TrueType\Include;GUI\TrueType\Include\config;GUI\TrueType\Include\internal;GUI\TrueType\Include\internal\services;GUI\TrueType\Source\autofit;GUI\TrueType\Source\base;GUI\TrueType\Source\bdf;GUI\TrueType\Source\bzip2;GUI\TrueType\Source\cache;GUI\TrueType\Source\cff;GUI\TrueType\Source\cid;GUI\TrueType\Source\gxvalid;GUI\TrueType\Source\gzip;GUI\TrueType\Source\lzw;GUI\TrueType\Source\otvalid;GUI\TrueType\Source\pcf;GUI\TrueType\Source\pfr;GUI\TrueType\Source\psaux;GUI\TrueType\Source\pshinter;GUI\TrueType\Source\psnames;GUI\TrueType\Source\raster;GUI\TrueType\Source\sfnt;GUI\TrueType\Source\smooth;GUI\TrueType\Source\truetype;GUI\TrueType\Source\type42;GUI\TrueType\Source\type1;GUI\TrueType\Source\winfonts;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\Utility\ZLib;..\..\..\..\Utility\ZLib\Port;Application;Config;Sample\GUIDemo;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;System\Simulation\SIM_GUI\Branding;GUI\AntiAlias;GUI\BMP;GUI\ConvertColor;GUI\ConvertMono;GUI\Core;GUI\Font;GUI\JPEG;GUI\JPEG\Port;GUI\LCDDriver;GUI\MemDev;GUI\MultiLayer;GUI\PNG;GUI\PNG\Port;GUI\Widget;GUI\WM;GUI\TrueType\Include;GUI\TrueType\Include\freetype;GUI\TrueType\Include\freetype\config;GUI\TrueType\Include\freetype\internal;GUI\TrueType\Include\freetype\internal\services;GUI\TrueType\Source\autofit;GUI\TrueType\Source\base;GUI\TrueType\Source\bdf;GUI\TrueType\Source\bzip2;GUI\TrueType\Source\cache;GUI\TrueType\Source\cff;GUI\TrueType\Source\cid;GUI\TrueType\Source\gxvalid;GUI\TrueType\Source\gzip;GUI\TrueType\Source\lzw;GUI\TrueType\Source\otvalid;GUI\TrueType\Source\pcf;GUI\TrueType\Source\pfr;GUI\TrueType\Source\psaux;GUI\TrueType\Source\pshinter;GUI\TrueType\Source\psnames;GUI\TrueType\Source\raster;GUI\TrueType\Source\sfnt;GUI\TrueType\Source\smooth;GUI\TrueType\Source\truetype;GUI\TrueType\Source\type42;GUI\TrueType\Source\type1;GUI\TrueType\Source\winfonts;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;NDEBUG;WIN32;_WINDOWS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -566,7 +566,6 @@
     <ClCompile Include="GUI\TrueType\Source\base\ftglyph.c" />
     <ClCompile Include="GUI\TrueType\Source\base\ftgxval.c" />
     <ClCompile Include="GUI\TrueType\Source\base\ftinit.c" />
-    <ClCompile Include="GUI\TrueType\Source\base\ftlcdfil.c" />
     <ClCompile Include="GUI\TrueType\Source\base\ftmm.c" />
     <ClCompile Include="GUI\TrueType\Source\base\ftotval.c" />
     <ClCompile Include="GUI\TrueType\Source\base\ftpatent.c" />
@@ -576,8 +575,6 @@
     <ClCompile Include="GUI\TrueType\Source\base\ftsystem.c" />
     <ClCompile Include="GUI\TrueType\Source\base\fttype1.c" />
     <ClCompile Include="GUI\TrueType\Source\base\ftwinfnt.c" />
-    <ClCompile Include="GUI\TrueType\Source\base\ftxf86.c" />
-    <ClCompile Include="GUI\TrueType\Source\base\md5.c" />
     <ClCompile Include="GUI\TrueType\Source\bdf\bdf.c" />
     <ClCompile Include="GUI\TrueType\Source\bzip2\ftbzip2.c" />
     <ClCompile Include="GUI\TrueType\Source\cache\ftcache.c" />
@@ -1142,17 +1139,12 @@
     <ClInclude Include="GUI\TrueType\Source\autofit\aftypes.h" />
     <ClInclude Include="GUI\TrueType\Source\autofit\afwrtsys.h" />
     <ClInclude Include="GUI\TrueType\Source\base\ftbase.h" />
-    <ClInclude Include="GUI\TrueType\Source\base\md5.h" />
     <ClInclude Include="GUI\TrueType\Source\bdf\bdf.h" />
     <ClInclude Include="GUI\TrueType\Source\bdf\bdferror.h" />
     <ClInclude Include="GUI\TrueType\Source\cache\ftccback.h" />
     <ClInclude Include="GUI\TrueType\Source\cache\ftcerror.h" />
-    <ClInclude Include="GUI\TrueType\Source\cff\cf2fixed.h" />
-    <ClInclude Include="GUI\TrueType\Source\cff\cf2glue.h" />
-    <ClInclude Include="GUI\TrueType\Source\cff\cf2types.h" />
     <ClInclude Include="GUI\TrueType\Source\cff\cfferrs.h" />
     <ClInclude Include="GUI\TrueType\Source\cff\cfftoken.h" />
-    <ClInclude Include="GUI\TrueType\Source\cff\cfftypes.h" />
     <ClInclude Include="GUI\TrueType\Source\cid\ciderrs.h" />
     <ClInclude Include="GUI\TrueType\Source\cid\cidtoken.h" />
     <ClInclude Include="GUI\TrueType\Source\gxvalid\gxvalid.h" />
@@ -1167,6 +1159,9 @@
     <ClInclude Include="GUI\TrueType\Source\pfr\pfrerror.h" />
     <ClInclude Include="GUI\TrueType\Source\pfr\pfrtypes.h" />
     <ClInclude Include="GUI\TrueType\Source\psaux\psauxerr.h" />
+    <ClInclude Include="GUI\TrueType\Source\psaux\psfixed.h" />
+    <ClInclude Include="GUI\TrueType\Source\psaux\psglue.h" />
+    <ClInclude Include="GUI\TrueType\Source\psaux\pstypes.h" />
     <ClInclude Include="GUI\TrueType\Source\pshinter\pshnterr.h" />
     <ClInclude Include="GUI\TrueType\Source\psnames\psnamerr.h" />
     <ClInclude Include="GUI\TrueType\Source\psnames\pstables.h" />
