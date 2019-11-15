@@ -107,6 +107,7 @@ void GUIDEMO_Touch(void);
 void GUIDEMO_WM(void);
 void GUIDEMO_MultiEdit(void);
 void GUIDEMO_TTFs(void);
+void GUIDEMO_DriverPerformance(void);
 
 //extern const GUI_BITMAP bmemWinGSCLogo320x46;
 extern const GUI_BITMAP bmMicriumLogo;

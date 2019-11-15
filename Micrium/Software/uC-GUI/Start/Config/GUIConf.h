@@ -27,7 +27,7 @@ Purpose     : Configures abilities, fonts etc.
 #define GUI_SUPPORT_UNICODE       (1)  /* Support mixed ASCII/UNICODE strings */
 
 #define GUI_DEFAULT_FONT          &GUI_Font6x8
-#define GUI_ALLOC_SIZE            12500  /* Size of dynamic memory ... For WM and memory devices*/
+#define GUI_ALLOC_SIZE            (1024L * 240)  /* Size of dynamic memory ... For WM and memory devices*/
 
 /*********************************************************************
 *
