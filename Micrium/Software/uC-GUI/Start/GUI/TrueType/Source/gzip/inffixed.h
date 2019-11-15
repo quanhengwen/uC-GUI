@@ -7,7 +7,6 @@
    subject to change. Applications should only use zlib.h.
  */
 
-
 local const uInt fixed_bl = 9;
 local const uInt fixed_bd = 5;
 local const inflate_huft fixed_tl[] = {

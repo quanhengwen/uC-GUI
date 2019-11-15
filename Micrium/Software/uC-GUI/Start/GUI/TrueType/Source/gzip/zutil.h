@@ -10,11 +10,10 @@
 
 /* @(#) $Id$ */
 
-
 #ifndef _Z_UTIL_H
 #define _Z_UTIL_H
 
-#include "ttzlib.h"
+#include "zlib.h"
 
 #ifdef STDC
 #  include <stddef.h>

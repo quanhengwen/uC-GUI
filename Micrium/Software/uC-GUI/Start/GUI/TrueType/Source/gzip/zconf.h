@@ -5,7 +5,6 @@
 
 /* @(#) $Id$ */
 
-
 #ifndef _ZCONF_H
 #define _ZCONF_H
 
