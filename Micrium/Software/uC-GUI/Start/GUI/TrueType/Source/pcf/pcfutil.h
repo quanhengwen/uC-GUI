@@ -25,11 +25,11 @@ THE SOFTWARE.
 */
 
 
-#ifndef __PCFUTIL_H__
-#define __PCFUTIL_H__
+#ifndef PCFUTIL_H_
+#define PCFUTIL_H_
 
 
-#include "ft2build.h"
+#include <ft2build.h>
 #include FT_CONFIG_CONFIG_H
 
 
@@ -49,7 +49,7 @@ FT_BEGIN_HEADER
 
 FT_END_HEADER
 
-#endif /* __PCFUTIL_H__ */
+#endif /* PCFUTIL_H_ */
 
 
 /* END */
