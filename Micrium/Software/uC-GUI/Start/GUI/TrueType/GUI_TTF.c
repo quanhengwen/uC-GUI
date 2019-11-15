@@ -145,7 +145,6 @@ static void GUI_AA__DrawCharAA8(int x0, int y0, int XSize, int YSize, int BytesP
   for (y=0; y<YSize; y++) {
     const U8*pData0 = pData;
     for (x=0; x<XSize-1; x++) {
-      (*pfSetPixelAA)(x+x0,y0+y,   (*pData0)>>1); /* x0+x changed -> x+x0 to avoid problems with IAR's ICCMC80 */
       (*pfSetPixelAA)(x0+x+1,y0+y, (*pData0++)&255);
   	}
     if (XSize&1) {
