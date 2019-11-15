@@ -152,7 +152,6 @@ merged_2v_upsample (j_decompress_ptr cinfo,
   JSAMPROW work_ptrs[2];
   JDIMENSION num_rows;		/* number of rows returned to caller */
 
-  GUI_USE_PARA(in_row_groups_avail);
   if (upsample->spare_full) {
     /* If we have a spare row saved from a previous cycle, just return it. */
     jcopy_sample_rows(& upsample->spare_row, 0, output_buf + *out_row_ctr, 0,
@@ -200,8 +199,6 @@ merged_1v_upsample (j_decompress_ptr cinfo,
 {
   my_upsample_ptr upsample = (my_upsample_ptr) cinfo->upsample;
 
-  GUI_USE_PARA(out_rows_avail);
-  GUI_USE_PARA(in_row_groups_avail);
   /* Just do the upsampling. */
   (*upsample->upmethod) (cinfo, input_buf, *in_row_group_ctr,
 			 output_buf + *out_row_ctr);

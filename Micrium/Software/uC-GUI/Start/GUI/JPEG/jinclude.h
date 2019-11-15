@@ -20,6 +20,8 @@
 #include "jconfig.h"		/* auto configuration options */
 #define JCONFIG_INCLUDED	/* so that jpeglib.h doesn't do it again */
 
+
+
 /*
  * We need the NULL macro and size_t typedef.
  * On an ANSI-conforming system it is sufficient to include <stddef.h>.
@@ -27,7 +29,7 @@
  * pull in <sys/types.h> as well.
  * Note that the core JPEG library does not require <stdio.h>;
  * only the default error handler and data source/destination modules do.
- * But we must pull it in because of the references to FILE in jpeglib.h.
+ * But we must pull it in because of the references to JFILE in jpeglib.h.
  * You can remove those references if you want to compile without <stdio.h>.
  */
 
@@ -35,7 +37,9 @@
 #include <stddef.h>
 #endif
 
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
 
 #ifdef NEED_SYS_TYPES_H
 #include <sys/types.h>
@@ -76,14 +80,3 @@
  */
 
 #define SIZEOF(object)	((size_t) sizeof(object))
-
-/*
- * The modules that use fread() and fwrite() always invoke them through
- * these macros.  On some systems you may need to twiddle the argument casts.
- * CAUTION: argument order is different from underlying functions!
- */
-
-#define JFREAD(file,buf,sizeofbuf)  \
-  ((size_t) fread((void *) (buf), (size_t) 1, (size_t) (sizeofbuf), (file)))
-#define JFWRITE(file,buf,sizeofbuf)  \
-  ((size_t) fwrite((const void *) (buf), (size_t) 1, (size_t) (sizeofbuf), (file)))
