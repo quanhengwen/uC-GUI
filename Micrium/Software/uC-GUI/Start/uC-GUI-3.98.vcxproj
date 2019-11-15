@@ -149,15 +149,25 @@
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Navi.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Polygon.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ProgBar.c" />
+    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ShowAllTTFs.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Speed.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Touch.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_WM.c" />
     <ClCompile Include="..\Sample\GUIDemo\MainTask.c" />
     <ClCompile Include="..\Sample\GUIDemo\MicriumLogo.c" />
     <ClCompile Include="..\Sample\GUIDemo\MicriumLogoWRed.c" />
-    <ClCompile Include="Application\MainTask.c" />
-    <ClCompile Include="Application\MicriumLogo.C" />
-    <ClCompile Include="Application\MicriumLogo_1bpp.c" />
+    <ClCompile Include="Application\MainTask.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Application\MicriumLogo.C">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Application\MicriumLogo_1bpp.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GUI\AntiAlias\GUIAAArc.c" />
     <ClCompile Include="GUI\AntiAlias\GUIAAChar.c" />
     <ClCompile Include="GUI\AntiAlias\GUIAAChar2.c" />

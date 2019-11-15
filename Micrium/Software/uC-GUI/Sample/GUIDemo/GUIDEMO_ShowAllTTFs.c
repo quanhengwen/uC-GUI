@@ -15,7 +15,7 @@ source code may not be used to write a similar product.  This file may
 only  be used  in accordance  with  a license  and should  not be  re-
 distributed in any way. We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
-File        : FONT_ShowAllTTFs.c
+File        : GUIDEMO_ShowAllTTFs.c
 Purpose     : Demonstrates the use of TTF font files
 Requirements: WindowManager - ( )
               MemoryDevices - ( )
@@ -74,7 +74,7 @@ static void _ShowText(void) {
   i = 0;
   GUI_TTF_GetFamilyName(&_aFont[i], _acFamily, sizeof(_acFamily));
   GUI_TTF_GetStyleName(&_aFont[i],  _acStyle,  sizeof(_acStyle));
-  GUI_SetFont(&GUI_Font20_1);
+  GUI_SetFont(&GUI_Font24_1);
   GUI_DispString(_acFamily);
   GUI_DispString(", ");
   GUI_DispString(_acStyle);
@@ -87,7 +87,8 @@ static void _ShowText(void) {
   GUI_DrawHLine(GUI_GetDispPosY(), 0, 0xfff);
   for (i = 0; i < GUI_COUNTOF(_aHeight); i++) {
     GUI_SetFont(&_aFont[i]);
-    GUI_DispString("The quick brown fox jumps over the lazy dog. 1234567890\n");
+    //GUI_DispString("The quick brown fox jumps over the lazy dog. 1234567890\n");
+    GUI_DispString("镕镕电子AaＡａ-点半角全角，\n");
   }
   GUI_Delay(1000);
 }
@@ -111,7 +112,7 @@ static int _CreateFonts(const U8 * pData, U32 NumBytes) {
     //
     // Create GUI font
     //
-    if (GUI_TTF_CreateFontAA(&_aFont[i], &_aCS[i])) {
+    if (GUI_TTF_CreateFont(&_aFont[i], &_aCS[i])) {
       return 1;
     }
   }
@@ -183,12 +184,16 @@ static void _IterateOverAllFiles(const char * sFolder, const char * sMask, void 
 */
 /*********************************************************************
 *
-*       MainTask
+*       GUIDEMO_TTFs
 */
-void MainTask(void) {
+void GUIDEMO_TTFs(void) {
+  int cnt = 10;
   char acPath[200];
 
-  GUI_Init();
+  //
+  // Be sure to modify the file encoding to UTF-8
+  //
+  GUI_UC_SetEncodeUTF8();
   //
   // Check if recommended memory for the sample is available
   //
@@ -210,8 +215,8 @@ void MainTask(void) {
   //
   // Iterate over files and call _cbFontDemo for each file
   //
-  while (1) {
-    _IterateOverAllFiles(acPath, "*.ttf", _cbFontDemo);
+  while (cnt--) {
+    _IterateOverAllFiles(acPath, "simhei.ttf", _cbFontDemo);
   }
 }
 

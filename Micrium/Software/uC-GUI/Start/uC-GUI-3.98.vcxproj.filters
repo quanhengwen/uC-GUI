@@ -2565,6 +2565,9 @@
     <ClCompile Include="..\Sample\GUIDemo\MicriumLogoWRed.c">
       <Filter>Sample\GUIDemo</Filter>
     </ClCompile>
+    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ShowAllTTFs.c">
+      <Filter>Sample\GUIDemo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\GUIConf.h">

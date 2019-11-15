@@ -63,6 +63,7 @@ static const char* _sExplain;
 typedef void fVoidVoid(void);
 
 static fVoidVoid * _apfTest[] = {
+  GUIDEMO_TTFs,
   GUIDEMO_HardwareInfo,
   GUIDEMO_Speed,
   #if GUI_SUPPORT_MEMDEV
