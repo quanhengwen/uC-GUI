@@ -85,12 +85,6 @@
     <Filter Include="Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding">
       <UniqueIdentifier>{4cb87507-d90e-4873-b9c4-915d8cd34da6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\Sample">
-      <UniqueIdentifier>{845e04ac-73b2-4a7f-b00f-171472cbfad0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\Sample\GUIDemo">
-      <UniqueIdentifier>{a4cf847a-171d-4e3c-ac0a-c4acb0337751}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Utility\ZLib">
       <UniqueIdentifier>{f2cda0b4-1bc0-4db8-8847-11b9cc409998}</UniqueIdentifier>
     </Filter>
@@ -207,6 +201,18 @@
     </Filter>
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services">
       <UniqueIdentifier>{fa333334-389e-43d5-956c-5363c1ab6538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft">
+      <UniqueIdentifier>{113e35d8-7200-4d28-8b43-bbad33a2c360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft\Windows">
+      <UniqueIdentifier>{7e964545-bc27-4ee0-8320-4cda81bedcb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft\Windows\Sample">
+      <UniqueIdentifier>{845e04ac-73b2-4a7f-b00f-171472cbfad0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft\Windows\Sample\GUIDemo">
+      <UniqueIdentifier>{a4cf847a-171d-4e3c-ac0a-c4acb0337751}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2478,102 +2484,6 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\qdbmp.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Automotive.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Bitmap.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Bitmap4bpp.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Circle.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_ColorBar.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_ColorList.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Cursor.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Dialog.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_DrawBMP.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_DrawGIF.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_DrawJPEG.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_DrawPNG.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_DriverPerformance.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Font.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_FrameWin.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Graph.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_HardwareInfo.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Intro.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_LUT.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_MemDevB.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Messagebox.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Navi.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Polygon.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_ProgBar.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_ShowAllTTFs.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Speed.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Touch.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_WM.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\MainTask.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\MicriumLogo.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\MicriumLogoWRed.c">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port\GUI_PNG.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\PNG\Port</Filter>
     </ClCompile>
@@ -3021,6 +2931,102 @@
     <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\WinDrive.c">
       <Filter>Micrium\Software\uC-FS\FS</Filter>
     </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Automotive.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Bitmap.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Bitmap4bpp.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Circle.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ColorBar.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ColorList.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Cursor.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Dialog.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawBMP.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawGIF.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawJPEG.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawPNG.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DriverPerformance.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Font.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_FrameWin.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Graph.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_HardwareInfo.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Intro.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_LUT.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_MemDevB.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Messagebox.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Navi.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Polygon.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ProgBar.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ShowAllTTFs.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Speed.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Touch.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_WM.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\MainTask.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\MicriumLogo.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample\GUIDemo\MicriumLogoWRed.c">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\Config\GUIConf.h">
@@ -3242,12 +3248,6 @@
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\qdbmp.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO.h">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\Map.h">
-      <Filter>Micrium\Software\uC-GUI\Start\Sample\GUIDemo</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port\GUI_PNG_Private.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\PNG\Port</Filter>
     </ClInclude>
@@ -3357,9 +3357,6 @@
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip\inffixed.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip\zconf.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip\zlib.h">
@@ -3763,6 +3760,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services\svwinfnt.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services</Filter>
+    </ClInclude>
+    <ClInclude Include="Sample\GUIDemo\GUIDEMO.h">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
+    </ClInclude>
+    <ClInclude Include="Sample\GUIDemo\Map.h">
+      <Filter>Microsoft\Windows\Sample\GUIDemo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

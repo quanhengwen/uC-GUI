@@ -83,7 +83,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\Utility\ZLib;..\..\Utility\ZLib\Port;..\..\Micrium\Software\uC-GUI\Start\Application;..\..\Micrium\Software\uC-GUI\Start\Config;..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo;..\..\Micrium\Software\uC-GUI\Start\System\Simulation;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding;..\..\Micrium\Software\uC-GUI\Start\GUI\AntiAlias;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertColor;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertMono;..\..\Micrium\Software\uC-GUI\Start\GUI\Core;..\..\Micrium\Software\uC-GUI\Start\GUI\Font;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\LCDDriver;..\..\Micrium\Software\uC-GUI\Start\GUI\MemDev;..\..\Micrium\Software\uC-GUI\Start\GUI\MultiLayer;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bdf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bzip2;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cache;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\lzw;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\otvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pcf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pfr;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pshinter;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psnames;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\raster;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\sfnt;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\smooth;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type42;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type1;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\winfonts;..\..\Micrium\Software\uC-GUI\Start\GUI\Widget;..\..\Micrium\Software\uC-GUI\Start\GUI\WM;..\..\Micrium\Software\uC-FS\Config;..\..\Micrium\Software\uC-FS\FS;..\..\Micrium\Software\uC-FS\Inc;..\..\Micrium\Software\uC-FS\Sample\API;..\..\Micrium\Software\uC-FS\Sample\OS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Utility\ZLib;..\..\Utility\ZLib\Port;..\..\Micrium\Software\uC-GUI\Start\Application;..\..\Micrium\Software\uC-GUI\Start\Config;..\..\Micrium\Software\uC-GUI\Start\System\Simulation;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding;..\..\Micrium\Software\uC-GUI\Start\GUI\AntiAlias;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertColor;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertMono;..\..\Micrium\Software\uC-GUI\Start\GUI\Core;..\..\Micrium\Software\uC-GUI\Start\GUI\Font;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\LCDDriver;..\..\Micrium\Software\uC-GUI\Start\GUI\MemDev;..\..\Micrium\Software\uC-GUI\Start\GUI\MultiLayer;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bdf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bzip2;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cache;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\lzw;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\otvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pcf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pfr;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pshinter;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psnames;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\raster;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\sfnt;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\smooth;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type42;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type1;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\winfonts;..\..\Micrium\Software\uC-GUI\Start\GUI\Widget;..\..\Micrium\Software\uC-GUI\Start\GUI\WM;..\..\Micrium\Software\uC-FS\Config;..\..\Micrium\Software\uC-FS\FS;..\..\Micrium\Software\uC-FS\Inc;..\..\Micrium\Software\uC-FS\Sample\API;..\..\Micrium\Software\uC-FS\Sample\OS;Sample\GUIDemo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;_DEBUG;WIN32;_WINDOWS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -110,7 +110,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\Utility\ZLib;..\..\Utility\ZLib\Port;..\..\Micrium\Software\uC-GUI\Start\Application;..\..\Micrium\Software\uC-GUI\Start\Config;..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo;..\..\Micrium\Software\uC-GUI\Start\System\Simulation;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding;..\..\Micrium\Software\uC-GUI\Start\GUI\AntiAlias;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertColor;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertMono;..\..\Micrium\Software\uC-GUI\Start\GUI\Core;..\..\Micrium\Software\uC-GUI\Start\GUI\Font;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\LCDDriver;..\..\Micrium\Software\uC-GUI\Start\GUI\MemDev;..\..\Micrium\Software\uC-GUI\Start\GUI\MultiLayer;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bdf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bzip2;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cache;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\lzw;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\otvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pcf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pfr;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pshinter;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psnames;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\raster;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\sfnt;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\smooth;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type42;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type1;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\winfonts;..\..\Micrium\Software\uC-GUI\Start\GUI\Widget;..\..\Micrium\Software\uC-GUI\Start\GUI\WM;..\..\Micrium\Software\uC-FS\Config;..\..\Micrium\Software\uC-FS\FS;..\..\Micrium\Software\uC-FS\Inc;..\..\Micrium\Software\uC-FS\Sample\API;..\..\Micrium\Software\uC-FS\Sample\OS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Utility\ZLib;..\..\Utility\ZLib\Port;..\..\Micrium\Software\uC-GUI\Start\Application;..\..\Micrium\Software\uC-GUI\Start\Config;..\..\Micrium\Software\uC-GUI\Start\System\Simulation;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding;..\..\Micrium\Software\uC-GUI\Start\GUI\AntiAlias;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertColor;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertMono;..\..\Micrium\Software\uC-GUI\Start\GUI\Core;..\..\Micrium\Software\uC-GUI\Start\GUI\Font;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\LCDDriver;..\..\Micrium\Software\uC-GUI\Start\GUI\MemDev;..\..\Micrium\Software\uC-GUI\Start\GUI\MultiLayer;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\config;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Include\freetype\internal\services;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bdf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bzip2;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cache;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\lzw;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\otvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pcf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pfr;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pshinter;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psnames;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\raster;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\sfnt;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\smooth;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type42;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type1;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\winfonts;..\..\Micrium\Software\uC-GUI\Start\GUI\Widget;..\..\Micrium\Software\uC-GUI\Start\GUI\WM;..\..\Micrium\Software\uC-FS\Config;..\..\Micrium\Software\uC-FS\FS;..\..\Micrium\Software\uC-FS\Inc;..\..\Micrium\Software\uC-FS\Sample\API;..\..\Micrium\Software\uC-FS\Sample\OS;Sample\GUIDemo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;NDEBUG;WIN32;_WINDOWS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -1051,38 +1051,6 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\WM\WM__SendMessageIfEnabled.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\WM\WM__SendMessageNoPara.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\WM\WM__UpdateChildPositions.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Automotive.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Bitmap.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Bitmap4bpp.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Circle.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_ColorBar.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_ColorList.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Cursor.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Dialog.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_DrawBMP.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_DrawGIF.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_DrawJPEG.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_DrawPNG.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_DriverPerformance.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Font.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_FrameWin.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Graph.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_HardwareInfo.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Intro.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_LUT.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_MemDevB.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Messagebox.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Navi.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Polygon.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_ProgBar.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_ShowAllTTFs.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Speed.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_Touch.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO_WM.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\MainTask.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\MicriumLogo.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\MicriumLogoWRed.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Main.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding\Branding.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\FS_Win32.c" />
@@ -1093,6 +1061,38 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\LCD_X_Sim.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\WinMain.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_X.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Automotive.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Bitmap.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Bitmap4bpp.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Circle.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ColorBar.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ColorList.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Cursor.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Dialog.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawBMP.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawGIF.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawJPEG.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DrawPNG.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_DriverPerformance.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Font.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_FrameWin.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Graph.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_HardwareInfo.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Intro.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_LUT.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_MemDevB.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Messagebox.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Navi.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Polygon.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ProgBar.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_ShowAllTTFs.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Speed.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_Touch.c" />
+    <ClCompile Include="Sample\GUIDemo\GUIDEMO_WM.c" />
+    <ClCompile Include="Sample\GUIDemo\MainTask.c" />
+    <ClCompile Include="Sample\GUIDemo\MicriumLogo.c" />
+    <ClCompile Include="Sample\GUIDemo\MicriumLogoWRed.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Micrium\Software\uC-FS\Config\FS_Conf.h" />
@@ -1265,7 +1265,6 @@
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid\gxvalid.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid\gxverror.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip\inffixed.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip\zconf.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip\zlib.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\otvalid\otvalid.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\otvalid\otverror.h" />
@@ -1335,13 +1334,13 @@
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\WM\WM_GUI.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\WM\WM_Intern.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\WM\WM_Intern_ConfDep.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\GUIDEMO.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\Sample\GUIDemo\Map.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res\ResourceSim.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding\Branding.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\FS_Win32.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\LCDSIM_Private.h" />
+    <ClInclude Include="Sample\GUIDemo\GUIDEMO.h" />
+    <ClInclude Include="Sample\GUIDemo\Map.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res\Device.bmp" />
