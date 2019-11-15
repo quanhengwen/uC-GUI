@@ -217,7 +217,7 @@ BMP* BMP_ReadFile( const char* filename )
 
 
   /* Open file */
-  f = BFOPEN( filename, "rb" );
+  f = BFOPENR( filename, "rb" );
   if ( f == NULL )
   {
     BMP_LAST_ERROR_CODE = BMP_FILE_NOT_FOUND;
@@ -321,7 +321,7 @@ void BMP_WriteFile( BMP* bmp, const char* filename )
 
 
   /* Open file */
-  f = BFOPEN( filename, "wb" );
+  f = BFOPENW( filename, "wb" );
   if ( f == NULL )
   {
     BMP_LAST_ERROR_CODE = BMP_FILE_NOT_FOUND;
