@@ -519,9 +519,10 @@ static void _DrawPNG_mem(const void * pFileData, int FileSize) {
 */
 /*********************************************************************
 *
-*       GUIDEMO_PNG
+*       GUIDEMO_PNGs
 */
-void GUIDEMO_PNG(void) {
+void GUIDEMO_PNGs(void) {
+  GUIDEMO_ShowIntro("PNGs",   "" );
   //
   // Check if recommended memory for the sample is available
   //

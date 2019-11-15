@@ -2565,6 +2565,15 @@
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawPNG.c">
       <Filter>Sample\GUIDemo</Filter>
     </ClCompile>
+    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawBMP.c">
+      <Filter>Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawGIF.c">
+      <Filter>Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DrawJPEG.c">
+      <Filter>Sample\GUIDemo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\GUIConf.h">

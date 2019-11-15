@@ -64,7 +64,10 @@ typedef void fVoidVoid(void);
 
 static fVoidVoid * _apfTest[] = {
   GUIDEMO_TTFs,
-  GUIDEMO_PNG,
+  GUIDEMO_PNGs,
+  GUIDEMO_JPEGs,
+  GUIDEMO_GIFs,
+  GUIDEMO_BMPs,
   GUIDEMO_DriverPerformance,
   GUIDEMO_HardwareInfo,
   GUIDEMO_Speed,
