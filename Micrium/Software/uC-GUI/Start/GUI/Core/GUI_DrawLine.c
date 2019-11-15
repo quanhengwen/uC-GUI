@@ -1,4 +1,4 @@
-/*
+﻿/*
 *********************************************************************************************************
 *                                             uC/GUI V3.98
 *                        Universal graphic software for embedded applications
@@ -6,7 +6,7 @@
 *                       (c) Copyright 2002, Micrium Inc., Weston, FL
 *                       (c) Copyright 2002, SEGGER Microcontroller Systeme GmbH
 *
-*              �C/GUI is protected by international copyright laws. Knowledge of the
+*              µC/GUI is protected by international copyright laws. Knowledge of the
 *              source code may not be used to write a similar product. This file may
 *              only be used in accordance with a license and should not be redistributed
 *              in any way. We appreciate your understanding and fairness.
@@ -63,7 +63,7 @@ static int Abs(int v) {
 *   All trigonometric functions are for internal usage only and
 *   use the following conventions:
 *
-*      Angles: 4096 <==> 360�
+*      Angles: 4096 <==> 360°
 *
 **********************************************************************
 */
@@ -76,27 +76,27 @@ static int Abs(int v) {
 *
 *       sin / cos (internal)
 *
-*  Angle : 90/1024�
+*  Angle : 90/1024°
 *  Data  : 1/1024
 */
 static const U16 aSin[] = {
-  0,       /*  1/16 *90� */
-  100,     /*  1/16 *90� */
-  200,     /*  2/16 *90� */
-  297,     /*  3/16 *90� */
-  392,     /*  4/16 *90� */
-  483,     /*  5/16 *90� */
-  569,     /*  6/16 *90� */
-  650,     /*  7/16 *90� */
-  724,     /*  8/16 *90� */
-  792,     /*  9/16 *90� */
-  851,     /* 10/16 *90� */
-  903,     /* 11/16 *90� */
-  946,     /* 12/16 *90� */
-  980,     /* 13/16 *90� */
-  1004,    /* 14/16 *90� */
-  1019,    /* 15/16 *90� */
-  1024     /* 16/16 *90� */
+  0,       /*  1/16 *90° */
+  100,     /*  1/16 *90° */
+  200,     /*  2/16 *90° */
+  297,     /*  3/16 *90° */
+  392,     /*  4/16 *90° */
+  483,     /*  5/16 *90° */
+  569,     /*  6/16 *90° */
+  650,     /*  7/16 *90° */
+  724,     /*  8/16 *90° */
+  792,     /*  9/16 *90° */
+  851,     /* 10/16 *90° */
+  903,     /* 11/16 *90° */
+  946,     /* 12/16 *90° */
+  980,     /* 13/16 *90° */
+  1004,    /* 14/16 *90° */
+  1019,    /* 15/16 *90° */
+  1024     /* 16/16 *90° */
 };
 
 /*********************************************************************
@@ -116,7 +116,7 @@ int GUI_sin(int angle) {
   if (angle> GUI_90DEG) {  /* between 90-180 */
     angle = 2*GUI_90DEG-angle;   /* use sine symetry */
   }
-  /* Now angle is reduced to 0� <= <= 90� */
+  /* Now angle is reduced to 0° <= <= 90° */
   i = angle>>6;
   {
     Faktor = (U16)((1<<6)-(angle&((1<<6)-1)));
@@ -141,7 +141,7 @@ int GUI_cos(int angle) {
 *
 *       atan() (internal)
 *
-*  Angle : 360/4096�
+*  Angle : 360/4096°
 */
 const I16 aTan[] = {
   0,       /* atan(0/16) */
@@ -160,7 +160,7 @@ const I16 aTan[] = {
   445,     /* atan(13/16) */
   469,     /* atan(14/16) */
   491,     /* atan(15/16) */
-  512      /* atan(1) = 45� = 512/1024 */
+  512      /* atan(1) = 45° = 512/1024 */
 };
 
 /*********************************************************************
@@ -172,7 +172,7 @@ const I16 aTan[] = {
 static int _atan0_45(int q) {
   int r;
   int i, Faktor;
-  /* Now angle is reduced to 0� <= <= 90� ==>  0 <= <= 256*/
+  /* Now angle is reduced to 0° <= <= 90° ==>  0 <= <= 256*/
   q >>=2;    /* make sure we do not exceed 16 bits in calculations */
   i = q>>4;
   Faktor = (1<<4)-(q&((1<<4)-1));
@@ -191,7 +191,7 @@ static int _atan0_45(int q) {
 static int _atan2(I32 x, I32 y) {
   U8 q =0;
   int angle;
-/* first make sure we are in angle between 0 and 45� */
+/* first make sure we are in angle between 0 and 45° */
   if (x<0) {
     q=1;
     x=-x;
