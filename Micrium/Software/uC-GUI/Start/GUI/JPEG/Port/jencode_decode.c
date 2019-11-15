@@ -10,10 +10,6 @@
 #include "jencode_decode.h"
 
 /* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-
 /*
  * BMP 文件头
  * 使用结构体读取文件头时候不读取前两个字节是因为编译器默认是 4 字节对齐的（一次读取 4 个字节）,
@@ -45,7 +41,9 @@ typedef struct BITMAP_INFO_HEADER {
      DWORD biClrUsed;        // 4 Byte 位图使用的颜色表中的颜色索引数.
      DWORD biClrImportant;   // 4 Byte 对图像显示有重要影响的颜色索引数目.
  } BITMAP_INFO_HEADER;
-
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -62,8 +60,8 @@ void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality)
   struct jpeg_compress_struct encode_cinfo;
   /* This struct represents a JPEG error handler */
   struct jpeg_error_mgr encode_jerr;
-  /* Encode BMP Image to JPEG */
-  JSAMPROW row_pointer;    /* Pointer to a single row */
+  /* Pointer to a single row */
+  JSAMPROW row_pointer;
   uint32_t bytesread;
   BITMAP_FILE_HEADER bmpFileHeader;
   BITMAP_INFO_HEADER bmpInfoHeader;
@@ -81,7 +79,7 @@ void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality)
   bmp_ptr = JMALLOC(data_size);
   if (bmp_ptr != NULL) {
     (void) ReadFile((HANDLE) file, bmp_ptr, data_size, (UINT*)&bytesread, NULL);
-    
+    /* Encode BMP Image to JPEG */  
     /* Step 1: allocate and initialize JPEG compression object */
     /* Set up the error handler */
     encode_cinfo.err = jpeg_std_error(&encode_jerr);
@@ -95,7 +93,7 @@ void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality)
     /* Step 3: set parameters for compression */
     encode_cinfo.image_width = bmpInfoHeader.biWidth;
     encode_cinfo.image_height = bmpInfoHeader.biHeight;
-    encode_cinfo.input_components = 3;
+    encode_cinfo.input_components = bmpInfoHeader.biBitCount / 8;
     encode_cinfo.in_color_space = JCS_RGB;
     
     /* Set default compression parameters */
@@ -113,7 +111,7 @@ void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality)
       /* In this application, the input file is a BMP, which first encodes the bottom of the picture */
       /* JPEG encodes the highest part of the picture first. We need to read the lines upside down   */
       /* Move the read pointer to 'last line of the picture - next_scanline'    */
-      row_pointer = (JSAMPROW)&bmp_ptr[((encode_cinfo.image_height - 1 - encode_cinfo.next_scanline) * encode_cinfo.image_width * 3)];
+      row_pointer = (JSAMPROW)&bmp_ptr[((encode_cinfo.image_height - 1 - encode_cinfo.next_scanline) * encode_cinfo.image_width * (bmpInfoHeader.biBitCount / 8))];
       jpeg_write_scanlines(&encode_cinfo, &row_pointer, 1);
     }
   }
@@ -142,8 +140,7 @@ void jpeg_decode(JFILE *file)
   unsigned long height;
   unsigned short depth;
   unsigned char* src_buff;
-  unsigned char* point;
-  JSAMPARRAY buffer;
+  JSAMPROW row_pointer;
 
   /* Decode JPEG Image */
   /* Step 1: allocate and initialize JPEG decompression object */
@@ -152,6 +149,7 @@ void jpeg_decode(JFILE *file)
   /* Initialize the JPEG decompression object */
   jpeg_create_decompress(&decode_cinfo);
 
+  /* Step 2: specify data destination */
   jpeg_stdio_src (&decode_cinfo, file);
 
   /* Step 3: read image parameters with jpeg_read_header() */
@@ -169,16 +167,13 @@ void jpeg_decode(JFILE *file)
 
   src_buff = (unsigned char *)JMALLOC(width * height * depth);
   if(src_buff != NULL) {
-    point = src_buff;
-    memset(src_buff, 0, sizeof(unsigned char) * width * height * depth);
-    buffer       = (*decode_cinfo.mem->alloc_sarray)((j_common_ptr)&decode_cinfo, JPOOL_IMAGE, width * depth, 1);
     while (decode_cinfo.output_scanline < decode_cinfo.output_height)
     {
-      (void) jpeg_read_scanlines(&decode_cinfo, buffer, 1);
-      memcpy(point, *buffer, width * depth);
-      point += width * depth;
+      row_pointer = (JSAMPROW)&src_buff[(decode_cinfo.output_scanline * decode_cinfo.image_width * decode_cinfo.output_components)];
+      (void) jpeg_read_scanlines(&decode_cinfo, &row_pointer, 1);
     }
   }
+
   /* Step 6: Finish decompression */
   jpeg_finish_decompress(&decode_cinfo);
 
