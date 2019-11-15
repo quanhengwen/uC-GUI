@@ -34,6 +34,7 @@ Requirements: WindowManager - ( )
 #include <stdio.h>
 #include "GUI.h"
 #include "GUIDEMO.H"
+#include "FS_Win32.h"
 
 /*********************************************************************
 *
@@ -57,6 +58,11 @@ static GUI_TTF_CS   _aCS      [GUI_COUNTOF(_aHeight)]; // Each GUI font needs it
 static GUI_FONT     _aFont    [GUI_COUNTOF(_aHeight)]; // Array of GUI fonts
 static char         _acFamily [200];
 static char         _acStyle  [200];
+
+//
+// File system info
+//
+static const _FS_API* _pFS_API;
 
 /*********************************************************************
 *
@@ -194,6 +200,10 @@ void GUIDEMO_TTFs(void) {
   GUIDEMO_ShowIntro("True Type Font",   "" );
   GUI_Clear();
 
+  //
+  // Assign file system
+  //
+  _pFS_API = &_FS_Win32;     // Use Windows filesystem.
   //
   // Check if recommended memory for the sample is available
   //
