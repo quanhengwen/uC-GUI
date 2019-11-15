@@ -187,7 +187,7 @@ static void _IterateOverAllFiles(const char * sFolder, const char * sMask, void 
 *       GUIDEMO_TTFs
 */
 void GUIDEMO_TTFs(void) {
-  int cnt = 10;
+  int cnt = 3;
   char acPath[200];
 
   //
