@@ -88,6 +88,32 @@ static GUI_SADDR GUI_CONTEXT *GUI_pContext = &GUI_Context;
 
 /*********************************************************************
 *
+*       LCD_MixColorsAA8
+*
+* Purpose:
+*   Mix 2 colors.
+*
+* Parameters:
+*   Intens:    Intensity of first color in 257 steps, from 0 to 256, where 256 equals 100%
+*/
+static LCD_COLOR LCD_MixColorsAA8(LCD_COLOR Color, LCD_COLOR BkColor, unsigned Intens) {
+  /* Calc Color seperations for FgColor first */
+  U32 R = (Color & 0xff)    * Intens;
+  U32 G = (Color & 0xff00)  * Intens;
+  U32 B = (Color & 0xff0000)* Intens;
+  /* Add Color seperations for BkColor */
+  Intens = 256 - Intens;
+  R += (BkColor & 0xff)     * Intens;
+  G += (BkColor & 0xff00)   * Intens;
+  B += (BkColor & 0xff0000) * Intens;
+  R = (R >> 8);
+  G = (G >> 8) & 0xff00;
+  B = (B >> 8) & 0xff0000;
+  return R + G + B;
+}
+
+/*********************************************************************
+*
 *       LCD_SetPixelAA8
 */
 static void LCD_SetPixelAA8(int x, int y, U8 Intens) {
@@ -100,7 +126,7 @@ static void LCD_SetPixelAA8(int x, int y, U8 Intens) {
   } else {
     LCD_COLOR Color = LCD_Index2Color(LCD_COLORINDEX);
     LCD_COLOR BkColor =  LCD_GetPixelColor(x,y);
-    Color = LCD_MixColors256(Color, BkColor, Intens);
+    Color = LCD_MixColorsAA8(Color, BkColor, Intens);
     LCDDEV_L0_SetPixelIndex(x,y, LCD_Color2Index(Color));
   }
 }
@@ -117,7 +143,7 @@ static void LCD_SetPixelAA8_NoTrans(int x, int y, U8 Intens) {
   } else if (Intens == 255) {
     LCDDEV_L0_SetPixelIndex(x,y, LCD_COLORINDEX);
   } else {
-    LCD_COLOR Color = LCD_MixColors256(LCD_Index2Color(LCD_COLORINDEX),
+    LCD_COLOR Color = LCD_MixColorsAA8(LCD_Index2Color(LCD_COLORINDEX),
                                    LCD_Index2Color(LCD_BKCOLORINDEX),
                                    Intens);
     LCDDEV_L0_SetPixelIndex(x,y,LCD_Color2Index(Color));
@@ -138,12 +164,9 @@ static void GUI_AA__DrawCharAA8(int x0, int y0, int XSize, int YSize, int BytesP
                  LCD_SetPixelAA8 : LCD_SetPixelAA8_NoTrans;
   for (y=0; y<YSize; y++) {
     const U8*pData0 = pData;
-    for (x=0; x<XSize-1; x++) {
+    for (x=0; x<XSize; x++) {
       (*pfSetPixelAA)(x0+x,y0+y, (*pData0++)&255);
   	}
-    if (XSize&1) {
-      (*pfSetPixelAA)(x0+x,y0+y, (*pData0)&255);
-    }
     pData+=BytesPerLine;
   }
   LCD_SetDrawMode(OldDrawMode); /* Restore draw mode */

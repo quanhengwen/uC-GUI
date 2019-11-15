@@ -214,8 +214,8 @@ void GUIDEMO_TTFs(void) {
   //
   // Set colors and text mode
   //
-  GUI_SetBkColor(GUI_YELLOW);
-  GUI_SetColor(GUI_LIGHTBLUE);
+  GUI_SetBkColor(GUI_WHITE);
+  GUI_SetColor(GUI_BLACK);
   GUI_SetTextMode(GUI_TM_TRANS);
   //
   // Get windows system directory and extend it with '\Font'
