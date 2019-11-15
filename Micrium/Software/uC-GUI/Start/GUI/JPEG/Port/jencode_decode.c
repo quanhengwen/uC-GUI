@@ -18,14 +18,16 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "encode.h"
+#include "jencode_decode.h"
 
 /* Private typedef -----------------------------------------------------------*/
    /* This struct contains the JPEG compression parameters */
-   static struct jpeg_compress_struct cinfo; 
+   static struct jpeg_compress_struct encode_cinfo;
+   struct jpeg_decompress_struct decode_cinfo;
    /* This struct represents a JPEG error handler */
-   static struct jpeg_error_mgr jerr; 
-  
+   static struct jpeg_error_mgr encode_jerr;
+   struct jpeg_error_mgr decode_jerr;
+
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -66,13 +68,13 @@ typedef struct BITMAP_INFO_HEADER {
 /**
   * @brief  Jpeg Encode
   * @param  file:          pointer to the bmp file
-  * @param  file1:         pointer to the jpg file  
+  * @param  file1:         pointer to the jpg file
   * @param  image_quality: image quality
   * @retval None
   */
 void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality)
 {
-  /* Encode BMP Image to JPEG */  
+  /* Encode BMP Image to JPEG */
   JSAMPROW row_pointer;    /* Pointer to a single row */
   uint32_t bytesread;
   BITMAP_FILE_HEADER bmpFileHeader;
@@ -94,46 +96,99 @@ void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality)
 
   /* Step 1: allocate and initialize JPEG compression object */
   /* Set up the error handler */
-  cinfo.err = jpeg_std_error(&jerr);
-  
-  /* Initialize the JPEG compression object */  
-  jpeg_create_compress(&cinfo);
-  
+  encode_cinfo.err = jpeg_std_error(&encode_jerr);
+
+  /* Initialize the JPEG compression object */
+  jpeg_create_compress(&encode_cinfo);
+
   /* Step 2: specify data destination */
-  jpeg_stdio_dest(&cinfo, file1);
-  
+  jpeg_stdio_dest(&encode_cinfo, file1);
+
   /* Step 3: set parameters for compression */
-  cinfo.image_width = bmpInfoHeader.biWidth;
-  cinfo.image_height = bmpInfoHeader.biHeight;
-  cinfo.input_components = 3;
-  cinfo.in_color_space = JCS_RGB;
-  
+  encode_cinfo.image_width = bmpInfoHeader.biWidth;
+  encode_cinfo.image_height = bmpInfoHeader.biHeight;
+  encode_cinfo.input_components = 3;
+  encode_cinfo.in_color_space = JCS_RGB;
+
   /* Set default compression parameters */
-  jpeg_set_defaults(&cinfo);
-  
-  cinfo.dct_method  = JDCT_FLOAT;    
-  
-  jpeg_set_quality(&cinfo, image_quality, TRUE);
-  
+  jpeg_set_defaults(&encode_cinfo);
+
+  encode_cinfo.dct_method  = JDCT_FLOAT;
+
+  jpeg_set_quality(&encode_cinfo, image_quality, TRUE);
+
   /* Step 4: start compressor */
-  jpeg_start_compress(&cinfo, TRUE);
-  
-  while (cinfo.next_scanline < cinfo.image_height)
-  {          
+  jpeg_start_compress(&encode_cinfo, TRUE);
+
+  while (encode_cinfo.next_scanline < encode_cinfo.image_height)
+  {
     /* In this application, the input file is a BMP, which first encodes the bottom of the picture */
     /* JPEG encodes the highest part of the picture first. We need to read the lines upside down   */
     /* Move the read pointer to 'last line of the picture - next_scanline'    */
-    row_pointer = (JSAMPROW)&bmp_ptr[((cinfo.image_height - 1 - cinfo.next_scanline) * cinfo.image_width * 3)];
-    jpeg_write_scanlines(&cinfo, &row_pointer, 1);
+    row_pointer = (JSAMPROW)&bmp_ptr[((encode_cinfo.image_height - 1 - encode_cinfo.next_scanline) * encode_cinfo.image_width * 3)];
+    jpeg_write_scanlines(&encode_cinfo, &row_pointer, 1);
   }
 
   /* Step 5: finish compression */
-  jpeg_finish_compress(&cinfo);
-  
+  jpeg_finish_compress(&encode_cinfo);
+
   /* Step 6: release JPEG compression object */
-  jpeg_destroy_compress(&cinfo);
-    
+  jpeg_destroy_compress(&encode_cinfo);
+
   JFREE(bmp_ptr);
+}
+
+/**
+  * @brief  Jpeg Decode
+  * @param  callback: line decoding callback
+  * @param  file1:    pointer to the jpg file
+  * @param  width:    image width
+  * @param  buff:     pointer to the image line
+  * @retval None
+  */
+void jpeg_decode(JFILE *file, uint32_t width, uint8_t * buff, uint8_t (*callback)(uint8_t*, uint32_t))
+{
+
+  /* Decode JPEG Image */
+  JSAMPROW buffer[2] = {0}; /* Output row buffer */
+  uint32_t row_stride = 0; /* physical row width in image buffer */
+
+  buffer[0] = buff;
+
+  /* Step 1: allocate and initialize JPEG decompression object */
+  decode_cinfo.err = jpeg_std_error(&decode_jerr);
+
+  /* Initialize the JPEG decompression object */
+  jpeg_create_decompress(&decode_cinfo);
+
+  jpeg_stdio_src (&decode_cinfo, file);
+
+  /* Step 3: read image parameters with jpeg_read_header() */
+  jpeg_read_header(&decode_cinfo, TRUE);
+
+  /* Step 4: set parameters for decompression */
+  decode_cinfo.dct_method = JDCT_FLOAT;
+
+  /* Step 5: start decompressor */
+  jpeg_start_decompress(&decode_cinfo);
+
+  row_stride = width * 3;
+  while (decode_cinfo.output_scanline < decode_cinfo.output_height)
+  {
+    (void) jpeg_read_scanlines(&decode_cinfo, buffer, 1);
+
+    if (callback(buffer[0], row_stride) != 0)
+    {
+      break;
+    }
+  }
+
+  /* Step 6: Finish decompression */
+  jpeg_finish_decompress(&decode_cinfo);
+
+  /* Step 7: Release JPEG decompression object */
+  jpeg_destroy_decompress(&decode_cinfo);
+
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -2508,12 +2508,6 @@
     <ClCompile Include="GUI\PNG\zutil.c">
       <Filter>GUI\PNG</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\JPEG\Port\decode.c">
-      <Filter>GUI\JPEG\Port</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\JPEG\Port\encode.c">
-      <Filter>GUI\JPEG\Port</Filter>
-    </ClCompile>
     <ClCompile Include="GUI\JPEG\Port\GUI_JPEG.c">
       <Filter>GUI\JPEG\Port</Filter>
     </ClCompile>
@@ -2654,6 +2648,9 @@
     </ClCompile>
     <ClCompile Include="GUI\JPEG\jutils.c">
       <Filter>GUI\JPEG</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\JPEG\Port\jencode_decode.c">
+      <Filter>GUI\JPEG\Port</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3668,12 +3665,6 @@
     <ClInclude Include="GUI\PNG\zutil.h">
       <Filter>GUI\PNG</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\JPEG\Port\decode.h">
-      <Filter>GUI\JPEG\Port</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\JPEG\Port\encode.h">
-      <Filter>GUI\JPEG\Port</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\JPEG\Port\jconfig.h">
       <Filter>GUI\JPEG\Port</Filter>
     </ClInclude>
@@ -3681,6 +3672,9 @@
       <Filter>GUI\JPEG\Port</Filter>
     </ClInclude>
     <ClInclude Include="GUI\JPEG\Port\jmorecfg.h">
+      <Filter>GUI\JPEG\Port</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\JPEG\Port\jencode_decode.h">
       <Filter>GUI\JPEG\Port</Filter>
     </ClInclude>
   </ItemGroup>

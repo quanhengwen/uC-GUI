@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file    LibJPEG/LibJPEG_Encoding/Inc/decode.h
+  * @file    LibJPEG/LibJPEG_Encoding/Inc/jencode_decode.h
   * @author  MCD Application Team
-  * @brief   header of decode.c file
+  * @brief   header of encode.c file
   ******************************************************************************
   * @attention
   *
@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DECODE_H
-#define __DECODE_H
+#ifndef __ENCODE_H
+#define __ENCODE_H
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
@@ -35,8 +35,9 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
+void jpeg_encode(JFILE *file, JFILE *file1, uint32_t image_quality);
 void jpeg_decode(JFILE *file, uint32_t width, uint8_t * buff, uint8_t (*callback)(uint8_t*, uint32_t));
 
-#endif /* __DECODE_H */
+#endif /* __ENCODE_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -299,14 +299,6 @@ jpeg_free_large (j_common_ptr cinfo, void FAR * object, size_t sizeofobject)
 }
 
 
-
-
-
-
-
-
-
-
 /*********************************************************************
 *
 *       _Init
@@ -331,7 +323,7 @@ static void _WritePixelsRGB(const U8*p, int x0, int y0, int xSize) {
     r = *p++;
     g = *p++;
     b = *p++;
-    LCD_SetColor(b | (g << 8) | (U32)(((U32)r << 16) | 0xFF000000));
+    LCD_SetColor((b) | (g << 8) | (U32)((U32)r << 16) | 0xFF000000);
     LCD_DrawPixel(x0++, y0);
     xSize--;
   }

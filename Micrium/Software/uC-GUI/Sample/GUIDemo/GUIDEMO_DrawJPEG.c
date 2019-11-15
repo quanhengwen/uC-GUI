@@ -37,7 +37,7 @@ Requirements: WindowManager - ( )
 #include "GUI.h"
 #include "GUIDEMO.H"
 #include "FS_Win32.h"
-#include "encode.h"
+#include "jencode_decode.h"
 
 /*********************************************************************
 *
@@ -193,8 +193,6 @@ static int _GetFirstBitmapDirectory(char * pDir, char * pBuffer) {
 *
 *       _JPEGsDecodeEncode
 *
-* Function description
-*   Iterates over all JPEG files in a Windows sub folder.
 */
 static void _JPEGsDecodeEncode(void) {
     //
