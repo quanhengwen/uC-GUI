@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Sample\GUIDemo\FS_Win32.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Automotive.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Bitmap.c" />
@@ -145,6 +146,7 @@
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ColorList.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Cursor.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Dialog.c" />
+    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DriverPerformance.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Font.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_FrameWin.c" />
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_Graph.c" />
@@ -979,6 +981,7 @@
     <ClCompile Include="System\Simulation\SIM_X.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Sample\GUIDemo\FS_Win32.h" />
     <ClInclude Include="..\Sample\GUIDemo\GUIDEMO.h" />
     <ClInclude Include="..\Sample\GUIDemo\Map.h" />
     <ClInclude Include="Config\GUIConf.h" />

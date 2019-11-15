@@ -2568,6 +2568,12 @@
     <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_ShowAllTTFs.c">
       <Filter>Sample\GUIDemo</Filter>
     </ClCompile>
+    <ClCompile Include="..\Sample\GUIDemo\FS_Win32.c">
+      <Filter>Sample\GUIDemo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Sample\GUIDemo\GUIDEMO_DriverPerformance.c">
+      <Filter>Sample\GUIDemo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\GUIConf.h">
@@ -3423,6 +3429,9 @@
       <Filter>Sample\GUIDemo</Filter>
     </ClInclude>
     <ClInclude Include="..\Sample\GUIDemo\Map.h">
+      <Filter>Sample\GUIDemo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sample\GUIDemo\FS_Win32.h">
       <Filter>Sample\GUIDemo</Filter>
     </ClInclude>
   </ItemGroup>
