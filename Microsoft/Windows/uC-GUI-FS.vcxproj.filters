@@ -4,14 +4,8 @@
     <Filter Include="Micrium">
       <UniqueIdentifier>{f186e6c4-a050-4804-9f6f-7eeecc294541}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utility">
-      <UniqueIdentifier>{cba9d013-9aa0-42bb-9b74-001e6b9ec14a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Micrium\Software">
       <UniqueIdentifier>{d377f74e-0f5b-45a2-8352-8550e022ad08}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\ZLib">
-      <UniqueIdentifier>{f2cda0b4-1bc0-4db8-8847-11b9cc409998}</UniqueIdentifier>
     </Filter>
     <Filter Include="Microsoft">
       <UniqueIdentifier>{113e35d8-7200-4d28-8b43-bbad33a2c360}</UniqueIdentifier>
@@ -24,12 +18,6 @@
     </Filter>
     <Filter Include="Microsoft\Windows\Sample\GUIDemo">
       <UniqueIdentifier>{a4cf847a-171d-4e3c-ac0a-c4acb0337751}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\ZLib\Source">
-      <UniqueIdentifier>{b0ad1f21-8fd7-44b6-80a9-3f6875abe280}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\ZLib\Port">
-      <UniqueIdentifier>{c1effd60-945b-4dd4-b0f7-1457813fa7ba}</UniqueIdentifier>
     </Filter>
     <Filter Include="Micrium\Software\uC-GUI">
       <UniqueIdentifier>{940eda20-822d-46c6-81a1-ef1d4a6390b5}</UniqueIdentifier>
@@ -216,6 +204,15 @@
     </Filter>
     <Filter Include="Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding">
       <UniqueIdentifier>{4cb87507-d90e-4873-b9c4-915d8cd34da6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\ZLib">
+      <UniqueIdentifier>{f2cda0b4-1bc0-4db8-8847-11b9cc409998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\ZLib\Source">
+      <UniqueIdentifier>{b0ad1f21-8fd7-44b6-80a9-3f6875abe280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\ZLib\Port">
+      <UniqueIdentifier>{c1effd60-945b-4dd4-b0f7-1457813fa7ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2787,53 +2784,53 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Source\jidctflt.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\JPEG\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\inffast.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\inflate.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\inftrees.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\trees.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\uncompr.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\zutil.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\adler32.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\compress.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\crc32.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\deflate.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\gzclose.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\gzlib.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\gzread.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\gzwrite.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\ZLib\Source\infback.c">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qdbmp_conf.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Port</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\adler32.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\compress.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\crc32.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\deflate.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\gzclose.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\gzlib.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\gzread.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\gzwrite.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\infback.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\inffast.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\inflate.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\inftrees.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\trees.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\uncompr.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\zutil.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3058,12 +3055,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port\pnglibconf.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\PNG\Port</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Port\zconf.h">
-      <Filter>Utility\ZLib\Port</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Port\zlib.h">
-      <Filter>Utility\ZLib\Port</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit\aferrors.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit</Filter>
@@ -3503,38 +3494,44 @@
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal\services\svwinfnt.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal\services</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Source\inffast.h">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Source\inffixed.h">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Source\inflate.h">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Source\inftrees.h">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Source\trees.h">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Source\zutil.h">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Source\crc32.h">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Source\deflate.h">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\ZLib\Source\gzguts.h">
-      <Filter>Utility\ZLib\Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype\tterrors.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qdbmp_conf.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Port\zconf.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Port\zlib.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\crc32.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\deflate.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\gzguts.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\inffast.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\inffixed.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\inflate.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\inftrees.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\trees.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\ZLib\Source\zutil.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\ZLib\Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
