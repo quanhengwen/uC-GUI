@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    qbmp_conf.h
+  * @file    qdbmp_conf.h
   * @author  MCD Application Team
   * @brief    this file contains the libJPEG abstruction defines for the memory
   *          management routines and IO File operations
@@ -19,10 +19,10 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include <stdint.h>
 #include <windows.h>
+#include <stdint.h>
 
-/* Private typedef -----------------------------------------------------------*/  
+/* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -31,20 +31,16 @@
 
 #define BFILE                      HANDLE
 
-#define BMALLOC                    malloc    
-#define BCALLOC                    calloc    
-#define BFREE                      free  
+#define BMALLOC                    malloc
+#define BCALLOC                    calloc
+#define BFREE                      free
 
-#define BFCLOSE                    bclose_file  
-#define BFOPENR                    bopenr_file  
-#define BFOPENW                    bopenw_file  
-#define BFREAD                     bread_file 
-#define BFWRITE                    bwrite_file    
+#define BFCLOSE                    bclose_file
+#define BFREAD                     bread_file
+#define BFWRITE                    bwrite_file
 
-int bclose_file(BFILE* file);
-BFILE* bopenr_file(const uint8_t* filename, uint8_t* mode);
-BFILE* bopenw_file(const uint8_t* filename, uint8_t* mode);
-size_t bread_file(uint8_t *buf, size_t size, uint32_t sizeofbuf, BFILE  *file);
-size_t bwrite_file(uint8_t *buf, size_t size, uint32_t sizeofbuf, BFILE  *file);
+size_t bread_file (uint8_t *buf, uint32_t sizeofbuf, BFILE  *file);
+size_t bwrite_file (uint8_t *buf, uint32_t sizeofbuf, BFILE  *file);
+size_t bclose_file(BFILE  *file);
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
