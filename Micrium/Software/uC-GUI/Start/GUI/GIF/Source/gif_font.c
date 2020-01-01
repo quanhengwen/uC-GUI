@@ -239,7 +239,7 @@ GifDrawBoxedText8x8(SavedImage *Image,
 		      border + LineCount * GIF_FONT_HEIGHT + border - 1, bg);
 	(void)strcpy(dup, (char *)legend);
 	char *lasts;
-	cp = strtok_r(dup, "\r\n", &lasts);
+	cp = strtok_s(dup, "\r\n", &lasts);
 	do {
 	    int leadspace = 0;
 
@@ -248,7 +248,7 @@ GifDrawBoxedText8x8(SavedImage *Image,
 
 	    GifDrawText8x8(Image, x + border + (leadspace * GIF_FONT_WIDTH),
 			   y + border + (GIF_FONT_HEIGHT * i++), cp, fg);
-	    cp = strtok_r(NULL, "\r\n", &lasts);
+	    cp = strtok_s(NULL, "\r\n", &lasts);
 	} while (cp);
 	(void)free((void *)dup);
 
