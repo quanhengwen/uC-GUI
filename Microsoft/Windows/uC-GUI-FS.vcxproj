@@ -83,7 +83,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Sample\GUIDemo;Lib;Kernel;Kernel\OS2;..\BSP\Windows;..\..\Micrium\Software\uC-Serial\Source;..\..\Micrium\Software\uC-Serial\OS;..\..\Micrium\Software\uC-Serial\Line;..\..\Micrium\Software\uC-Serial\Driver\Win32;..\..\Micrium\Software\uC-CRC\Source;..\..\Micrium\Software\uC-CLK\Cmd;..\..\Micrium\Software\uC-CLK\Source;..\..\Micrium\Software\uC-Shell\Terminal\Source;..\..\Micrium\Software\uC-Shell\Cmd\General;..\..\Micrium\Software\uC-Shell\Source;..\..\Micrium\Software\uC-Common;..\..\Micrium\Software\uC-Common\Auth;..\..\Micrium\Software\uC-Common\Collections;..\..\Micrium\Software\uC-Common\KAL;..\..\Micrium\Software\uC-CPU;..\..\Micrium\Software\uC-CPU\Win32\Visual_Studio;..\..\Micrium\Software\uC-LIB;..\..\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio;..\..\Micrium\Software\uCOS-II\Source;..\..\Micrium\Software\uC-FS\Config;..\..\Micrium\Software\uC-FS\FS;..\..\Micrium\Software\uC-FS\Inc;..\..\Micrium\Software\uC-FS\Sample\API;..\..\Micrium\Software\uC-FS\Sample\OS;..\..\Micrium\Software\uC-GUI\Start\Application;..\..\Micrium\Software\uC-GUI\Start\Config;..\..\Micrium\Software\uC-GUI\Start\GUI\AntiAlias;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertColor;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertMono;..\..\Micrium\Software\uC-GUI\Start\GUI\Core;..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\Font;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\LCDDriver;..\..\Micrium\Software\uC-GUI\Start\GUI\MemDev;..\..\Micrium\Software\uC-GUI\Start\GUI\MultiLayer;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\config;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal\services;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bdf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bzip2;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cache;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\lzw;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\otvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pcf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pfr;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pshinter;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psnames;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\raster;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\sfnt;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\smooth;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type42;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type1;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\winfonts;..\..\Micrium\Software\uC-GUI\Start\GUI\Widget;..\..\Micrium\Software\uC-GUI\Start\GUI\WM;..\..\Micrium\Software\uC-GUI\Start\System\Simulation;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding;..\..\Utility\LZO\Port;..\..\Utility\LZO\Source;..\..\Utility\LZO\Source\Include\LZO;..\..\Utility\ZLib;..\..\Utility\ZLib\Port;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Sample\GUIDemo;..\..\Micrium\Software\uC-GUI\Start\Application;..\..\Micrium\Software\uC-GUI\Start\Config;..\..\Micrium\Software\uC-GUI\Start\GUI\AntiAlias;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertColor;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertMono;..\..\Micrium\Software\uC-GUI\Start\GUI\Core;..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\Font;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\LCDDriver;..\..\Micrium\Software\uC-GUI\Start\GUI\MemDev;..\..\Micrium\Software\uC-GUI\Start\GUI\MultiLayer;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\config;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal\services;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bdf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bzip2;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cache;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\lzw;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\otvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pcf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pfr;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pshinter;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psnames;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\raster;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\sfnt;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\smooth;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type42;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type1;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\winfonts;..\..\Micrium\Software\uC-GUI\Start\GUI\Widget;..\..\Micrium\Software\uC-GUI\Start\GUI\WM;..\..\Micrium\Software\uC-GUI\Start\System\Simulation;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding;..\..\Utility\ZLib;..\..\Utility\ZLib\Port;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;_DEBUG;WIN32;_WINDOWS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -110,7 +110,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Sample\GUIDemo;Lib;Kernel;Kernel\OS2;..\BSP\Windows;..\..\Micrium\Software\uC-Serial\Source;..\..\Micrium\Software\uC-Serial\OS;..\..\Micrium\Software\uC-Serial\Line;..\..\Micrium\Software\uC-Serial\Driver\Win32;..\..\Micrium\Software\uC-CRC\Source;..\..\Micrium\Software\uC-CLK\Cmd;..\..\Micrium\Software\uC-CLK\Source;..\..\Micrium\Software\uC-Shell\Terminal\Source;..\..\Micrium\Software\uC-Shell\Cmd\General;..\..\Micrium\Software\uC-Shell\Source;..\..\Micrium\Software\uC-Common;..\..\Micrium\Software\uC-Common\Auth;..\..\Micrium\Software\uC-Common\Collections;..\..\Micrium\Software\uC-Common\KAL;..\..\Micrium\Software\uC-CPU;..\..\Micrium\Software\uC-CPU\Win32\Visual_Studio;..\..\Micrium\Software\uC-LIB;..\..\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio;..\..\Micrium\Software\uCOS-II\Source;..\..\Micrium\Software\uC-FS\Config;..\..\Micrium\Software\uC-FS\FS;..\..\Micrium\Software\uC-FS\Inc;..\..\Micrium\Software\uC-FS\Sample\API;..\..\Micrium\Software\uC-FS\Sample\OS;..\..\Micrium\Software\uC-GUI\Start\Application;..\..\Micrium\Software\uC-GUI\Start\Config;..\..\Micrium\Software\uC-GUI\Start\GUI\AntiAlias;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertColor;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertMono;..\..\Micrium\Software\uC-GUI\Start\GUI\Core;..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\Font;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\LCDDriver;..\..\Micrium\Software\uC-GUI\Start\GUI\MemDev;..\..\Micrium\Software\uC-GUI\Start\GUI\MultiLayer;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\config;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal\services;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bdf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bzip2;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cache;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\lzw;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\otvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pcf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pfr;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pshinter;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psnames;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\raster;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\sfnt;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\smooth;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type42;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type1;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\winfonts;..\..\Micrium\Software\uC-GUI\Start\GUI\Widget;..\..\Micrium\Software\uC-GUI\Start\GUI\WM;..\..\Micrium\Software\uC-GUI\Start\System\Simulation;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding;..\..\Utility\LZO\Port;..\..\Utility\LZO\Source;..\..\Utility\LZO\Source\Include\LZO;..\..\Utility\ZLib;..\..\Utility\ZLib\Port;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Sample\GUIDemo;..\..\Micrium\Software\uC-GUI\Start\Application;..\..\Micrium\Software\uC-GUI\Start\Config;..\..\Micrium\Software\uC-GUI\Start\GUI\AntiAlias;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertColor;..\..\Micrium\Software\uC-GUI\Start\GUI\ConvertMono;..\..\Micrium\Software\uC-GUI\Start\GUI\Core;..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\Font;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\LCDDriver;..\..\Micrium\Software\uC-GUI\Start\GUI\MemDev;..\..\Micrium\Software\uC-GUI\Start\GUI\MultiLayer;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Port;..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Source;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\config;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal\services;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\autofit;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\base;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bdf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\bzip2;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cache;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cff;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\cid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gxvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\gzip;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\lzw;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\otvalid;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pcf;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pfr;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psaux;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\pshinter;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\psnames;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\raster;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\sfnt;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\smooth;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type42;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\type1;..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\winfonts;..\..\Micrium\Software\uC-GUI\Start\GUI\Widget;..\..\Micrium\Software\uC-GUI\Start\GUI\WM;..\..\Micrium\Software\uC-GUI\Start\System\Simulation;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI;..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding;..\..\Utility\ZLib;..\..\Utility\ZLib\Port;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LCD_USE_WINSIM;_CRT_SECURE_NO_WARNINGS;NDEBUG;WIN32;_WINDOWS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -136,125 +136,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Micrium\Software\uC-Clk\Cmd\clk_cmd.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Clk\Source\clk.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Common\Auth\auth.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Common\Collections\slist.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Common\KAL\uCOS-II\kal.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-CPU\cpu_core.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-CPU\Win32\Visual_Studio\cpu_c.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-CRC\Source\crc_util.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-CRC\Source\ecc_hamming.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-CRC\Source\edc_crc.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Config\ConfigRamDisk.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Config\ConfigWinDisk.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Config\FS_X_Panic.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_API.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_CheckDisk.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Dir.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_DirEntry.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_DiskInfo.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Format.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_FormatSD.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Ioct.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Misc.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Move.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Open.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Read.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Rename.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_SetEndOfFile.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_VolumeLabel.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FAT_Write.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_AddSpaceHex.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_AssignCache.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Attrib.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CacheAll.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CacheMan.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CacheRW.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CacheRWQuota.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CLib.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CopyFile.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Core.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_CreateDir.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Dir.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_DirOld.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_ErrorNo2Text.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_ErrorOut.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Format.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_FRead.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_FWrite.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_GetFilePos.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_GetFileSize.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_GetNumFiles.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_GetNumOpenFiles.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Log.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_LogBlock.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_LogVolume.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_memcpy.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Misc.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Move.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_OS_Interface.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Partition.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Read.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Rename.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_SetEndOfFile.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_SetFilePos.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Storage.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Time.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Truncate.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Unmount.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Verify.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Volume.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Warn.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS_Write.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\FS__ECC256.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\RAMDISK.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\FS\WinDrive.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_APIValidation.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_CheckDisk.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_DirOperations.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_NORSectorInfo.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_Performance.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\API\FS_Start.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\OS\FS_X_embOS.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\OS\FS_X_Epsilon.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\OS\FS_X_ucOS_II.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-FS\Sample\OS\FS_X_Win32.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qdbmp_conf.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Source\qdbmp.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Port\openbsd-reallocarray.c" />
@@ -325,101 +206,6 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Source\pngwrite.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Source\pngwtran.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Source\pngwutil.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-LIB\lib_ascii.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-LIB\lib_math.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-LIB\lib_mem.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-LIB\lib_str.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_dflt.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_probe.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_tty.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Serial\OS\uCOS-II\serial_os.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Serial\Source\serial.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Serial\Source\serial_buf.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Cmd\General\sh_shell.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Source\shell.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Terminal\Mode\VT100\terminal_mode.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Terminal\OS\uCOS-II\terminal_os.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Terminal\Serial\terminal_serial.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Terminal\Source\terminal.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio\os_cpu_c.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_core.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_dbg_r.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_flag.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_mbox.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_mem.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_mutex.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_q.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_sem.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_task.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_time.c" />
-    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_tmr.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1a.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1a_99.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_2.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_3.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_4.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_5.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_6.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_7.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_8.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_9.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_99.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_9x.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_cc.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_d1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_d2.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_rr.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1b_xx.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_2.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_3.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_4.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_5.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_6.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_7.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_8.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_9.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_99.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_9x.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_cc.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_d1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_d2.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_rr.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1c_xx.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1f_1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1f_9x.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1f_d1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1f_d2.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1x_1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1x_1k.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1x_1l.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1x_1o.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1x_9x.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1x_d1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1x_d2.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1x_d3.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1x_o.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1y_1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1y_9x.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1y_d1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1y_d2.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1y_d3.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1y_o.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1z_9x.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1z_d1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1z_d2.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1z_d3.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo1_99.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo2a_9x.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo2a_d1.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo2a_d2.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo_crc.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo_init.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo_ptr.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo_str.c" />
-    <ClCompile Include="..\..\Utility\LZO\Source\lzo_util.c" />
     <ClCompile Include="..\..\Utility\ZLib\Source\adler32.c" />
     <ClCompile Include="..\..\Utility\ZLib\Source\compress.c" />
     <ClCompile Include="..\..\Utility\ZLib\Source\crc32.c" />
@@ -1193,12 +979,6 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\LCD_X_Sim.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\WinMain.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_X.c" />
-    <ClCompile Include="..\BSP\Windows\bsp_cpu.c" />
-    <ClCompile Include="Kernel\OS2\app_hooks.c" />
-    <ClCompile Include="Kernel\OS2\main.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Sample\GUIDemo\GUIDEMO.c" />
     <ClCompile Include="Sample\GUIDemo\GUIDEMO_Automotive.c" />
     <ClCompile Include="Sample\GUIDemo\GUIDEMO_Bitmap.c" />
@@ -1233,38 +1013,6 @@
     <ClCompile Include="Sample\GUIDemo\MicriumLogoWRed.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Micrium\Software\uC-Clk\Cmd\clk_cmd.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Clk\Source\clk.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Clk\Source\clk_type.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Common\Auth\auth.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Common\Collections\slist.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Common\common.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Common\common_err.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Common\KAL\kal.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-CPU\cpu_cache.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-CPU\cpu_core.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-CPU\cpu_def.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-CPU\Win32\Visual_Studio\cpu.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-CRC\Source\crc_util.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-CRC\Source\ecc.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-CRC\Source\ecc_hamming.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-CRC\Source\edc_crc.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\Config\FS_Conf.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FAT.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FAT_Intern.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_API.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_CLib.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_ConfDefaults.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Debug.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Dev.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_DF_X_HW.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Int.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Lbl.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_OS.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Storage.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\FS\FS_Types.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-FS\Inc\Global.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qdbmp_conf.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Source\qdbmp.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Port\gif_lib_private.h" />
@@ -1370,62 +1118,6 @@
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\tttags.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\ft2build.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype\tterrors.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-LIB\lib_ascii.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-LIB\lib_def.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-LIB\lib_math.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-LIB\lib_mem.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-LIB\lib_str.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_dflt.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_probe.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_tty.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Serial\OS\serial_os.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Source\serial.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Source\serial_buf.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Source\serial_type.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Shell\Cmd\General\sh_shell.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Shell\Source\shell.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-Shell\Terminal\Source\terminal.h" />
-    <ClInclude Include="..\..\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio\os_cpu.h" />
-    <ClInclude Include="..\..\Micrium\Software\uCOS-II\Source\os.h" />
-    <ClInclude Include="..\..\Micrium\Software\uCOS-II\Source\os_cfg_r.h" />
-    <ClInclude Include="..\..\Micrium\Software\uCOS-II\Source\os_trace.h" />
-    <ClInclude Include="..\..\Micrium\Software\uCOS-II\Source\ucos_ii.h" />
-    <ClInclude Include="..\..\Utility\LZO\Port\lzoconf.h" />
-    <ClInclude Include="..\..\Utility\LZO\Port\lzodefs.h" />
-    <ClInclude Include="..\..\Utility\LZO\Port\lzoutil.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\compr1b.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\compr1c.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\config1.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\config1a.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\config1b.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\config1c.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\config1f.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\config1x.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\config1y.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\config1z.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\config2a.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\Include\LZO\lzo1.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\Include\LZO\lzo1a.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\Include\LZO\lzo1b.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\Include\LZO\lzo1c.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\Include\LZO\lzo1f.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\Include\LZO\lzo1x.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\Include\LZO\lzo1y.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\Include\LZO\lzo1z.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\Include\LZO\lzo2a.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\Include\LZO\lzo_asm.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\lzo1a_de.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\lzo1b_cc.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\lzo1b_de.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\lzo1c_cc.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\lzo_conf.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\lzo_dict.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\lzo_func.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\lzo_ptr.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\lzo_supp.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\stats1a.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\stats1b.h" />
-    <ClInclude Include="..\..\Utility\LZO\Source\stats1c.h" />
     <ClInclude Include="..\..\Utility\ZLib\Port\zconf.h" />
     <ClInclude Include="..\..\Utility\ZLib\Port\zlib.h" />
     <ClInclude Include="..\..\Utility\ZLib\Source\crc32.h" />
@@ -1552,10 +1244,6 @@
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding\Branding.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\FS_Win32.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\LCDSIM_Private.h" />
-    <ClInclude Include="Kernel\app_cfg.h" />
-    <ClInclude Include="Kernel\cpu_cfg.h" />
-    <ClInclude Include="Kernel\lib_cfg.h" />
-    <ClInclude Include="Kernel\OS2\os_cfg.h" />
     <ClInclude Include="Sample\GUIDemo\GUIDEMO.h" />
     <ClInclude Include="Sample\GUIDemo\Map.h" />
   </ItemGroup>
@@ -1567,27 +1255,6 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\Res\Simulation.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Utility\LZO\Source\lzo1a_cm.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1a_cr.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1b_c.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1b_cm.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1b_cr.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1b_d.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1b_r.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1b_sm.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1b_tm.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1f_d.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1x_c.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1x_d.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1x_oo.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1_cm.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo1_d.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo2a_d.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo_dll.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo_mchw.ch" />
-    <None Include="..\..\Utility\LZO\Source\lzo_swd.ch" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
