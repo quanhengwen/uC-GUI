@@ -10,6 +10,123 @@
     <Filter Include="Micrium\Software">
       <UniqueIdentifier>{d377f74e-0f5b-45a2-8352-8550e022ad08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utility\ZLib">
+      <UniqueIdentifier>{f2cda0b4-1bc0-4db8-8847-11b9cc409998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft">
+      <UniqueIdentifier>{113e35d8-7200-4d28-8b43-bbad33a2c360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft\Windows">
+      <UniqueIdentifier>{7e964545-bc27-4ee0-8320-4cda81bedcb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft\Windows\Sample">
+      <UniqueIdentifier>{845e04ac-73b2-4a7f-b00f-171472cbfad0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft\Windows\Sample\GUIDemo">
+      <UniqueIdentifier>{a4cf847a-171d-4e3c-ac0a-c4acb0337751}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\LZO">
+      <UniqueIdentifier>{5ca19d8b-6be9-4fc0-9376-e5be3d0353af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\LZO\Port">
+      <UniqueIdentifier>{fd72ccc4-6580-4def-b9ab-089e8d761437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\LZO\Source">
+      <UniqueIdentifier>{c590d755-ffac-4b54-94a8-cd26e1652e3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\LZO\Source\Include">
+      <UniqueIdentifier>{86bdb6ac-b5ed-471f-83da-eb8b6df4449f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\LZO\Source\Include\LZO">
+      <UniqueIdentifier>{a5722da3-d987-4ff5-94a8-a7885e8192a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\ZLib\Source">
+      <UniqueIdentifier>{b0ad1f21-8fd7-44b6-80a9-3f6875abe280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\ZLib\Port">
+      <UniqueIdentifier>{c1effd60-945b-4dd4-b0f7-1457813fa7ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft\BSP">
+      <UniqueIdentifier>{76972324-ef22-46b5-85d6-3323ccb015af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft\BSP\Windows">
+      <UniqueIdentifier>{ff853d92-1766-432b-bed1-44f2eb9429d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft\Windows\Kernel">
+      <UniqueIdentifier>{69b5c88e-6170-4711-95dc-b5b961f46a42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Microsoft\Windows\Kernel\OS2">
+      <UniqueIdentifier>{e44525e1-3667-46e4-aa49-33f962590656}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell">
+      <UniqueIdentifier>{0ef8d82a-e7a9-4289-9be6-8f87733f61eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell\Cmd">
+      <UniqueIdentifier>{290bc1fd-9a96-4f5a-9861-d0a0fce0a8cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell\Cmd\General">
+      <UniqueIdentifier>{11711ed8-8b4e-4c93-9875-4e321f1f2d93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell\Source">
+      <UniqueIdentifier>{cdf175bb-6712-4c99-ab9f-85cd642669c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell\Terminal">
+      <UniqueIdentifier>{4f8f0173-7171-4fa1-99a4-2eb8c507e25f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell\Terminal\Mode">
+      <UniqueIdentifier>{dba9b718-9a4e-479f-a763-559ccd0b7469}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell\Terminal\Mode\VT100">
+      <UniqueIdentifier>{ae361659-f280-4cd6-ba69-79139cdff08c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell\Terminal\Serial">
+      <UniqueIdentifier>{1a05dcde-82b3-4946-a01f-49ea23c1a486}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell\Terminal\OS">
+      <UniqueIdentifier>{05c7090f-ea7b-4d36-81e3-15f16fd5462d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell\Terminal\OS\uCOS-II">
+      <UniqueIdentifier>{62c62d56-ebb2-431e-9eef-de1bce1db3e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Shell\Terminal\Source">
+      <UniqueIdentifier>{13ea5aef-d179-42c6-b6c2-e8c349c3adec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Serial">
+      <UniqueIdentifier>{1a27f4bc-3a58-4274-af7a-a1f57d928fac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Serial\Driver">
+      <UniqueIdentifier>{d15fca36-cc84-414e-bae3-2d04ec61d7e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Serial\Line">
+      <UniqueIdentifier>{a41448cd-654e-4b0d-94be-d5b2893a42b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Serial\OS">
+      <UniqueIdentifier>{316ce981-2aad-448a-9831-2bdf4ffe6a2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Serial\OS\uCOS-II">
+      <UniqueIdentifier>{a1fc7724-7173-41da-ac8c-2a79fa141a42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-Serial\Source">
+      <UniqueIdentifier>{3e3d0a20-07a2-4cb5-ba46-06c65a265d63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uCOS-II">
+      <UniqueIdentifier>{8543bd61-807e-4648-b4bb-931657cda282}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uCOS-II\Ports">
+      <UniqueIdentifier>{90c2fa3b-7883-46e9-a53d-0e8f8043dbf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uCOS-II\Ports\Win32">
+      <UniqueIdentifier>{13844b4b-b502-46b1-85ec-72b5d42e67b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uCOS-II\Ports\Win32\Visual Studio">
+      <UniqueIdentifier>{2bfd0e67-1918-4002-b47f-ba6482ec9f1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uCOS-II\Source">
+      <UniqueIdentifier>{7e984b3a-5823-4932-b7da-545a3f0f04d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-LIB">
+      <UniqueIdentifier>{2fc837d8-ed4b-4dc3-8020-c0f13eb95649}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Micrium\Software\uC-GUI">
       <UniqueIdentifier>{940eda20-822d-46c6-81a1-ef1d4a6390b5}</UniqueIdentifier>
     </Filter>
@@ -43,6 +160,9 @@
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\JPEG\Port">
       <UniqueIdentifier>{5161c01b-1178-41fa-bd7e-50b53abc2138}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\JPEG\Source">
+      <UniqueIdentifier>{2542a3cc-f8ff-4a12-b80b-e772c0d67ed0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\LCDDriver">
       <UniqueIdentifier>{ee7be231-f35d-44a0-829a-bc624a3ed52e}</UniqueIdentifier>
     </Filter>
@@ -58,35 +178,11 @@
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\PNG\Port">
       <UniqueIdentifier>{7e7ae80f-1bd0-4d12-810d-a0c3ec554ee9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\PNG\Source">
+      <UniqueIdentifier>{cc6c97a4-b6dc-455b-8c84-1a22f80cb673}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType">
       <UniqueIdentifier>{705cf06a-45f7-4f73-a2c5-f4228cc2e71b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\Widget">
-      <UniqueIdentifier>{bc07396f-184a-4c88-8030-e74d26c0698c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\WM">
-      <UniqueIdentifier>{e967b4d4-0e6b-444a-8709-166c823d68a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\BMP">
-      <UniqueIdentifier>{6fd37344-4c31-4e9d-a07d-ac860c3ec618}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\System">
-      <UniqueIdentifier>{c4967d06-fa2b-473d-a3cd-b2e96b7c0592}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\System\Simulation">
-      <UniqueIdentifier>{d6546564-1ae9-418e-a314-9d994c8a03b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\System\Simulation\Res">
-      <UniqueIdentifier>{4d98b501-04e9-4714-8872-f0a590077b2b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI">
-      <UniqueIdentifier>{cf4c867d-0c67-45a6-adb7-67e16c624de2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding">
-      <UniqueIdentifier>{4cb87507-d90e-4873-b9c4-915d8cd34da6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\ZLib">
-      <UniqueIdentifier>{f2cda0b4-1bc0-4db8-8847-11b9cc409998}</UniqueIdentifier>
     </Filter>
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source">
       <UniqueIdentifier>{8d05de6d-a382-4051-989c-98405f1b549e}</UniqueIdentifier>
@@ -160,8 +256,62 @@
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\winfonts">
       <UniqueIdentifier>{de1243f5-b1f2-4820-99b9-70e52edf3014}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include">
+      <UniqueIdentifier>{f2dff092-7be0-46bb-a8e8-6df7c6a4bd83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype">
+      <UniqueIdentifier>{22865327-99ec-4456-85cc-2ee637b763fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\config">
+      <UniqueIdentifier>{081138ce-a592-44be-b07e-3993d29f3c06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal">
+      <UniqueIdentifier>{d6a7903e-7bed-40f3-94b9-785c47d31524}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal\services">
+      <UniqueIdentifier>{fa333334-389e-43d5-956c-5363c1ab6538}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Port">
       <UniqueIdentifier>{4ea56b8f-eb4e-440e-9c4e-2b19104a60ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\Widget">
+      <UniqueIdentifier>{bc07396f-184a-4c88-8030-e74d26c0698c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\WM">
+      <UniqueIdentifier>{e967b4d4-0e6b-444a-8709-166c823d68a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\BMP">
+      <UniqueIdentifier>{6fd37344-4c31-4e9d-a07d-ac860c3ec618}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\BMP\Port">
+      <UniqueIdentifier>{29b85609-66cb-44cc-9d5f-7d1fa72dd218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\BMP\Source">
+      <UniqueIdentifier>{3b8d4a67-0e3a-4c51-9c5f-c0320e50c1a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\GIF">
+      <UniqueIdentifier>{e3deb27f-528d-4474-a673-fb7f96793083}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\GIF\Source">
+      <UniqueIdentifier>{2533d762-3924-4471-8928-d87eb7acb770}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\GIF\Port">
+      <UniqueIdentifier>{ad4be146-f7f8-4240-aee1-7831e4edd114}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\System">
+      <UniqueIdentifier>{c4967d06-fa2b-473d-a3cd-b2e96b7c0592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\System\Simulation">
+      <UniqueIdentifier>{d6546564-1ae9-418e-a314-9d994c8a03b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\System\Simulation\Res">
+      <UniqueIdentifier>{4d98b501-04e9-4714-8872-f0a590077b2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI">
+      <UniqueIdentifier>{cf4c867d-0c67-45a6-adb7-67e16c624de2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding">
+      <UniqueIdentifier>{4cb87507-d90e-4873-b9c4-915d8cd34da6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Micrium\Software\uC-FS">
       <UniqueIdentifier>{2890c137-dd82-45d6-b965-6f8cf0f20ed0}</UniqueIdentifier>
@@ -184,74 +334,44 @@
     <Filter Include="Micrium\Software\uC-FS\Sample\OS">
       <UniqueIdentifier>{918a7a71-acc8-4df5-a1f1-bcea6cc4e3e5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Microsoft">
-      <UniqueIdentifier>{113e35d8-7200-4d28-8b43-bbad33a2c360}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-CRC">
+      <UniqueIdentifier>{af23e738-0fd2-40dd-9b3c-4c052befed44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Microsoft\Windows">
-      <UniqueIdentifier>{7e964545-bc27-4ee0-8320-4cda81bedcb3}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-CRC\Source">
+      <UniqueIdentifier>{3cbc4ea2-d8e7-4176-9d6f-32824e2ec875}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Microsoft\Windows\Sample">
-      <UniqueIdentifier>{845e04ac-73b2-4a7f-b00f-171472cbfad0}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-CPU">
+      <UniqueIdentifier>{26aa3808-1e1b-4488-bf5c-16a353009778}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Microsoft\Windows\Sample\GUIDemo">
-      <UniqueIdentifier>{a4cf847a-171d-4e3c-ac0a-c4acb0337751}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-CPU\Win32">
+      <UniqueIdentifier>{3b9ef2e0-ada5-46da-846c-643d66e317ad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utility\LZO">
-      <UniqueIdentifier>{5ca19d8b-6be9-4fc0-9376-e5be3d0353af}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-CPU\Win32\Visual_Studio">
+      <UniqueIdentifier>{0d9d556a-015f-4392-b3da-08f0952d3ed0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utility\LZO\Port">
-      <UniqueIdentifier>{fd72ccc4-6580-4def-b9ab-089e8d761437}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-Common">
+      <UniqueIdentifier>{297f2298-7f6e-48b2-b133-d29d99013ea7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utility\LZO\Source">
-      <UniqueIdentifier>{c590d755-ffac-4b54-94a8-cd26e1652e3e}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-Common\Auth">
+      <UniqueIdentifier>{09248d11-de5a-468e-93ce-371fa6f833d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\BMP\Port">
-      <UniqueIdentifier>{29b85609-66cb-44cc-9d5f-7d1fa72dd218}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-Common\Collections">
+      <UniqueIdentifier>{d83e1509-08f0-434c-8659-b9dddccfb578}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\BMP\Source">
-      <UniqueIdentifier>{3b8d4a67-0e3a-4c51-9c5f-c0320e50c1a7}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-Common\KAL">
+      <UniqueIdentifier>{e31cbd6b-42e3-4e7b-a882-a9e833ac1764}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\GIF">
-      <UniqueIdentifier>{e3deb27f-528d-4474-a673-fb7f96793083}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-Common\KAL\uCOS-II">
+      <UniqueIdentifier>{11e813f2-9496-4ef2-8ba2-b61475d649b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\GIF\Source">
-      <UniqueIdentifier>{2533d762-3924-4471-8928-d87eb7acb770}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-CLK">
+      <UniqueIdentifier>{40615240-16b1-4058-8533-9c16c47bcd44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\GIF\Port">
-      <UniqueIdentifier>{ad4be146-f7f8-4240-aee1-7831e4edd114}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-CLK\Cmd">
+      <UniqueIdentifier>{a20773e2-ae75-484b-9bb9-206bff1db5c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\PNG\Source">
-      <UniqueIdentifier>{cc6c97a4-b6dc-455b-8c84-1a22f80cb673}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\JPEG\Source">
-      <UniqueIdentifier>{2542a3cc-f8ff-4a12-b80b-e772c0d67ed0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include">
-      <UniqueIdentifier>{f2dff092-7be0-46bb-a8e8-6df7c6a4bd83}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype">
-      <UniqueIdentifier>{22865327-99ec-4456-85cc-2ee637b763fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\config">
-      <UniqueIdentifier>{081138ce-a592-44be-b07e-3993d29f3c06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal">
-      <UniqueIdentifier>{d6a7903e-7bed-40f3-94b9-785c47d31524}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\Include\freetype\internal\services">
-      <UniqueIdentifier>{fa333334-389e-43d5-956c-5363c1ab6538}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\LZO\Source\Include">
-      <UniqueIdentifier>{86bdb6ac-b5ed-471f-83da-eb8b6df4449f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\LZO\Source\Include\LZO">
-      <UniqueIdentifier>{a5722da3-d987-4ff5-94a8-a7885e8192a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\ZLib\Source">
-      <UniqueIdentifier>{b0ad1f21-8fd7-44b6-80a9-3f6875abe280}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\ZLib\Port">
-      <UniqueIdentifier>{c1effd60-945b-4dd4-b0f7-1457813fa7ba}</UniqueIdentifier>
+    <Filter Include="Micrium\Software\uC-CLK\Source">
+      <UniqueIdentifier>{3de4c2a3-e64f-40fd-919d-1ecd18fe96a0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -3042,9 +3162,6 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Source\qdbmp.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qbmp_conf.c">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Port</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\dgif_lib.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
     </ClCompile>
@@ -3299,6 +3416,132 @@
     </ClCompile>
     <ClCompile Include="..\..\Utility\ZLib\Source\infback.c">
       <Filter>Utility\ZLib\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-CPU\Win32\Visual_Studio\cpu_c.c">
+      <Filter>Micrium\Software\uC-CPU\Win32\Visual_Studio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-CPU\cpu_core.c">
+      <Filter>Micrium\Software\uC-CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-LIB\lib_ascii.c">
+      <Filter>Micrium\Software\uC-LIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-LIB\lib_math.c">
+      <Filter>Micrium\Software\uC-LIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-LIB\lib_mem.c">
+      <Filter>Micrium\Software\uC-LIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-LIB\lib_str.c">
+      <Filter>Micrium\Software\uC-LIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_core.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_dbg_r.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_flag.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_mbox.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_mem.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_mutex.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_q.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_sem.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_task.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_time.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Source\os_tmr.c">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio\os_cpu_c.c">
+      <Filter>Micrium\Software\uCOS-II\Ports\Win32\Visual Studio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BSP\Windows\bsp_cpu.c">
+      <Filter>Microsoft\BSP\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Kernel\OS2\app_hooks.c">
+      <Filter>Microsoft\Windows\Kernel\OS2</Filter>
+    </ClCompile>
+    <ClCompile Include="Kernel\OS2\main.c">
+      <Filter>Microsoft\Windows\Kernel\OS2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Common\Auth\auth.c">
+      <Filter>Micrium\Software\uC-Common\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Common\Collections\slist.c">
+      <Filter>Micrium\Software\uC-Common\Collections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Common\KAL\uCOS-II\kal.c">
+      <Filter>Micrium\Software\uC-Common\KAL\uCOS-II</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Cmd\General\sh_shell.c">
+      <Filter>Micrium\Software\uC-Shell\Cmd\General</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Source\shell.c">
+      <Filter>Micrium\Software\uC-Shell\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Terminal\Mode\VT100\terminal_mode.c">
+      <Filter>Micrium\Software\uC-Shell\Terminal\Mode\VT100</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Terminal\OS\uCOS-II\terminal_os.c">
+      <Filter>Micrium\Software\uC-Shell\Terminal\OS\uCOS-II</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Terminal\Serial\terminal_serial.c">
+      <Filter>Micrium\Software\uC-Shell\Terminal\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Shell\Terminal\Source\terminal.c">
+      <Filter>Micrium\Software\uC-Shell\Terminal\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Clk\Source\clk.c">
+      <Filter>Micrium\Software\uC-CLK\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Clk\Cmd\clk_cmd.c">
+      <Filter>Micrium\Software\uC-CLK\Cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-CRC\Source\crc_util.c">
+      <Filter>Micrium\Software\uC-CRC\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-CRC\Source\ecc_hamming.c">
+      <Filter>Micrium\Software\uC-CRC\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-CRC\Source\edc_crc.c">
+      <Filter>Micrium\Software\uC-CRC\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Serial\OS\uCOS-II\serial_os.c">
+      <Filter>Micrium\Software\uC-Serial\OS\uCOS-II</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Serial\Source\serial.c">
+      <Filter>Micrium\Software\uC-Serial\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Serial\Source\serial_buf.c">
+      <Filter>Micrium\Software\uC-Serial\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_dflt.c">
+      <Filter>Micrium\Software\uC-Serial\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_probe.c">
+      <Filter>Micrium\Software\uC-Serial\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_tty.c">
+      <Filter>Micrium\Software\uC-Serial\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qdbmp_conf.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Port</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3788,9 +4031,6 @@
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Source\qdbmp.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qbmp_conf.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Port</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\getarg.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
     </ClInclude>
@@ -4159,6 +4399,129 @@
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype\tterrors.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\TrueType\Source\truetype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-CPU\Win32\Visual_Studio\cpu.h">
+      <Filter>Micrium\Software\uC-CPU\Win32\Visual_Studio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-CPU\cpu_cache.h">
+      <Filter>Micrium\Software\uC-CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-CPU\cpu_core.h">
+      <Filter>Micrium\Software\uC-CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-CPU\cpu_def.h">
+      <Filter>Micrium\Software\uC-CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-LIB\lib_ascii.h">
+      <Filter>Micrium\Software\uC-LIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-LIB\lib_def.h">
+      <Filter>Micrium\Software\uC-LIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-LIB\lib_math.h">
+      <Filter>Micrium\Software\uC-LIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-LIB\lib_mem.h">
+      <Filter>Micrium\Software\uC-LIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-LIB\lib_str.h">
+      <Filter>Micrium\Software\uC-LIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uCOS-II\Source\os.h">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uCOS-II\Source\os_cfg_r.h">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uCOS-II\Source\os_trace.h">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uCOS-II\Source\ucos_ii.h">
+      <Filter>Micrium\Software\uCOS-II\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio\os_cpu.h">
+      <Filter>Micrium\Software\uCOS-II\Ports\Win32\Visual Studio</Filter>
+    </ClInclude>
+    <ClInclude Include="Kernel\OS2\os_cfg.h">
+      <Filter>Microsoft\Windows\Kernel\OS2</Filter>
+    </ClInclude>
+    <ClInclude Include="Kernel\app_cfg.h">
+      <Filter>Microsoft\Windows\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Kernel\cpu_cfg.h">
+      <Filter>Microsoft\Windows\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Kernel\lib_cfg.h">
+      <Filter>Microsoft\Windows\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Common\Auth\auth.h">
+      <Filter>Micrium\Software\uC-Common\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Common\Collections\slist.h">
+      <Filter>Micrium\Software\uC-Common\Collections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Common\KAL\kal.h">
+      <Filter>Micrium\Software\uC-Common\KAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Common\common.h">
+      <Filter>Micrium\Software\uC-Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Common\common_err.h">
+      <Filter>Micrium\Software\uC-Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Shell\Cmd\General\sh_shell.h">
+      <Filter>Micrium\Software\uC-Shell\Cmd\General</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Shell\Source\shell.h">
+      <Filter>Micrium\Software\uC-Shell\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Shell\Terminal\Source\terminal.h">
+      <Filter>Micrium\Software\uC-Shell\Terminal\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Clk\Source\clk.h">
+      <Filter>Micrium\Software\uC-CLK\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Clk\Source\clk_type.h">
+      <Filter>Micrium\Software\uC-CLK\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Clk\Cmd\clk_cmd.h">
+      <Filter>Micrium\Software\uC-CLK\Cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-CRC\Source\crc_util.h">
+      <Filter>Micrium\Software\uC-CRC\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-CRC\Source\ecc.h">
+      <Filter>Micrium\Software\uC-CRC\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-CRC\Source\ecc_hamming.h">
+      <Filter>Micrium\Software\uC-CRC\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-CRC\Source\edc_crc.h">
+      <Filter>Micrium\Software\uC-CRC\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Serial\OS\serial_os.h">
+      <Filter>Micrium\Software\uC-Serial\OS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Source\serial.h">
+      <Filter>Micrium\Software\uC-Serial\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Source\serial_buf.h">
+      <Filter>Micrium\Software\uC-Serial\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Source\serial_type.h">
+      <Filter>Micrium\Software\uC-Serial\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_dflt.h">
+      <Filter>Micrium\Software\uC-Serial\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_probe.h">
+      <Filter>Micrium\Software\uC-Serial\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-Serial\Line\serial_line_tty.h">
+      <Filter>Micrium\Software\uC-Serial\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qdbmp_conf.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Port</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
