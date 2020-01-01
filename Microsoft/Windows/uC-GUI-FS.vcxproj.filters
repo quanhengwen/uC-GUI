@@ -247,9 +247,6 @@
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\GIF\Port">
       <UniqueIdentifier>{ad4be146-f7f8-4240-aee1-7831e4edd114}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utility\SQLite">
-      <UniqueIdentifier>{22ac1c0a-832c-49ab-8d66-236ea2a0cc7b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding\Branding.c">
@@ -3297,12 +3294,6 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\quantize.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Utility\SQLite\shell.c">
-      <Filter>Utility\SQLite</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Utility\SQLite\sqlite3.c">
-      <Filter>Utility\SQLite</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\Config\GUIConf.h">
@@ -4159,12 +4150,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_lib_private.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\SQLite\sqlite3.h">
-      <Filter>Utility\SQLite</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Utility\SQLite\sqlite3ext.h">
-      <Filter>Utility\SQLite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
