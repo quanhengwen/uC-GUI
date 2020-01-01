@@ -1,15 +1,17 @@
 /* inftrees.h -- header to use inftrees.c
  * Copyright (C) 1995-2002 Mark Adler
- * For conditions of distribution and use, see copyright notice in zlib.h
+ * For conditions of distribution and use, see copyright notice in ttzlib.h
  */
 
 /* WARNING: this file should *not* be used by applications. It is
    part of the implementation of the compression library and is
-   subject to change. Applications should only use zlib.h.
+   subject to change. Applications should only use ttzlib.h.
  */
 
 /* Huffman code lookup table entry--this entry is four bytes for machines
    that have 16-bit pointers (e.g. PC's in the small or medium model). */
+
+//JE: Renamed to ttinftrees.h
 
 #ifndef _INFTREES_H
 #define _INFTREES_H

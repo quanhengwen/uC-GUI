@@ -1,11 +1,11 @@
 /* infutil.h -- types and macros common to blocks and codes
  * Copyright (C) 1995-2002 Mark Adler
- * For conditions of distribution and use, see copyright notice in zlib.h
+ * For conditions of distribution and use, see copyright notice in ttzlib.h
  */
 
 /* WARNING: this file should *not* be used by applications. It is
    part of the implementation of the compression library and is
-   subject to change. Applications should only use zlib.h.
+   subject to change. Applications should only use ttzlib.h.
  */
 
 #ifndef _INFUTIL_H

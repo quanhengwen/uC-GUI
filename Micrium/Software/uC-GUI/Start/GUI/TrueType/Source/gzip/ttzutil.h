@@ -1,19 +1,21 @@
 /* zutil.h -- internal interface and configuration of the compression library
  * Copyright (C) 1995-2002 Jean-loup Gailly.
- * For conditions of distribution and use, see copyright notice in zlib.h
+ * For conditions of distribution and use, see copyright notice in ttzlib.h
  */
 
 /* WARNING: this file should *not* be used by applications. It is
    part of the implementation of the compression library and is
-   subject to change. Applications should only use zlib.h.
+   subject to change. Applications should only use ttzlib.h.
  */
 
 /* @(#) $Id$ */
 
+//JE: Renamed to ttzutil.h
+
 #ifndef _Z_UTIL_H
 #define _Z_UTIL_H
 
-#include "zlib.h"
+#include "ttzlib.h"
 
 #ifdef STDC
 #  include <stddef.h>

@@ -1,9 +1,11 @@
 /* zconf.h -- configuration of the zlib compression library
  * Copyright (C) 1995-2002 Jean-loup Gailly.
- * For conditions of distribution and use, see copyright notice in zlib.h
+ * For conditions of distribution and use, see copyright notice in ttzlib.h
  */
 
 /* @(#) $Id$ */
+
+//JE: Renamed to ttzconf.h
 
 #ifndef _ZCONF_H
 #define _ZCONF_H
@@ -150,7 +152,7 @@
 /* The following definitions for FAR are needed only for MSDOS mixed
  * model programming (small or medium model with some far allocations).
  * This was tested only with MSC; for other MSDOS compilers you may have
- * to define NO_MEMCPY in zutil.h.  If you don't need the mixed model,
+ * to define NO_MEMCPY in ttzutil.h.  If you don't need the mixed model,
  * just define FAR to be empty.
  */
 #if (defined(M_I86SM) || defined(M_I86MM)) && !defined(__32BIT__)

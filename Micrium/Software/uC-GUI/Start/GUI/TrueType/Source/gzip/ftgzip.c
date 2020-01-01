@@ -43,7 +43,7 @@
 
 #ifdef FT_CONFIG_OPTION_SYSTEM_ZLIB
 
-#include <zlib.h>
+#include <ttzlib.h>
 
 #else /* !FT_CONFIG_OPTION_SYSTEM_ZLIB */
 
@@ -58,19 +58,19 @@
 #define MY_ZCALLOC /* prevent all zcalloc() & zfree() in zutil.c */
 #endif
 
-  /* Note that our `zlib.h' includes `ftzconf.h' instead of `zconf.h'; */
-  /* the main reason is that even a global `zlib.h' includes `zconf.h' */
+  /* Note that our `ttzlib.h' includes `ttzconf.h' instead of `ttzconf.h'; */
+  /* the main reason is that even a global `ttzlib.h' includes `ttzconf.h' */
   /* with                                                              */
   /*                                                                   */
-  /*   #include "zconf.h"                                              */
+  /*   #include "ttzconf.h"                                              */
   /*                                                                   */
   /* instead of the expected                                           */
   /*                                                                   */
-  /*   #include <zconf.h>                                              */
+  /*   #include <ttzconf.h>                                              */
   /*                                                                   */
   /* so that configuration with `FT_CONFIG_OPTION_SYSTEM_ZLIB' might   */
-  /* include the wrong `zconf.h' file, leading to errors.              */
-#include "zlib.h"
+  /* include the wrong `ttzconf.h' file, leading to errors.              */
+#include "ttzlib.h"
 
 #undef  SLOW
 #define SLOW  1  /* we can't use asm-optimized sources here! */
@@ -87,8 +87,8 @@
   /* Urgh.  `inflate_mask' must not be declared twice -- C++ doesn't like
      this.  We temporarily disable it and load all necessary header files. */
 #define NO_INFLATE_MASK
-#include "zutil.h"
-#include "inftrees.h"
+#include "ttzutil.h"
+#include "ttinftrees.h"
 #include "infblock.h"
 #include "infcodes.h"
 #include "infutil.h"

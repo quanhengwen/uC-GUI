@@ -1,11 +1,11 @@
 /* infblock.c -- interpret and process block types to last block
  * Copyright (C) 1995-2002 Mark Adler
- * For conditions of distribution and use, see copyright notice in zlib.h
+ * For conditions of distribution and use, see copyright notice in ttzlib.h
  */
 
-#include "zutil.h"
+#include "ttzutil.h"
 #include "infblock.h"
-#include "inftrees.h"
+#include "ttinftrees.h"
 #include "infcodes.h"
 #include "infutil.h"
 

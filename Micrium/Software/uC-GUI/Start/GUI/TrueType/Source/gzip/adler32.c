@@ -1,11 +1,11 @@
 /* adler32.c -- compute the Adler-32 checksum of a data stream
  * Copyright (C) 1995-2002 Mark Adler
- * For conditions of distribution and use, see copyright notice in zlib.h
+ * For conditions of distribution and use, see copyright notice in ttzlib.h
  */
 
 /* @(#) $Id$ */
 
-#include "zlib.h"
+#include "ttzlib.h"
 
 #define BASE 65521L /* largest prime smaller than 65536 */
 #define NMAX 5552

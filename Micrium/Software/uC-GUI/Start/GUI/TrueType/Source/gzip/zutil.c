@@ -1,11 +1,11 @@
 /* zutil.c -- target dependent utility functions for the compression library
  * Copyright (C) 1995-2002 Jean-loup Gailly.
- * For conditions of distribution and use, see copyright notice in zlib.h
+ * For conditions of distribution and use, see copyright notice in ttzlib.h
  */
 
 /* @(#) $Id$ */
 
-#include "zutil.h"
+#include "ttzutil.h"
 
 #ifndef STDC
 extern void exit OF((int));

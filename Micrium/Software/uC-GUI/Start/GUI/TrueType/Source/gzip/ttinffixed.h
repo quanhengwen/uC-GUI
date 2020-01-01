@@ -4,8 +4,10 @@
 
 /* WARNING: this file should *not* be used by applications. It is
    part of the implementation of the compression library and is
-   subject to change. Applications should only use zlib.h.
+   subject to change. Applications should only use ttzlib.h.
  */
+
+//JE: Renamed to ttinffixed.h
 
 local const uInt fixed_bl = 9;
 local const uInt fixed_bd = 5;
