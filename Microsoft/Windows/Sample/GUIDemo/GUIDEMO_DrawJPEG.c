@@ -50,8 +50,8 @@ Requirements: WindowManager - ( )
 #define BORDER_SIZE           5
 #define YPOS_IMAGE            73
 
-#define JPEG_IMAGE_FILE       "ColorCircle_120x120_24bpp.jpg"
-#define BMP_IMAGE_FILE        "ColorCircle_120x120_24bpp.bmp"
+#define JPEG_IMAGE_FILE       "ColorCircle_240x240_24bpp.jpg"
+#define BMP_IMAGE_FILE        "ColorCircle_240x240_24bpp.bmp"
 #define IMAGE_QUALITY         100
 
 //
@@ -214,7 +214,7 @@ static void _JPEGsDecodeEncode(void) {
     //
     // Config Base Dir
     //
-    sprintf(acBuffer, "%s", "C:\\Keil_v5\\ARM\\Segger\\emWin\\Doc\\Training\\BitmapConverter\\");
+    sprintf(acBuffer, "%s", "..\\..\\Media\\");
     _FS_WIN32_ConfigBaseDir(acBuffer);
     //
     // Open the JPG image with read access
@@ -270,7 +270,7 @@ static void _DrawJPEGsFromWindowsDir(void) {
   GUI_SetColor(GUI_WHITE);
   GUI_SetFont(&GUI_Font24_ASCII);
   GUI_DispStringHCenterAt("Draw JPEG - Sample", xSize / 2, 5);
-  sprintf(acBuffer, "%s", "C:\\Keil_v5\\ARM\\Segger\\emWin\\Doc\\Training\\BitmapConverter");
+  sprintf(acBuffer, "%s", "..\\..\\Media\\");
   _GetFirstBitmapDirectory(acBuffer, acPath);
   sprintf(acMask, "%s*.jp*", acPath);
   hFind = FindFirstFile(acMask, &Context);

@@ -136,7 +136,7 @@ static void _DrawWindowsDirectoryBitmaps(void) {
   GUI_SetFont(&GUI_Font24_ASCII);
   GUI_DispStringHCenterAt("DrawBMP - Sample", 160, 5);
   GUI_SetFont(&GUI_Font8x16);
-  sprintf(acBuffer, "%s", "C:\\Keil_v5\\ARM\\Segger\\emWin\\Doc\\Training\\BitmapConverter");
+  sprintf(acBuffer, "%s", "..\\..\\Media\\");
   _GetFirstBitmapDirectory(acBuffer, acPath);
   sprintf(acMask, "%s\\*.bmp", acPath);
   hFind = FindFirstFile(acMask, &Context);

@@ -40,3 +40,7 @@ uC-GUI-FS.sln
 
 # Visual Studio Code
 .vscode/
+
+# Demo
+*.log
+ColorCircle_240x240_24bpp.jpg
