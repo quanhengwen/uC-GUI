@@ -238,6 +238,15 @@
     <Filter Include="Micrium\Software\uC-GUI\Start\GUI\BMP\Source">
       <UniqueIdentifier>{3b8d4a67-0e3a-4c51-9c5f-c0320e50c1a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\GIF">
+      <UniqueIdentifier>{e3deb27f-528d-4474-a673-fb7f96793083}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\GIF\Source">
+      <UniqueIdentifier>{2533d762-3924-4471-8928-d87eb7acb770}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Micrium\Software\uC-GUI\Start\GUI\GIF\Port">
+      <UniqueIdentifier>{ad4be146-f7f8-4240-aee1-7831e4edd114}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\System\Simulation\SIM_GUI\Branding\Branding.c">
@@ -3255,6 +3264,36 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qbmp_conf.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Port</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\dgif_lib.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\egif_lib.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\getarg.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_err.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_font.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_hash.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gifalloc.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\openbsd-reallocarray.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\qprintf.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\quantize.c">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\Config\GUIConf.h">
@@ -4105,6 +4144,18 @@
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qbmp_conf.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\getarg.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_hash.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_lib.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_lib_private.h">
+      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
