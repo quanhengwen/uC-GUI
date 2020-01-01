@@ -3168,9 +3168,6 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\egif_lib.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\getarg.c">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_err.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
     </ClCompile>
@@ -3181,9 +3178,6 @@
       <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gifalloc.c">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\qprintf.c">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\quantize.c">
@@ -4030,9 +4024,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Source\qdbmp.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\BMP\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\getarg.h">
-      <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_hash.h">
       <Filter>Micrium\Software\uC-GUI\Start\GUI\GIF\Source</Filter>

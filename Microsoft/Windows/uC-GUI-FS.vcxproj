@@ -260,12 +260,10 @@
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Port\openbsd-reallocarray.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\dgif_lib.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\egif_lib.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\getarg.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gifalloc.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_err.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_font.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_hash.c" />
-    <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\qprintf.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\quantize.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Source\jaricom.c" />
     <ClCompile Include="..\..\Micrium\Software\uC-GUI\Start\GUI\JPEG\Source\jcapimin.c" />
@@ -1270,7 +1268,6 @@
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Port\qdbmp_conf.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\BMP\Source\qdbmp.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Port\gif_lib_private.h" />
-    <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\getarg.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_hash.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\GIF\Source\gif_lib.h" />
     <ClInclude Include="..\..\Micrium\Software\uC-GUI\Start\GUI\PNG\Source\png.h" />
