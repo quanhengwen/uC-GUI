@@ -2,6 +2,7 @@
  * jinclude.h
  *
  * Copyright (C) 1991-1994, Thomas G. Lane.
+ * Modified 2017 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -19,8 +20,6 @@
 
 #include "jconfig.h"		/* auto configuration options */
 #define JCONFIG_INCLUDED	/* so that jpeglib.h doesn't do it again */
-
-
 
 /*
  * We need the NULL macro and size_t typedef.

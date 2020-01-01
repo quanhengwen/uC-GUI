@@ -2,7 +2,7 @@
  * jmorecfg.h
  *
  * Copyright (C) 1991-1997, Thomas G. Lane.
- * Modified 1997-2011 by Guido Vollbeding.
+ * Modified 1997-2013 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -15,13 +15,22 @@
 /*
  * Define BITS_IN_JSAMPLE as either
  *   8   for 8-bit sample values (the usual setting)
+ *   9   for 9-bit sample values
+ *   10  for 10-bit sample values
+ *   11  for 11-bit sample values
  *   12  for 12-bit sample values
- * Only 8 and 12 are legal data precisions for lossy JPEG according to the
- * JPEG standard, and the IJG code does not support anything else!
- * We do not support run-time selection of data precision, sorry.
+ * Only 8, 9, 10, 11, and 12 bits sample data precision are supported for
+ * full-feature DCT processing.  Further depths up to 16-bit may be added
+ * later for the lossless modes of operation.
+ * Run-time selection and conversion of data precision will be added later
+ * and are currently not supported, sorry.
+ * Exception:  The transcoding part (jpegtran) supports all settings in a
+ * single instance, since it operates on the level of DCT coefficients and
+ * not sample values.  The DCT coefficients are of the same type (16 bits)
+ * in all cases (see below).
  */
 
-#define BITS_IN_JSAMPLE  8	/* use 8 or 12 */
+#define BITS_IN_JSAMPLE  8	/* use 8, 9, 10, 11, or 12 */
 
 
 /*
@@ -39,7 +48,7 @@
 /*
  * Basic data types.
  * You may need to change these if you have a machine with unusual data
- * type sizes; for application, "char" not 8 bits, "short" not 16 bits,
+ * type sizes; for example, "char" not 8 bits, "short" not 16 bits,
  * or "long" not 32 bits.  We don't care whether "int" is 16 or 32 bits,
  * but it had better be at least 16.
  */
@@ -75,6 +84,48 @@ typedef char JSAMPLE;
 #define CENTERJSAMPLE	128
 
 #endif /* BITS_IN_JSAMPLE == 8 */
+
+
+#if BITS_IN_JSAMPLE == 9
+/* JSAMPLE should be the smallest type that will hold the values 0..511.
+ * On nearly all machines "short" will do nicely.
+ */
+
+typedef short JSAMPLE;
+#define GETJSAMPLE(value)  ((int) (value))
+
+#define MAXJSAMPLE	511
+#define CENTERJSAMPLE	256
+
+#endif /* BITS_IN_JSAMPLE == 9 */
+
+
+#if BITS_IN_JSAMPLE == 10
+/* JSAMPLE should be the smallest type that will hold the values 0..1023.
+ * On nearly all machines "short" will do nicely.
+ */
+
+typedef short JSAMPLE;
+#define GETJSAMPLE(value)  ((int) (value))
+
+#define MAXJSAMPLE	1023
+#define CENTERJSAMPLE	512
+
+#endif /* BITS_IN_JSAMPLE == 10 */
+
+
+#if BITS_IN_JSAMPLE == 11
+/* JSAMPLE should be the smallest type that will hold the values 0..2047.
+ * On nearly all machines "short" will do nicely.
+ */
+
+typedef short JSAMPLE;
+#define GETJSAMPLE(value)  ((int) (value))
+
+#define MAXJSAMPLE	2047
+#define CENTERJSAMPLE	1024
+
+#endif /* BITS_IN_JSAMPLE == 11 */
 
 
 #if BITS_IN_JSAMPLE == 12
@@ -210,6 +261,26 @@ typedef unsigned int JDIMENSION;
 #endif
 
 
+/* The noreturn type identifier is used to declare functions
+ * which cannot return.
+ * Compilers can thus create more optimized code and perform
+ * better checks for warnings and errors.
+ * Static analyzer tools can make improved inferences about
+ * execution paths and are prevented from giving false alerts.
+ *
+ * Unfortunately, the proposed specifications of corresponding
+ * extensions in the Dec 2011 ISO C standard revision (C11),
+ * GCC, MSVC, etc. are not viable.
+ * Thus we introduce a user defined type to declare noreturn
+ * functions at least for clarity.  A proper compiler would
+ * have a suitable noreturn type to match in place of void.
+ */
+
+#ifndef HAVE_NORETURN_T
+typedef void noreturn_t;
+#endif
+
+
 /* Here is the pseudo-keyword for declaring pointers that must be "far"
  * on 80x86 machines.  Most of the specialized coding for 80x86 is handled
  * by just saying "FAR *" where such a pointer is needed.  In a few places
@@ -233,13 +304,18 @@ typedef unsigned int JDIMENSION;
  */
 
 #ifndef HAVE_BOOLEAN
+#if defined FALSE || defined TRUE || defined QGLOBAL_H
+/* Qt3 defines FALSE and TRUE as "const" variables in qglobal.h */
 typedef int boolean;
-#endif
 #ifndef FALSE			/* in case these macros already exist */
 #define FALSE	0		/* values of boolean */
 #endif
 #ifndef TRUE
 #define TRUE	1
+#endif
+#else
+typedef enum { FALSE = 0, TRUE = 1 } boolean;
+#endif
 #endif
 
 
@@ -274,15 +350,16 @@ typedef int boolean;
 /* Encoder capability options: */
 
 #define C_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
-#undef  C_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
-#undef  C_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
-#undef  DCT_SCALING_SUPPORTED	    /* Input rescaling via DCT? (Requires DCT_ISLOW)*/
-#undef  ENTROPY_OPT_SUPPORTED	    /* Optimization of entropy coding parms? */
-/* Note: if you selected 12-bit data precision, it is dangerous to turn off
- * ENTROPY_OPT_SUPPORTED.  The standard Huffman tables are only good for 8-bit
- * precision, so jchuff.c normally uses entropy optimization to compute
- * usable tables for higher precision.  If you don't want to do optimization,
- * you'll have to supply different default Huffman tables.
+#define C_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
+#define C_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
+#define DCT_SCALING_SUPPORTED	    /* Input rescaling via DCT? (Requires DCT_ISLOW)*/
+#define ENTROPY_OPT_SUPPORTED	    /* Optimization of entropy coding parms? */
+/* Note: if you selected more than 8-bit data precision, it is dangerous to
+ * turn off ENTROPY_OPT_SUPPORTED.  The standard Huffman tables are only
+ * good for 8-bit precision, so arithmetic coding is recommended for higher
+ * precision.  The Huffman encoder normally uses entropy optimization to
+ * compute usable tables for higher precision.  Otherwise, you'll have to
+ * supply different default Huffman tables.
  * The exact same statements apply for progressive JPEG: the default tables
  * don't work for progressive mode.  (This may get fixed, however.)
  */
@@ -291,11 +368,11 @@ typedef int boolean;
 /* Decoder capability options: */
 
 #define D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
-#undef  D_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
-#undef  D_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
-#undef  IDCT_SCALING_SUPPORTED	    /* Output rescaling via IDCT? */
-#undef  SAVE_MARKERS_SUPPORTED	    /* jpeg_save_markers() needed? */
-#undef  BLOCK_SMOOTHING_SUPPORTED   /* Block smoothing? (Progressive only) */
+#define D_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
+#define D_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
+#define IDCT_SCALING_SUPPORTED	    /* Output rescaling via IDCT? (Requires DCT_ISLOW)*/
+#define SAVE_MARKERS_SUPPORTED	    /* jpeg_save_markers() needed? */
+#define BLOCK_SMOOTHING_SUPPORTED   /* Block smoothing? (Progressive only) */
 #undef  UPSAMPLE_SCALING_SUPPORTED  /* Output rescaling at upsample stage? */
 #define UPSAMPLE_MERGING_SUPPORTED  /* Fast path for sloppy upsampling? */
 #define QUANT_1PASS_SUPPORTED	    /* 1-pass color quantization? */
@@ -331,24 +408,13 @@ typedef int boolean;
  */
 
 #ifndef INLINE
-#if   defined ( __CC_ARM )
-  #define INLINE         __inline   /*!< inline keyword for ARM Compiler       */
-
-#elif defined ( __ICCARM__ )
-  #define INLINE        inline      /*!< inline keyword for IAR Compiler. Only available in High optimization mode! */
-
-#elif defined ( __GNUC__ )
-  #define INLINE         inline     /*!< inline keyword for GNU Compiler       */
-
-#elif defined ( __TASKING__ )
-  #define INLINE         inline     /*!< inline keyword for TASKING Compiler   */
+#ifdef __GNUC__			/* for instance, GNU C knows about inline */
+#define INLINE __inline__
 #endif
 #ifndef INLINE
 #define INLINE			/* default is to define it as empty */
 #endif
 #endif
-
-
 
 
 /* On some machines (notably 68000 series) "int" is 32 bits, but multiplying
